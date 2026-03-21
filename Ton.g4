@@ -63,7 +63,7 @@ expr
     
     | L_PAREN expr R_PAREN                                     # ParensExpr
     
-    | (TILDE | NOT_KW) expr                                    # NotExpr
+    | (NOT_KW) expr                                    # NotExpr
     
     | expr (MULT | DIV_OP | COLON) expr                        # MulDivExpr   
     | expr (PLUS | MINUS )                                     # AddSubExpr   
