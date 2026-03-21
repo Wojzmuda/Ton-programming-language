@@ -12,7 +12,7 @@ statement
     | ifStat            // !if < ... > { ... }
     | loopStat          // !loop < ... > { ... }
     | untilStat         // !until < ... > { ... }
-    | shoutStat         // !shout "chuje" ;
+    | shoutStat         // !shout "złotko" ;
     | funcDef           // !define VOID zagraj_intro <INT tempo> { ... }
     | audioOpStat       // Operacje typu: A TRASH 2:8 ;
     ;
@@ -63,7 +63,7 @@ expr
     
     | L_PAREN expr R_PAREN                                     # ParensExpr
     
-    | (NOT_KW) expr                                    # NotExpr
+    | (NOT_KW) expr                                             # NotExpr
     
     | expr (MULT | DIV_OP | COLON) expr                        # MulDivExpr   
     | expr (PLUS | MINUS )                                     # AddSubExpr   
