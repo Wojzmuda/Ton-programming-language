@@ -17,6 +17,7 @@ public:
 
   virtual std::any visitProgram(TonParser::ProgramContext *ctx) override {
     return visitChildren(ctx);
+    //TODO:
   }
 
   virtual std::any visitHeader(TonParser::HeaderContext *ctx) override {
@@ -25,22 +26,27 @@ public:
 
   virtual std::any visitBlock(TonParser::BlockContext *ctx) override {
     return visitChildren(ctx);
+    //TODO:
   }
 
   virtual std::any visitStatement(TonParser::StatementContext *ctx) override {
     return visitChildren(ctx);
+    //TODO:
   }
 
   virtual std::any visitVarDecl(TonParser::VarDeclContext *ctx) override {
     return visitChildren(ctx);
+    //TODO:
   }
 
   virtual std::any visitAssignment(TonParser::AssignmentContext *ctx) override {
     return visitChildren(ctx);
+    //TODO:
   }
 
   virtual std::any visitShoutStat(TonParser::ShoutStatContext *ctx) override {
     return visitChildren(ctx);
+    //TODO:
   }
 
   virtual std::any visitIfStat(TonParser::IfStatContext *ctx) override {
@@ -65,10 +71,13 @@ public:
 
   virtual std::any visitSaveStat(TonParser::SaveStatContext *ctx) override {
     return visitChildren(ctx);
+    //TODO:
   }
 
   virtual std::any visitType(TonParser::TypeContext *ctx) override {
     return visitChildren(ctx);
+    //TODO: BUT IT MAY NOT EVEN BE NECESSARY FOR OUR LANGUAGE, the
+    // vardeclar may handle it instead
   }
 
   virtual std::any visitAndExpr(TonParser::AndExprContext *ctx) override {
@@ -77,6 +86,7 @@ public:
 
   virtual std::any visitIdExpr(TonParser::IdExprContext *ctx) override {
     return visitChildren(ctx);
+    //TODO:
   }
 
   virtual std::any visitBoolValExpr(TonParser::BoolValExprContext *ctx) override {
@@ -85,10 +95,12 @@ public:
 
   virtual std::any visitCreateSoundExpr(TonParser::CreateSoundExprContext *ctx) override {
     return visitChildren(ctx);
+    //TODO:
   }
 
   virtual std::any visitStringValExpr(TonParser::StringValExprContext *ctx) override {
     return visitChildren(ctx);
+    //TODO:
   }
 
   virtual std::any visitNumValExpr(TonParser::NumValExprContext *ctx) override {
@@ -125,6 +137,7 @@ public:
 
   virtual std::any visitNoteValExpr(TonParser::NoteValExprContext *ctx) override {
     return visitChildren(ctx);
+    //TODO:
   }
 
   virtual std::any visitEmptySoundExpr(TonParser::EmptySoundExprContext *ctx) override {
@@ -133,6 +146,7 @@ public:
 
   virtual std::any visitIntValExpr(TonParser::IntValExprContext *ctx) override {
     return visitChildren(ctx);
+    //TODO:
   }
 
   virtual std::any visitCharValExpr(TonParser::CharValExprContext *ctx) override {
