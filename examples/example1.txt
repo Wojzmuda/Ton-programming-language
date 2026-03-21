@@ -1,0 +1,15 @@
+$______________________________________________
+$
+$ PROGRAM 1: Hello World and text operations
+$______________________________________________
+
+
+!shout "Welcome to the TON compiler!" ;
+
+$ Declaration of a STRING variable
+!make STRING greeting <- "Hello World!" ;
+!shout greeting ;
+
+$ Overwriting the variable 
+greeting <- "HELLO WORLD" ;
+!shout greeting ;

@@ -1,0 +1,19 @@
+$______________________________________________
+$
+$ PROGRAM 2: Preparation of musical variables
+$______________________________________________
+
+
+!shout "Initializing sound parameters..." ;
+
+$ Declarations of integers (INT)
+!make INT tempo <- 120 ;
+
+$ By default, duration is expressed in milliseconds
+!make INT duration <- 4000 ; 
+
+$ Declarations of notes (NOTE) 
+!make NOTE A <- C3 ;
+!make NOTE B <- F#4 ;
+
+!shout "Musical variables loaded successfully!" ;
