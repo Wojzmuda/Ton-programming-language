@@ -43,6 +43,8 @@ public:
 
     virtual std::any visitAudioOpStat(TonParser::AudioOpStatContext *context) = 0;
 
+    virtual std::any visitSaveStat(TonParser::SaveStatContext *context) = 0;
+
     virtual std::any visitType(TonParser::TypeContext *context) = 0;
 
     virtual std::any visitAndExpr(TonParser::AndExprContext *context) = 0;
@@ -51,11 +53,11 @@ public:
 
     virtual std::any visitBoolValExpr(TonParser::BoolValExprContext *context) = 0;
 
+    virtual std::any visitCreateSoundExpr(TonParser::CreateSoundExprContext *context) = 0;
+
     virtual std::any visitStringValExpr(TonParser::StringValExprContext *context) = 0;
 
     virtual std::any visitNumValExpr(TonParser::NumValExprContext *context) = 0;
-
-    virtual std::any visitConstructorExpr(TonParser::ConstructorExprContext *context) = 0;
 
     virtual std::any visitMixWithExpr(TonParser::MixWithExprContext *context) = 0;
 
@@ -84,8 +86,6 @@ public:
     virtual std::any visitSliceExpr(TonParser::SliceExprContext *context) = 0;
 
     virtual std::any visitNotExpr(TonParser::NotExprContext *context) = 0;
-
-    virtual std::any visitInstrumentPlayExpr(TonParser::InstrumentPlayExprContext *context) = 0;
 
     virtual std::any visitAddSubExpr(TonParser::AddSubExprContext *context) = 0;
 

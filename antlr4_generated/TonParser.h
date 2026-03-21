@@ -15,20 +15,21 @@ public:
     TYPE_BOOL = 1, TYPE_INT = 2, TYPE_NUM = 3, TYPE_CHAR = 4, TYPE_STRING = 5, 
     TYPE_NOTE = 6, TYPE_SOUND = 7, TYPE_VOID = 8, TYPE_ARRAY = 9, TYPE_INSTR = 10, 
     MAKE = 11, IF = 12, IF_PLAIN = 13, OTHERWISE = 14, UNTIL = 15, LOOP = 16, 
-    DEFINE = 17, OUT = 18, SHOUT = 19, FROM = 20, TO = 21, TIMES = 22, USE = 23, 
-    MIXWITH = 24, TRASH = 25, MUTE = 26, DIVIDE = 27, EMPTYSOUND = 28, ASSIGN = 29, 
-    AND_OP = 30, OR_OP = 31, NOT_KW = 32, EQ = 33, NEQ = 34, PLUS = 35, 
-    MINUS = 36, MULT = 37, DIV_OP = 38, COLON = 39, L_ANGLE = 40, R_ANGLE = 41, 
-    L_BRACE = 42, R_BRACE = 43, L_BRACKET = 44, R_BRACKET = 45, L_PAREN = 46, 
-    R_PAREN = 47, SEMI = 48, COMMA = 49, NOTE_VAL = 50, INT_VAL = 51, NUM_VAL = 52, 
-    BOOL_VAL = 53, CHAR_VAL = 54, STRING_VAL = 55, ID = 56, WS = 57, COMMENT = 58
+    DEFINE = 17, OUT = 18, SHOUT = 19, SAVE = 20, FROM = 21, TO = 22, TIMES = 23, 
+    USE = 24, MIXWITH = 25, TRASH = 26, MUTE = 27, DIVIDE = 28, EMPTYSOUND = 29, 
+    ASSIGN = 30, AND_OP = 31, OR_OP = 32, NOT_KW = 33, EQ = 34, NEQ = 35, 
+    PLUS = 36, MINUS = 37, MULT = 38, DIV_OP = 39, COLON = 40, L_ANGLE = 41, 
+    R_ANGLE = 42, L_BRACE = 43, R_BRACE = 44, L_BRACKET = 45, R_BRACKET = 46, 
+    L_PAREN = 47, R_PAREN = 48, SEMI = 49, COMMA = 50, NOTE_VAL = 51, INT_VAL = 52, 
+    NUM_VAL = 53, BOOL_VAL = 54, CHAR_VAL = 55, STRING_VAL = 56, ID = 57, 
+    WS = 58, COMMENT = 59
   };
 
   enum {
     RuleProgram = 0, RuleHeader = 1, RuleBlock = 2, RuleStatement = 3, RuleVarDecl = 4, 
     RuleAssignment = 5, RuleShoutStat = 6, RuleIfStat = 7, RuleLoopStat = 8, 
-    RuleUntilStat = 9, RuleFuncDef = 10, RuleAudioOpStat = 11, RuleType = 12, 
-    RuleExpr = 13
+    RuleUntilStat = 9, RuleFuncDef = 10, RuleAudioOpStat = 11, RuleSaveStat = 12, 
+    RuleType = 13, RuleExpr = 14
   };
 
   explicit TonParser(antlr4::TokenStream *input);
@@ -60,6 +61,7 @@ public:
   class UntilStatContext;
   class FuncDefContext;
   class AudioOpStatContext;
+  class SaveStatContext;
   class TypeContext;
   class ExprContext; 
 
@@ -123,6 +125,7 @@ public:
     ShoutStatContext *shoutStat();
     FuncDefContext *funcDef();
     AudioOpStatContext *audioOpStat();
+    SaveStatContext *saveStat();
 
 
     virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
@@ -288,6 +291,22 @@ public:
 
   AudioOpStatContext* audioOpStat();
 
+  class  SaveStatContext : public antlr4::ParserRuleContext {
+  public:
+    SaveStatContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    antlr4::tree::TerminalNode *SAVE();
+    ExprContext *expr();
+    antlr4::tree::TerminalNode *STRING_VAL();
+    antlr4::tree::TerminalNode *SEMI();
+
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  SaveStatContext* saveStat();
+
   class  TypeContext : public antlr4::ParserRuleContext {
   public:
     TypeContext(antlr4::ParserRuleContext *parent, size_t invokingState);
@@ -352,6 +371,17 @@ public:
     virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
   };
 
+  class  CreateSoundExprContext : public ExprContext {
+  public:
+    CreateSoundExprContext(ExprContext *ctx);
+
+    antlr4::tree::TerminalNode *ID();
+    std::vector<ExprContext *> expr();
+    ExprContext* expr(size_t i);
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
   class  StringValExprContext : public ExprContext {
   public:
     StringValExprContext(ExprContext *ctx);
@@ -366,20 +396,6 @@ public:
     NumValExprContext(ExprContext *ctx);
 
     antlr4::tree::TerminalNode *NUM_VAL();
-
-    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-  };
-
-  class  ConstructorExprContext : public ExprContext {
-  public:
-    ConstructorExprContext(ExprContext *ctx);
-
-    TypeContext *type();
-    antlr4::tree::TerminalNode *L_PAREN();
-    std::vector<ExprContext *> expr();
-    ExprContext* expr(size_t i);
-    antlr4::tree::TerminalNode *COMMA();
-    antlr4::tree::TerminalNode *R_PAREN();
 
     virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
   };
@@ -545,22 +561,12 @@ public:
     virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
   };
 
-  class  InstrumentPlayExprContext : public ExprContext {
-  public:
-    InstrumentPlayExprContext(ExprContext *ctx);
-
-    antlr4::tree::TerminalNode *ID();
-    std::vector<ExprContext *> expr();
-    ExprContext* expr(size_t i);
-
-    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-  };
-
   class  AddSubExprContext : public ExprContext {
   public:
     AddSubExprContext(ExprContext *ctx);
 
-    ExprContext *expr();
+    std::vector<ExprContext *> expr();
+    ExprContext* expr(size_t i);
     antlr4::tree::TerminalNode *PLUS();
     antlr4::tree::TerminalNode *MINUS();
 
