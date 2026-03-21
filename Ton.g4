@@ -15,6 +15,7 @@ statement
     | shoutStat         // !shout "złotko" ;
     | funcDef           // !define VOID zagraj_intro <INT tempo> { ... }
     | audioOpStat       // Operacje typu: A TRASH 2:8 ;
+    | saveStat      
     ;
 
 varDecl : MAKE type ID ASSIGN expr SEMI ;
@@ -45,18 +46,20 @@ audioOpStat
     | ID DIVIDE expr SEMI
     ;
 
+saveStat : SAVE expr STRING_VAL SEMI ;
+
 type : TYPE_BOOL | TYPE_INT | TYPE_NUM | TYPE_CHAR | TYPE_STRING 
      | TYPE_NOTE | TYPE_SOUND | TYPE_VOID | TYPE_ARRAY | TYPE_INSTR ;
 
 expr
     : L_BRACKET expr (COMMA expr)* R_BRACKET                   # ArrayExpr
     
-    | type L_PAREN expr COMMA expr R_PAREN                     # ConstructorExpr
+
     
     | ID L_PAREN (expr (COMMA expr)*)? R_PAREN                 # FunctionCallExpr
     
   
-    | ID expr expr                                             # InstrumentPlayExpr
+    | ID expr expr                                             			# CreateSoundExpr
     
     | expr L_BRACKET expr R_BRACKET                            # IndexExpr    
     | expr L_BRACKET expr COLON expr R_BRACKET                 # SliceExpr    
@@ -66,7 +69,7 @@ expr
     | (NOT_KW) expr                                             # NotExpr
     
     | expr (MULT | DIV_OP | COLON) expr                        # MulDivExpr   
-    | expr (PLUS | MINUS )                                     # AddSubExpr   
+    | expr (PLUS | MINUS ) expr                                    # AddSubExpr   
     | expr MIXWITH expr FROM expr                              # MixWithExpr
     
     | expr (EQ | NEQ | L_ANGLE | R_ANGLE) expr                 # RelationalExpr 
@@ -108,6 +111,7 @@ LOOP : '!loop' ;
  DEFINE : '!define' ;
  OUT : '!out' ; 
 SHOUT : '!shout' ;   
+SAVE : '!save' ; 
 
 
 FROM           : 'FROM' ;
@@ -158,3 +162,7 @@ STRING_VAL     : '"' ~["]* '"' ;
 ID             : [a-zA-Z_][a-zA-Z0-9_]* ;
 WS             : [ \t\r\n]+ -> skip ;
 COMMENT        : '$' ~[\r\n]* -> skip ;      
+
+
+
+
