@@ -12,7 +12,9 @@ To build and run this project, you will need:
 ###  Windows :poop:
 ```
 cmake -G "MinGW Makefiles" -B build
-cmake --build build
+
+#Use -j [num of cores] for faster building
+cmake --build build 
 ```
 
 ###  Linux :penguin:

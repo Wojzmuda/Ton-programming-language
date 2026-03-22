@@ -9,13 +9,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(ANTLR_BUILD_CPP_TESTS OFF CACHE INTERNAL "")
 add_subdirectory(runtime)
 
-include_directories(
-    ${CMAKE_CURRENT_SOURCE_DIR}/runtime/runtime/src    
-    ${CMAKE_CURRENT_SOURCE_DIR}/antlr4_generated       
-    ${CMAKE_CURRENT_SOURCE_DIR}                        
-)
-
-
 set(SOURCES
     main.cpp                                       
     TonInterpreter.cpp
@@ -25,8 +18,12 @@ set(SOURCES
     antlr4_generated/TonVisitor.cpp
 )
 
-
 add_executable(ton_app ${SOURCES})
 
+target_include_directories( ton_app PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/runtime/runtime/src    
+    ${CMAKE_CURRENT_SOURCE_DIR}/antlr4_generated       
+    ${CMAKE_CURRENT_SOURCE_DIR}                        
+)
 
 target_link_libraries(ton_app PRIVATE antlr4_static)
