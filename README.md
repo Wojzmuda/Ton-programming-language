@@ -1,34 +1,34 @@
-# :musical_note: Tøn-programming-language
+# Tøn-programming-language :musical_note:
 Description, will be written in the future
-## :spiral_notepad: Requirements
+##  Requirements :spiral_notepad:
 To build and run this project, you will need:
 * **C++ Compiler**: A compiler that supports C++17 (e.g., GCC/MinGW, Clang, or MSVC).
 * **CMake**: Version 3.14 or higher.
 * **Antlr4 tool**: If you make any changes to the `Ton.g4` file
 * *(Optional)* **Java (JRE)**: Only required if you plan to modify the `.g4` grammar file and regenerate the parser using the ANTLR4 tool.
 
-## :building_construction: Setup and Build
+##  Setup and Build :building_construction:
 
-### :poop: Windows
+###  Windows :poop:
 ```
 cmake -G "MinGW Makefiles" -B build
 cmake --build build
 ```
 
-### :penguin: Linux
+###  Linux :penguin:
 ```
 cmake -B build
 cmake --build build
 ```
 
-## :deer: Generating the parser and lexer with antlr4
+##  Generating the parser and lexer with antlr4 :deer:
 ```
 
 antlr4 -Dlanguage=Cpp -visitor -no-listener -o antlr4_generated Ton.g4
 
 ```
 
-## :evergreen_tree: Project structure 
+##  Project structure :evergreen_tree:
 
 ```
 
