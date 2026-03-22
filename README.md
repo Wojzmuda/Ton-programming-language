@@ -13,8 +13,9 @@ To build and run this project, you will need:
 ```
 cmake -G "MinGW Makefiles" -B build
 cmake --build build
-:arrow_up: Use -j [num of cores] for faster building
+# ^ Use -j [num of cores] for faster building
 ```
+
 
 ###  Linux :penguin:
 ```
