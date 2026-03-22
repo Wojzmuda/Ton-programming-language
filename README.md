@@ -28,7 +28,7 @@ antlr4 -Dlanguage=Cpp -visitor -no-listener -o antlr4_generated Ton.g4
 
 ```
 
-
+```
 ## Project structure
 
 Ton-programming-language/
@@ -47,3 +47,4 @@ Ton-programming-language/
 ├── TonInterpreter.cpp      # Our Interpreter
 ├── TonInterpreter.h   
 └──  main.cpp    
+```
