@@ -1,0 +1,21 @@
+$______________________________________________
+$
+$ PROGRAM 3: Hello Sample
+$______________________________________________
+
+
+!shout "Starting to load samples..." ;
+
+$ 1. Preparation of arguments
+!make NOTE note <- C4 ;
+!make INT time <- 2000 ;
+
+$ 2. Using the sound creation rule with instrument (guitar)
+!make SOUND my_sound <- GUITAR note time ;
+
+!shout "Samples processed. Saving to disk..." ;
+
+$ 3. Saving to file
+!save my_sound "hello_guitar.wav" ;
+
+!shout "Success! Open the hello_guitar.wav file" ;
