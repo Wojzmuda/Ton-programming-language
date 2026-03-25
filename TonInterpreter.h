@@ -6,6 +6,15 @@
 #include <any>
 #include <vector>
 
+std::any TonInterpreter::visitProgram(TonParser::ProgramContext *ctx){
+    return visitChildren(ctx);
+	std::any TonInterpreter::visitVarDecl(TonParser::VarDeclContext *ctx){
+    std::any value = visit(ctx->expr());
+    memory[varName] = value;
+    return value;
+}
+}
+
 struct Instrument {
     std::string name;
     // Tutaj w przyszłości można dodać wskaźnik do mapy sampli
