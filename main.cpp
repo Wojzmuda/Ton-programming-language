@@ -25,6 +25,11 @@ int main(int argc, const char* argv[]){
     TonParser parser(&tokens);
 
     auto treeAST = parser.program();
+    if (parser.getNumberOfSyntaxErrors() > 0){
+        std::cerr << "Found " << parser.getNumberOfSyntaxErrors() << " syntax errors, fix your code."<< std::endl;
+        return 1;
+    }
+
 
     TonInterpreter interpreter;
     try {

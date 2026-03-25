@@ -16,4 +16,7 @@ $ Declarations of notes (NOTE)
 !make NOTE A <- C3 ;
 !make NOTE B <- F#4 ;
 
+!shout A;
+!shout B;
+
 !shout "Musical variables loaded successfully!" ;
