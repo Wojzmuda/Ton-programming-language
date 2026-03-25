@@ -53,4 +53,11 @@ class TonInterpreter: public TonBaseVisitor {
         std::any visitSaveStat(TonParser::SaveStatContext *ctx) override;
         std::any visitIdExpr(TonParser::IdExprContext *ctx) override;
 
+    // 3rd functions batch
+    virtual std::any visitCreateSoundExpr(TonParser::CreateSoundExprContext *ctx);
+    virtual std::any visitStringValExpr(TonParser::StringValExprContext *ctx) override;
+    virtual std::any visitNoteValExpr(TonParser::NoteValExprContext *ctx) override;
+    virtual std::any visitIntValExpr(TonParser::IntValExprContext *ctx) override;
+
+
 };
