@@ -8,6 +8,7 @@ block : L_BRACE statement* R_BRACE ;
 
 statement
     : varDecl           // !make INT x <- 5;
+    | trackDecl         // timeline NEW track;
     | assignment        // x <- 10;
     | ifStat            // !if < ... > { ... }
     | loopStat          // !loop < ... > { ... }
@@ -53,12 +54,11 @@ audioOpStat
     | MOVE target TO expr SEMI
     | MUTE target SEMI
     | UNMUTE (target | ALL) SEMI
-    | SOLO target SEMI
+    | ISOLATE target SEMI
     | TRASH target SEMI
-    | LENGTH target SEMI
     ;
 
-saveStat : SAVE expr (STRING_VAL)? SEMI ;
+saveStat : SAVE expr STRING_VAL SEMI ;
 
 playStat : PLAY target SEMI ;
 
@@ -90,7 +90,8 @@ expr
     | CHAR_VAL                                                 # CharValExpr
     | STRING_VAL                                               # StringValExpr
     | target                                                   # TargetExpr       // Zastępuje samo ID, by wspierać np. t1.skrzypeczki
-    | EMPTYSOUND                                               # EmptySoundExpr
+    | LENGTH target                                            # LengthOfExpr 
+    | EMPTYSOUND                                               # EmptySoundExpr                           
     ;
 
 // --- TOKENS ---
@@ -127,7 +128,7 @@ SHIFT          : 'SHIFT' ;
 BY             : 'BY' ;
 MOVE           : 'MOVE' ;
 ALL            : 'ALL' ;
-SOLO           : 'SOLO' ;
+ISOLATE           : 'ISOLATE' ;
 LENGTH         : 'LENGTH' ;
 PLAY           : 'PLAY' ;
 

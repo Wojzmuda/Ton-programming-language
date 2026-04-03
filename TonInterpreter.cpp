@@ -21,18 +21,30 @@ std::any TonInterpreter::visitVarDecl(TonParser::VarDeclContext *ctx) {
     return value;
 }
 
-std::any TonInterpreter::visitIdExpr(TonParser::IdExprContext *ctx) {
-    std::string varName = ctx->ID()->getText(); 
-    if (memory.find(varName) != memory.end()) {
-        return memory[varName]; 
+// std::any TonInterpreter::visitIdExpr(TonParser::IdExprContext *ctx) {
+//     std::string varName = ctx->ID()->getText(); 
+//     if (memory.find(varName) != memory.end()) {
+//         return memory[varName]; 
+//     }
+
+//     throw std::runtime_error("Error: Use of undefined variable '" + varName + "'.");
+// }
+// ZASTĄP CAŁĄ METODĘ visitIdExpr TYM KODEM:
+std::any TonInterpreter::visitTargetExpr(TonParser::TargetExprContext *ctx) {
+    std::string targetName = ctx->getText(); 
+    
+    // Na razie zostawiamy proste przeszukiwanie pamięci, 
+    // później będziesz musiał tu dodać logikę rozdzielania kropką (np. t1 vs t1.skrzypeczki)
+    if (memory.find(targetName) != memory.end()) {
+        return memory[targetName]; 
     }
 
-    throw std::runtime_error("Error: Use of undefined variable '" + varName + "'.");
+    throw std::runtime_error("Error: Use of undefined target '" + targetName + "'.");
 }
 
 
 std::any TonInterpreter::visitAssignment(TonParser::AssignmentContext *ctx) {
-    std::string varName = ctx->ID()->getText();
+    std::string varName = ctx->target()->getText();
 
     if (memory.find(varName) == memory.end()) {
         throw std::runtime_error("Error: Variable '" + varName + "' must be declared using !make before assignment.");

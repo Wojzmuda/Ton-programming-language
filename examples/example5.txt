@@ -1,0 +1,19 @@
+$______________________________________________
+$
+$ PROGRAM 5: Operations on Tracks
+$______________________________________________
+
+!make SOUND x <- piano C#4 4000;
+!make TIMELINE t1;
+t1 NEW TRACK pianos;
+
+t1.pianos <- [x AS "intro" AT 500, x AT 1500];
+SHIFT t1.pianos."intro" BY 500;
+
+t1 NEW TRACK noise;
+!make SOUND noise <- piano D1 10000;
+t1.noise <- x AS "bass" AT 0;
+!save all "all.wav";
+
+ISOLATE t1.pianos;
+!save t1 "isolated-pianos.wav";
