@@ -29,12 +29,11 @@ std::any TonInterpreter::visitVarDecl(TonParser::VarDeclContext *ctx) {
 
 //     throw std::runtime_error("Error: Use of undefined variable '" + varName + "'.");
 // }
-// ZASTĄP CAŁĄ METODĘ visitIdExpr TYM KODEM:
+
 std::any TonInterpreter::visitTargetExpr(TonParser::TargetExprContext *ctx) {
     std::string targetName = ctx->getText(); 
-    
-    // Na razie zostawiamy proste przeszukiwanie pamięci, 
-    // później będziesz musiał tu dodać logikę rozdzielania kropką (np. t1 vs t1.skrzypeczki)
+
+    // TODO: how to memory ?
     if (memory.find(targetName) != memory.end()) {
         return memory[targetName]; 
     }
