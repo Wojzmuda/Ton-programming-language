@@ -29,6 +29,10 @@ public:
 
     virtual std::any visitVarDecl(TonParser::VarDeclContext *context) = 0;
 
+    virtual std::any visitTrackDecl(TonParser::TrackDeclContext *context) = 0;
+
+    virtual std::any visitTarget(TonParser::TargetContext *context) = 0;
+
     virtual std::any visitAssignment(TonParser::AssignmentContext *context) = 0;
 
     virtual std::any visitShoutStat(TonParser::ShoutStatContext *context) = 0;
@@ -45,11 +49,13 @@ public:
 
     virtual std::any visitSaveStat(TonParser::SaveStatContext *context) = 0;
 
+    virtual std::any visitPlayStat(TonParser::PlayStatContext *context) = 0;
+
     virtual std::any visitType(TonParser::TypeContext *context) = 0;
 
     virtual std::any visitAndExpr(TonParser::AndExprContext *context) = 0;
 
-    virtual std::any visitIdExpr(TonParser::IdExprContext *context) = 0;
+    virtual std::any visitAddSubMixExpr(TonParser::AddSubMixExprContext *context) = 0;
 
     virtual std::any visitBoolValExpr(TonParser::BoolValExprContext *context) = 0;
 
@@ -61,11 +67,15 @@ public:
 
     virtual std::any visitMixWithExpr(TonParser::MixWithExprContext *context) = 0;
 
+    virtual std::any visitTargetExpr(TonParser::TargetExprContext *context) = 0;
+
     virtual std::any visitRelationalExpr(TonParser::RelationalExprContext *context) = 0;
 
     virtual std::any visitOrExpr(TonParser::OrExprContext *context) = 0;
 
     virtual std::any visitIndexExpr(TonParser::IndexExprContext *context) = 0;
+
+    virtual std::any visitConcatExpr(TonParser::ConcatExprContext *context) = 0;
 
     virtual std::any visitArrayExpr(TonParser::ArrayExprContext *context) = 0;
 
@@ -83,11 +93,13 @@ public:
 
     virtual std::any visitParensExpr(TonParser::ParensExprContext *context) = 0;
 
+    virtual std::any visitTrackEventExpr(TonParser::TrackEventExprContext *context) = 0;
+
     virtual std::any visitSliceExpr(TonParser::SliceExprContext *context) = 0;
 
     virtual std::any visitNotExpr(TonParser::NotExprContext *context) = 0;
 
-    virtual std::any visitAddSubExpr(TonParser::AddSubExprContext *context) = 0;
+    virtual std::any visitLengthOfExpr(TonParser::LengthOfExprContext *context) = 0;
 
 
 };

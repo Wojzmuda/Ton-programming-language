@@ -7,7 +7,7 @@
 #include "antlr4-runtime.h"
 #include "TonVisitor.h"
 
-//eloelo
+
 /**
  * This class provides an empty implementation of TonVisitor, which can be
  * extended to create a visitor which only needs to handle a subset of the available methods.
@@ -17,7 +17,6 @@ public:
 
   virtual std::any visitProgram(TonParser::ProgramContext *ctx) override {
     return visitChildren(ctx);
-    //TODO:
   }
 
   virtual std::any visitHeader(TonParser::HeaderContext *ctx) override {
@@ -26,27 +25,30 @@ public:
 
   virtual std::any visitBlock(TonParser::BlockContext *ctx) override {
     return visitChildren(ctx);
-    //TODO:
   }
 
   virtual std::any visitStatement(TonParser::StatementContext *ctx) override {
     return visitChildren(ctx);
-    //TODO:
   }
 
   virtual std::any visitVarDecl(TonParser::VarDeclContext *ctx) override {
     return visitChildren(ctx);
-    //TODO:
+  }
+
+  virtual std::any visitTrackDecl(TonParser::TrackDeclContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitTarget(TonParser::TargetContext *ctx) override {
+    return visitChildren(ctx);
   }
 
   virtual std::any visitAssignment(TonParser::AssignmentContext *ctx) override {
     return visitChildren(ctx);
-    //TODO:
   }
 
   virtual std::any visitShoutStat(TonParser::ShoutStatContext *ctx) override {
     return visitChildren(ctx);
-    //TODO:
   }
 
   virtual std::any visitIfStat(TonParser::IfStatContext *ctx) override {
@@ -71,22 +73,22 @@ public:
 
   virtual std::any visitSaveStat(TonParser::SaveStatContext *ctx) override {
     return visitChildren(ctx);
-    //TODO:
+  }
+
+  virtual std::any visitPlayStat(TonParser::PlayStatContext *ctx) override {
+    return visitChildren(ctx);
   }
 
   virtual std::any visitType(TonParser::TypeContext *ctx) override {
     return visitChildren(ctx);
-    //TODO: BUT IT MAY NOT EVEN BE NECESSARY FOR OUR LANGUAGE, the
-    // vardeclar may handle it instead
   }
 
   virtual std::any visitAndExpr(TonParser::AndExprContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual std::any visitIdExpr(TonParser::IdExprContext *ctx) override {
+  virtual std::any visitAddSubMixExpr(TonParser::AddSubMixExprContext *ctx) override {
     return visitChildren(ctx);
-    //TODO:
   }
 
   virtual std::any visitBoolValExpr(TonParser::BoolValExprContext *ctx) override {
@@ -95,12 +97,10 @@ public:
 
   virtual std::any visitCreateSoundExpr(TonParser::CreateSoundExprContext *ctx) override {
     return visitChildren(ctx);
-    //TODO:
   }
 
   virtual std::any visitStringValExpr(TonParser::StringValExprContext *ctx) override {
     return visitChildren(ctx);
-    //TODO:
   }
 
   virtual std::any visitNumValExpr(TonParser::NumValExprContext *ctx) override {
@@ -108,6 +108,10 @@ public:
   }
 
   virtual std::any visitMixWithExpr(TonParser::MixWithExprContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitTargetExpr(TonParser::TargetExprContext *ctx) override {
     return visitChildren(ctx);
   }
 
@@ -120,6 +124,10 @@ public:
   }
 
   virtual std::any visitIndexExpr(TonParser::IndexExprContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitConcatExpr(TonParser::ConcatExprContext *ctx) override {
     return visitChildren(ctx);
   }
 
@@ -137,7 +145,6 @@ public:
 
   virtual std::any visitNoteValExpr(TonParser::NoteValExprContext *ctx) override {
     return visitChildren(ctx);
-    //TODO:
   }
 
   virtual std::any visitEmptySoundExpr(TonParser::EmptySoundExprContext *ctx) override {
@@ -146,7 +153,6 @@ public:
 
   virtual std::any visitIntValExpr(TonParser::IntValExprContext *ctx) override {
     return visitChildren(ctx);
-    //TODO:
   }
 
   virtual std::any visitCharValExpr(TonParser::CharValExprContext *ctx) override {
@@ -154,6 +160,10 @@ public:
   }
 
   virtual std::any visitParensExpr(TonParser::ParensExprContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitTrackEventExpr(TonParser::TrackEventExprContext *ctx) override {
     return visitChildren(ctx);
   }
 
@@ -165,7 +175,7 @@ public:
     return visitChildren(ctx);
   }
 
-  virtual std::any visitAddSubExpr(TonParser::AddSubExprContext *ctx) override {
+  virtual std::any visitLengthOfExpr(TonParser::LengthOfExprContext *ctx) override {
     return visitChildren(ctx);
   }
 

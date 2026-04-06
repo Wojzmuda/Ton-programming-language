@@ -52,122 +52,149 @@ void tonParserInitialize() {
 #endif
   auto staticData = std::make_unique<TonParserStaticData>(
     std::vector<std::string>{
-      "program", "header", "block", "statement", "varDecl", "assignment", 
-      "shoutStat", "ifStat", "loopStat", "untilStat", "funcDef", "audioOpStat", 
-      "saveStat", "type", "expr"
+      "program", "header", "block", "statement", "varDecl", "trackDecl", 
+      "target", "assignment", "shoutStat", "ifStat", "loopStat", "untilStat", 
+      "funcDef", "audioOpStat", "saveStat", "playStat", "type", "expr"
     },
     std::vector<std::string>{
       "", "'BOOL'", "'INT'", "'NUMERICAL'", "'CHAR'", "'STRING'", "'NOTE'", 
-      "'SOUND'", "'VOID'", "'ARRAY'", "'INSTRUMENT'", "'!make'", "'!if'", 
-      "'if'", "'!otherwise'", "'!until'", "'!loop'", "'!define'", "'!out'", 
-      "'!shout'", "'!save'", "'FROM'", "'TO'", "'TIMES'", "'USE'", "'MIXWITH'", 
-      "'TRASH'", "'MUTE'", "'DIVIDE'", "'EMPTYSOUND'", "'<-'", "'AND'", 
-      "'OR'", "'NOT'", "'=='", "'!='", "'+'", "'-'", "'*'", "'/'", "':'", 
-      "'<'", "'>'", "'{'", "'}'", "'['", "']'", "'('", "')'", "';'", "','"
+      "'SOUND'", "'VOID'", "'ARRAY'", "'INSTRUMENT'", "'TIMELINE'", "'!make'", 
+      "'!if'", "'if'", "'!otherwise'", "'!until'", "'!loop'", "'!define'", 
+      "'!out'", "'!shout'", "'!save'", "'NEW'", "'TRACK'", "'AS'", "'AT'", 
+      "'SHIFT'", "'BY'", "'MOVE'", "'ALL'", "'ISOLATE'", "'LENGTH'", "'PLAY'", 
+      "'FROM'", "'TO'", "'TIMES'", "'USE'", "'MIXWITH'", "'TRASH'", "'MUTE'", 
+      "'UNMUTE'", "'DIVIDE'", "'EMPTYSOUND'", "'<-'", "'+='", "'AND'", "'OR'", 
+      "'NOT'", "'=='", "'!='", "'+'", "'-'", "'*'", "'/'", "':'", "'.'", 
+      "'&'", "'<'", "'>'", "'{'", "'}'", "'['", "']'", "'('", "')'", "';'", 
+      "','"
     },
     std::vector<std::string>{
       "", "TYPE_BOOL", "TYPE_INT", "TYPE_NUM", "TYPE_CHAR", "TYPE_STRING", 
       "TYPE_NOTE", "TYPE_SOUND", "TYPE_VOID", "TYPE_ARRAY", "TYPE_INSTR", 
-      "MAKE", "IF", "IF_PLAIN", "OTHERWISE", "UNTIL", "LOOP", "DEFINE", 
-      "OUT", "SHOUT", "SAVE", "FROM", "TO", "TIMES", "USE", "MIXWITH", "TRASH", 
-      "MUTE", "DIVIDE", "EMPTYSOUND", "ASSIGN", "AND_OP", "OR_OP", "NOT_KW", 
-      "EQ", "NEQ", "PLUS", "MINUS", "MULT", "DIV_OP", "COLON", "L_ANGLE", 
+      "TYPE_TIMELINE", "MAKE", "IF", "IF_PLAIN", "OTHERWISE", "UNTIL", "LOOP", 
+      "DEFINE", "OUT", "SHOUT", "SAVE", "NEW", "TRACK", "AS", "AT", "SHIFT", 
+      "BY", "MOVE", "ALL", "ISOLATE", "LENGTH", "PLAY", "FROM", "TO", "TIMES", 
+      "USE", "MIXWITH", "TRASH", "MUTE", "UNMUTE", "DIVIDE", "EMPTYSOUND", 
+      "ASSIGN", "ADD_ASSIGN", "AND_OP", "OR_OP", "NOT_KW", "EQ", "NEQ", 
+      "PLUS", "MINUS", "MULT", "DIV_OP", "COLON", "DOT", "AMPERSAND", "L_ANGLE", 
       "R_ANGLE", "L_BRACE", "R_BRACE", "L_BRACKET", "R_BRACKET", "L_PAREN", 
       "R_PAREN", "SEMI", "COMMA", "NOTE_VAL", "INT_VAL", "NUM_VAL", "BOOL_VAL", 
       "CHAR_VAL", "STRING_VAL", "ID", "WS", "COMMENT"
     }
   );
   static const int32_t serializedATNSegment[] = {
-  	4,1,59,272,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,2,5,7,5,2,6,7,6,2,
+  	4,1,75,331,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,2,5,7,5,2,6,7,6,2,
   	7,7,7,2,8,7,8,2,9,7,9,2,10,7,10,2,11,7,11,2,12,7,12,2,13,7,13,2,14,7,
-  	14,1,0,5,0,32,8,0,10,0,12,0,35,9,0,1,0,5,0,38,8,0,10,0,12,0,41,9,0,1,
-  	0,1,0,1,1,1,1,1,1,1,1,1,2,1,2,5,2,51,8,2,10,2,12,2,54,9,2,1,2,1,2,1,3,
-  	1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,3,3,67,8,3,1,4,1,4,1,4,1,4,1,4,1,4,1,
-  	4,1,5,1,5,1,5,1,5,1,5,1,6,1,6,1,6,1,6,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,
-  	1,7,1,7,1,7,1,7,5,7,97,8,7,10,7,12,7,100,9,7,1,7,1,7,3,7,104,8,7,1,8,
-  	1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,
-  	8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,3,8,133,8,8,1,9,1,9,1,9,1,9,1,9,1,9,
-  	1,10,1,10,1,10,1,10,1,10,1,10,1,10,1,10,1,10,1,10,5,10,151,8,10,10,10,
-  	12,10,154,9,10,3,10,156,8,10,1,10,1,10,1,10,1,11,1,11,1,11,1,11,1,11,
-  	1,11,1,11,1,11,1,11,1,11,1,11,1,11,1,11,1,11,1,11,1,11,1,11,1,11,1,11,
-  	3,11,180,8,11,1,12,1,12,1,12,1,12,1,12,1,13,1,13,1,14,1,14,1,14,1,14,
-  	1,14,5,14,194,8,14,10,14,12,14,197,9,14,1,14,1,14,1,14,1,14,1,14,1,14,
-  	1,14,5,14,206,8,14,10,14,12,14,209,9,14,3,14,211,8,14,1,14,1,14,1,14,
-  	1,14,1,14,1,14,1,14,1,14,1,14,1,14,1,14,1,14,1,14,1,14,1,14,1,14,1,14,
-  	1,14,1,14,3,14,232,8,14,1,14,1,14,1,14,1,14,1,14,1,14,1,14,1,14,1,14,
-  	1,14,1,14,1,14,1,14,1,14,1,14,1,14,1,14,1,14,1,14,1,14,1,14,1,14,1,14,
-  	1,14,1,14,1,14,1,14,1,14,1,14,1,14,1,14,1,14,1,14,5,14,267,8,14,10,14,
-  	12,14,270,9,14,1,14,0,1,28,15,0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,
-  	0,4,1,0,1,10,1,0,38,40,1,0,36,37,2,0,34,35,41,42,298,0,33,1,0,0,0,2,44,
-  	1,0,0,0,4,48,1,0,0,0,6,66,1,0,0,0,8,68,1,0,0,0,10,75,1,0,0,0,12,80,1,
-  	0,0,0,14,84,1,0,0,0,16,132,1,0,0,0,18,134,1,0,0,0,20,140,1,0,0,0,22,179,
-  	1,0,0,0,24,181,1,0,0,0,26,186,1,0,0,0,28,231,1,0,0,0,30,32,3,2,1,0,31,
-  	30,1,0,0,0,32,35,1,0,0,0,33,31,1,0,0,0,33,34,1,0,0,0,34,39,1,0,0,0,35,
-  	33,1,0,0,0,36,38,3,6,3,0,37,36,1,0,0,0,38,41,1,0,0,0,39,37,1,0,0,0,39,
-  	40,1,0,0,0,40,42,1,0,0,0,41,39,1,0,0,0,42,43,5,0,0,1,43,1,1,0,0,0,44,
-  	45,5,24,0,0,45,46,5,57,0,0,46,47,5,49,0,0,47,3,1,0,0,0,48,52,5,43,0,0,
-  	49,51,3,6,3,0,50,49,1,0,0,0,51,54,1,0,0,0,52,50,1,0,0,0,52,53,1,0,0,0,
-  	53,55,1,0,0,0,54,52,1,0,0,0,55,56,5,44,0,0,56,5,1,0,0,0,57,67,3,8,4,0,
-  	58,67,3,10,5,0,59,67,3,14,7,0,60,67,3,16,8,0,61,67,3,18,9,0,62,67,3,12,
-  	6,0,63,67,3,20,10,0,64,67,3,22,11,0,65,67,3,24,12,0,66,57,1,0,0,0,66,
-  	58,1,0,0,0,66,59,1,0,0,0,66,60,1,0,0,0,66,61,1,0,0,0,66,62,1,0,0,0,66,
-  	63,1,0,0,0,66,64,1,0,0,0,66,65,1,0,0,0,67,7,1,0,0,0,68,69,5,11,0,0,69,
-  	70,3,26,13,0,70,71,5,57,0,0,71,72,5,30,0,0,72,73,3,28,14,0,73,74,5,49,
-  	0,0,74,9,1,0,0,0,75,76,5,57,0,0,76,77,5,30,0,0,77,78,3,28,14,0,78,79,
-  	5,49,0,0,79,11,1,0,0,0,80,81,5,19,0,0,81,82,3,28,14,0,82,83,5,49,0,0,
-  	83,13,1,0,0,0,84,85,5,12,0,0,85,86,5,41,0,0,86,87,3,28,14,0,87,88,5,42,
-  	0,0,88,98,3,4,2,0,89,90,5,14,0,0,90,91,5,13,0,0,91,92,5,41,0,0,92,93,
-  	3,28,14,0,93,94,5,42,0,0,94,95,3,4,2,0,95,97,1,0,0,0,96,89,1,0,0,0,97,
-  	100,1,0,0,0,98,96,1,0,0,0,98,99,1,0,0,0,99,103,1,0,0,0,100,98,1,0,0,0,
-  	101,102,5,14,0,0,102,104,3,4,2,0,103,101,1,0,0,0,103,104,1,0,0,0,104,
-  	15,1,0,0,0,105,106,5,16,0,0,106,107,5,41,0,0,107,108,3,28,14,0,108,109,
-  	5,23,0,0,109,110,5,42,0,0,110,111,3,4,2,0,111,133,1,0,0,0,112,113,5,16,
-  	0,0,113,114,5,41,0,0,114,115,3,26,13,0,115,116,5,57,0,0,116,117,5,21,
-  	0,0,117,118,3,28,14,0,118,119,5,22,0,0,119,120,3,28,14,0,120,121,5,42,
-  	0,0,121,122,3,4,2,0,122,133,1,0,0,0,123,124,5,16,0,0,124,125,5,41,0,0,
-  	125,126,3,26,13,0,126,127,5,57,0,0,127,128,5,30,0,0,128,129,3,28,14,0,
-  	129,130,5,42,0,0,130,131,3,4,2,0,131,133,1,0,0,0,132,105,1,0,0,0,132,
-  	112,1,0,0,0,132,123,1,0,0,0,133,17,1,0,0,0,134,135,5,15,0,0,135,136,5,
-  	41,0,0,136,137,3,28,14,0,137,138,5,42,0,0,138,139,3,4,2,0,139,19,1,0,
-  	0,0,140,141,5,17,0,0,141,142,3,26,13,0,142,143,5,57,0,0,143,155,5,41,
-  	0,0,144,145,3,26,13,0,145,152,5,57,0,0,146,147,5,50,0,0,147,148,3,26,
-  	13,0,148,149,5,57,0,0,149,151,1,0,0,0,150,146,1,0,0,0,151,154,1,0,0,0,
-  	152,150,1,0,0,0,152,153,1,0,0,0,153,156,1,0,0,0,154,152,1,0,0,0,155,144,
-  	1,0,0,0,155,156,1,0,0,0,156,157,1,0,0,0,157,158,5,42,0,0,158,159,3,4,
-  	2,0,159,21,1,0,0,0,160,161,5,57,0,0,161,162,5,26,0,0,162,163,3,28,14,
-  	0,163,164,5,40,0,0,164,165,3,28,14,0,165,166,5,49,0,0,166,180,1,0,0,0,
-  	167,168,5,57,0,0,168,169,5,27,0,0,169,170,3,28,14,0,170,171,5,40,0,0,
-  	171,172,3,28,14,0,172,173,5,49,0,0,173,180,1,0,0,0,174,175,5,57,0,0,175,
-  	176,5,28,0,0,176,177,3,28,14,0,177,178,5,49,0,0,178,180,1,0,0,0,179,160,
-  	1,0,0,0,179,167,1,0,0,0,179,174,1,0,0,0,180,23,1,0,0,0,181,182,5,20,0,
-  	0,182,183,3,28,14,0,183,184,5,56,0,0,184,185,5,49,0,0,185,25,1,0,0,0,
-  	186,187,7,0,0,0,187,27,1,0,0,0,188,189,6,14,-1,0,189,190,5,45,0,0,190,
-  	195,3,28,14,0,191,192,5,50,0,0,192,194,3,28,14,0,193,191,1,0,0,0,194,
-  	197,1,0,0,0,195,193,1,0,0,0,195,196,1,0,0,0,196,198,1,0,0,0,197,195,1,
-  	0,0,0,198,199,5,46,0,0,199,232,1,0,0,0,200,201,5,57,0,0,201,210,5,47,
-  	0,0,202,207,3,28,14,0,203,204,5,50,0,0,204,206,3,28,14,0,205,203,1,0,
-  	0,0,206,209,1,0,0,0,207,205,1,0,0,0,207,208,1,0,0,0,208,211,1,0,0,0,209,
-  	207,1,0,0,0,210,202,1,0,0,0,210,211,1,0,0,0,211,212,1,0,0,0,212,232,5,
-  	48,0,0,213,214,5,57,0,0,214,215,3,28,14,0,215,216,3,28,14,19,216,232,
-  	1,0,0,0,217,218,5,47,0,0,218,219,3,28,14,0,219,220,5,48,0,0,220,232,1,
-  	0,0,0,221,222,5,33,0,0,222,232,3,28,14,15,223,232,5,51,0,0,224,232,5,
-  	52,0,0,225,232,5,53,0,0,226,232,5,54,0,0,227,232,5,55,0,0,228,232,5,56,
-  	0,0,229,232,5,57,0,0,230,232,5,29,0,0,231,188,1,0,0,0,231,200,1,0,0,0,
-  	231,213,1,0,0,0,231,217,1,0,0,0,231,221,1,0,0,0,231,223,1,0,0,0,231,224,
-  	1,0,0,0,231,225,1,0,0,0,231,226,1,0,0,0,231,227,1,0,0,0,231,228,1,0,0,
-  	0,231,229,1,0,0,0,231,230,1,0,0,0,232,268,1,0,0,0,233,234,10,14,0,0,234,
-  	235,7,1,0,0,235,267,3,28,14,15,236,237,10,13,0,0,237,238,7,2,0,0,238,
-  	267,3,28,14,14,239,240,10,12,0,0,240,241,5,25,0,0,241,242,3,28,14,0,242,
-  	243,5,21,0,0,243,244,3,28,14,13,244,267,1,0,0,0,245,246,10,11,0,0,246,
-  	247,7,3,0,0,247,267,3,28,14,12,248,249,10,10,0,0,249,250,5,31,0,0,250,
-  	267,3,28,14,11,251,252,10,9,0,0,252,253,5,32,0,0,253,267,3,28,14,10,254,
-  	255,10,18,0,0,255,256,5,45,0,0,256,257,3,28,14,0,257,258,5,46,0,0,258,
-  	267,1,0,0,0,259,260,10,17,0,0,260,261,5,45,0,0,261,262,3,28,14,0,262,
-  	263,5,40,0,0,263,264,3,28,14,0,264,265,5,46,0,0,265,267,1,0,0,0,266,233,
-  	1,0,0,0,266,236,1,0,0,0,266,239,1,0,0,0,266,245,1,0,0,0,266,248,1,0,0,
-  	0,266,251,1,0,0,0,266,254,1,0,0,0,266,259,1,0,0,0,267,270,1,0,0,0,268,
-  	266,1,0,0,0,268,269,1,0,0,0,269,29,1,0,0,0,270,268,1,0,0,0,16,33,39,52,
-  	66,98,103,132,152,155,179,195,207,210,231,266,268
+  	14,2,15,7,15,2,16,7,16,2,17,7,17,1,0,5,0,38,8,0,10,0,12,0,41,9,0,1,0,
+  	5,0,44,8,0,10,0,12,0,47,9,0,1,0,1,0,1,1,1,1,1,1,1,1,1,2,1,2,5,2,57,8,
+  	2,10,2,12,2,60,9,2,1,2,1,2,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,
+  	3,3,3,75,8,3,1,4,1,4,1,4,1,4,1,4,3,4,82,8,4,1,4,1,4,1,5,1,5,1,5,1,5,1,
+  	5,1,5,1,6,1,6,1,6,1,6,1,6,3,6,97,8,6,3,6,99,8,6,1,7,1,7,1,7,1,7,1,7,1,
+  	7,1,7,1,7,1,7,1,7,3,7,111,8,7,1,8,1,8,1,8,1,8,1,9,1,9,1,9,1,9,1,9,1,9,
+  	1,9,1,9,1,9,1,9,1,9,1,9,5,9,129,8,9,10,9,12,9,132,9,9,1,9,1,9,3,9,136,
+  	8,9,1,10,1,10,1,10,1,10,1,10,1,10,1,10,1,10,1,10,1,10,1,10,1,10,1,10,
+  	1,10,1,10,1,10,1,10,1,10,1,10,1,10,1,10,1,10,1,10,1,10,1,10,1,10,1,10,
+  	3,10,165,8,10,1,11,1,11,1,11,1,11,1,11,1,11,1,12,1,12,1,12,1,12,1,12,
+  	1,12,1,12,1,12,1,12,1,12,5,12,183,8,12,10,12,12,12,186,9,12,3,12,188,
+  	8,12,1,12,1,12,1,12,1,13,1,13,1,13,1,13,1,13,1,13,1,13,1,13,1,13,1,13,
+  	1,13,1,13,1,13,1,13,1,13,1,13,1,13,1,13,1,13,3,13,212,8,13,1,13,1,13,
+  	1,13,1,13,1,13,1,13,1,13,1,13,1,13,3,13,223,8,13,1,14,1,14,1,14,1,14,
+  	1,14,1,15,1,15,1,15,1,15,1,16,1,16,1,17,1,17,1,17,1,17,1,17,5,17,241,
+  	8,17,10,17,12,17,244,9,17,1,17,1,17,1,17,1,17,1,17,1,17,1,17,5,17,253,
+  	8,17,10,17,12,17,256,9,17,3,17,258,8,17,1,17,1,17,1,17,1,17,1,17,1,17,
+  	1,17,1,17,1,17,1,17,1,17,1,17,1,17,1,17,1,17,1,17,1,17,1,17,1,17,1,17,
+  	1,17,3,17,281,8,17,1,17,1,17,1,17,3,17,286,8,17,1,17,1,17,1,17,1,17,1,
+  	17,1,17,1,17,1,17,1,17,1,17,1,17,1,17,1,17,1,17,1,17,1,17,1,17,1,17,1,
+  	17,1,17,1,17,1,17,1,17,1,17,1,17,1,17,1,17,1,17,1,17,1,17,1,17,1,17,1,
+  	17,1,17,1,17,1,17,1,17,1,17,5,17,326,8,17,10,17,12,17,329,9,17,1,17,0,
+  	1,34,18,0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34,0,4,1,0,1,11,
+  	1,0,52,54,1,0,50,51,2,0,48,49,57,58,368,0,39,1,0,0,0,2,50,1,0,0,0,4,54,
+  	1,0,0,0,6,74,1,0,0,0,8,76,1,0,0,0,10,85,1,0,0,0,12,91,1,0,0,0,14,110,
+  	1,0,0,0,16,112,1,0,0,0,18,116,1,0,0,0,20,164,1,0,0,0,22,166,1,0,0,0,24,
+  	172,1,0,0,0,26,222,1,0,0,0,28,224,1,0,0,0,30,229,1,0,0,0,32,233,1,0,0,
+  	0,34,280,1,0,0,0,36,38,3,2,1,0,37,36,1,0,0,0,38,41,1,0,0,0,39,37,1,0,
+  	0,0,39,40,1,0,0,0,40,45,1,0,0,0,41,39,1,0,0,0,42,44,3,6,3,0,43,42,1,0,
+  	0,0,44,47,1,0,0,0,45,43,1,0,0,0,45,46,1,0,0,0,46,48,1,0,0,0,47,45,1,0,
+  	0,0,48,49,5,0,0,1,49,1,1,0,0,0,50,51,5,36,0,0,51,52,5,73,0,0,52,53,5,
+  	65,0,0,53,3,1,0,0,0,54,58,5,59,0,0,55,57,3,6,3,0,56,55,1,0,0,0,57,60,
+  	1,0,0,0,58,56,1,0,0,0,58,59,1,0,0,0,59,61,1,0,0,0,60,58,1,0,0,0,61,62,
+  	5,60,0,0,62,5,1,0,0,0,63,75,3,8,4,0,64,75,3,10,5,0,65,75,3,14,7,0,66,
+  	75,3,18,9,0,67,75,3,20,10,0,68,75,3,22,11,0,69,75,3,16,8,0,70,75,3,24,
+  	12,0,71,75,3,26,13,0,72,75,3,28,14,0,73,75,3,30,15,0,74,63,1,0,0,0,74,
+  	64,1,0,0,0,74,65,1,0,0,0,74,66,1,0,0,0,74,67,1,0,0,0,74,68,1,0,0,0,74,
+  	69,1,0,0,0,74,70,1,0,0,0,74,71,1,0,0,0,74,72,1,0,0,0,74,73,1,0,0,0,75,
+  	7,1,0,0,0,76,77,5,12,0,0,77,78,3,32,16,0,78,81,5,73,0,0,79,80,5,43,0,
+  	0,80,82,3,34,17,0,81,79,1,0,0,0,81,82,1,0,0,0,82,83,1,0,0,0,83,84,5,65,
+  	0,0,84,9,1,0,0,0,85,86,5,73,0,0,86,87,5,22,0,0,87,88,5,23,0,0,88,89,5,
+  	73,0,0,89,90,5,65,0,0,90,11,1,0,0,0,91,98,5,73,0,0,92,93,5,55,0,0,93,
+  	96,5,73,0,0,94,95,5,55,0,0,95,97,5,72,0,0,96,94,1,0,0,0,96,97,1,0,0,0,
+  	97,99,1,0,0,0,98,92,1,0,0,0,98,99,1,0,0,0,99,13,1,0,0,0,100,101,3,12,
+  	6,0,101,102,5,43,0,0,102,103,3,34,17,0,103,104,5,65,0,0,104,111,1,0,0,
+  	0,105,106,3,12,6,0,106,107,5,44,0,0,107,108,3,34,17,0,108,109,5,65,0,
+  	0,109,111,1,0,0,0,110,100,1,0,0,0,110,105,1,0,0,0,111,15,1,0,0,0,112,
+  	113,5,20,0,0,113,114,3,34,17,0,114,115,5,65,0,0,115,17,1,0,0,0,116,117,
+  	5,13,0,0,117,118,5,57,0,0,118,119,3,34,17,0,119,120,5,58,0,0,120,130,
+  	3,4,2,0,121,122,5,15,0,0,122,123,5,14,0,0,123,124,5,57,0,0,124,125,3,
+  	34,17,0,125,126,5,58,0,0,126,127,3,4,2,0,127,129,1,0,0,0,128,121,1,0,
+  	0,0,129,132,1,0,0,0,130,128,1,0,0,0,130,131,1,0,0,0,131,135,1,0,0,0,132,
+  	130,1,0,0,0,133,134,5,15,0,0,134,136,3,4,2,0,135,133,1,0,0,0,135,136,
+  	1,0,0,0,136,19,1,0,0,0,137,138,5,17,0,0,138,139,5,57,0,0,139,140,3,34,
+  	17,0,140,141,5,35,0,0,141,142,5,58,0,0,142,143,3,4,2,0,143,165,1,0,0,
+  	0,144,145,5,17,0,0,145,146,5,57,0,0,146,147,3,32,16,0,147,148,5,73,0,
+  	0,148,149,5,33,0,0,149,150,3,34,17,0,150,151,5,34,0,0,151,152,3,34,17,
+  	0,152,153,5,58,0,0,153,154,3,4,2,0,154,165,1,0,0,0,155,156,5,17,0,0,156,
+  	157,5,57,0,0,157,158,3,32,16,0,158,159,5,73,0,0,159,160,5,43,0,0,160,
+  	161,3,34,17,0,161,162,5,58,0,0,162,163,3,4,2,0,163,165,1,0,0,0,164,137,
+  	1,0,0,0,164,144,1,0,0,0,164,155,1,0,0,0,165,21,1,0,0,0,166,167,5,16,0,
+  	0,167,168,5,57,0,0,168,169,3,34,17,0,169,170,5,58,0,0,170,171,3,4,2,0,
+  	171,23,1,0,0,0,172,173,5,18,0,0,173,174,3,32,16,0,174,175,5,73,0,0,175,
+  	187,5,57,0,0,176,177,3,32,16,0,177,184,5,73,0,0,178,179,5,66,0,0,179,
+  	180,3,32,16,0,180,181,5,73,0,0,181,183,1,0,0,0,182,178,1,0,0,0,183,186,
+  	1,0,0,0,184,182,1,0,0,0,184,185,1,0,0,0,185,188,1,0,0,0,186,184,1,0,0,
+  	0,187,176,1,0,0,0,187,188,1,0,0,0,188,189,1,0,0,0,189,190,5,58,0,0,190,
+  	191,3,4,2,0,191,25,1,0,0,0,192,193,5,26,0,0,193,194,3,12,6,0,194,195,
+  	5,27,0,0,195,196,3,34,17,0,196,197,5,65,0,0,197,223,1,0,0,0,198,199,5,
+  	28,0,0,199,200,3,12,6,0,200,201,5,34,0,0,201,202,3,34,17,0,202,203,5,
+  	65,0,0,203,223,1,0,0,0,204,205,5,39,0,0,205,206,3,12,6,0,206,207,5,65,
+  	0,0,207,223,1,0,0,0,208,211,5,40,0,0,209,212,3,12,6,0,210,212,5,29,0,
+  	0,211,209,1,0,0,0,211,210,1,0,0,0,212,213,1,0,0,0,213,223,5,65,0,0,214,
+  	215,5,30,0,0,215,216,3,12,6,0,216,217,5,65,0,0,217,223,1,0,0,0,218,219,
+  	5,38,0,0,219,220,3,12,6,0,220,221,5,65,0,0,221,223,1,0,0,0,222,192,1,
+  	0,0,0,222,198,1,0,0,0,222,204,1,0,0,0,222,208,1,0,0,0,222,214,1,0,0,0,
+  	222,218,1,0,0,0,223,27,1,0,0,0,224,225,5,21,0,0,225,226,3,34,17,0,226,
+  	227,5,72,0,0,227,228,5,65,0,0,228,29,1,0,0,0,229,230,5,32,0,0,230,231,
+  	3,12,6,0,231,232,5,65,0,0,232,31,1,0,0,0,233,234,7,0,0,0,234,33,1,0,0,
+  	0,235,236,6,17,-1,0,236,237,5,61,0,0,237,242,3,34,17,0,238,239,5,66,0,
+  	0,239,241,3,34,17,0,240,238,1,0,0,0,241,244,1,0,0,0,242,240,1,0,0,0,242,
+  	243,1,0,0,0,243,245,1,0,0,0,244,242,1,0,0,0,245,246,5,62,0,0,246,281,
+  	1,0,0,0,247,248,5,73,0,0,248,257,5,63,0,0,249,254,3,34,17,0,250,251,5,
+  	66,0,0,251,253,3,34,17,0,252,250,1,0,0,0,253,256,1,0,0,0,254,252,1,0,
+  	0,0,254,255,1,0,0,0,255,258,1,0,0,0,256,254,1,0,0,0,257,249,1,0,0,0,257,
+  	258,1,0,0,0,258,259,1,0,0,0,259,281,5,64,0,0,260,261,5,73,0,0,261,262,
+  	3,34,17,0,262,263,3,34,17,22,263,281,1,0,0,0,264,265,5,63,0,0,265,266,
+  	3,34,17,0,266,267,5,64,0,0,267,281,1,0,0,0,268,269,5,47,0,0,269,281,3,
+  	34,17,17,270,281,5,67,0,0,271,281,5,68,0,0,272,281,5,69,0,0,273,281,5,
+  	70,0,0,274,281,5,71,0,0,275,281,5,72,0,0,276,281,3,12,6,0,277,278,5,31,
+  	0,0,278,281,3,12,6,0,279,281,5,42,0,0,280,235,1,0,0,0,280,247,1,0,0,0,
+  	280,260,1,0,0,0,280,264,1,0,0,0,280,268,1,0,0,0,280,270,1,0,0,0,280,271,
+  	1,0,0,0,280,272,1,0,0,0,280,273,1,0,0,0,280,274,1,0,0,0,280,275,1,0,0,
+  	0,280,276,1,0,0,0,280,277,1,0,0,0,280,279,1,0,0,0,281,327,1,0,0,0,282,
+  	285,10,21,0,0,283,284,5,24,0,0,284,286,5,72,0,0,285,283,1,0,0,0,285,286,
+  	1,0,0,0,286,287,1,0,0,0,287,288,5,25,0,0,288,326,3,34,17,22,289,290,10,
+  	16,0,0,290,291,7,1,0,0,291,326,3,34,17,17,292,293,10,15,0,0,293,294,7,
+  	2,0,0,294,326,3,34,17,16,295,296,10,14,0,0,296,297,5,56,0,0,297,326,3,
+  	34,17,15,298,299,10,13,0,0,299,300,5,37,0,0,300,301,3,34,17,0,301,302,
+  	5,33,0,0,302,303,3,34,17,14,303,326,1,0,0,0,304,305,10,12,0,0,305,306,
+  	7,3,0,0,306,326,3,34,17,13,307,308,10,11,0,0,308,309,5,45,0,0,309,326,
+  	3,34,17,12,310,311,10,10,0,0,311,312,5,46,0,0,312,326,3,34,17,11,313,
+  	314,10,20,0,0,314,315,5,61,0,0,315,316,3,34,17,0,316,317,5,62,0,0,317,
+  	326,1,0,0,0,318,319,10,19,0,0,319,320,5,61,0,0,320,321,3,34,17,0,321,
+  	322,5,54,0,0,322,323,3,34,17,0,323,324,5,62,0,0,324,326,1,0,0,0,325,282,
+  	1,0,0,0,325,289,1,0,0,0,325,292,1,0,0,0,325,295,1,0,0,0,325,298,1,0,0,
+  	0,325,304,1,0,0,0,325,307,1,0,0,0,325,310,1,0,0,0,325,313,1,0,0,0,325,
+  	318,1,0,0,0,326,329,1,0,0,0,327,325,1,0,0,0,327,328,1,0,0,0,328,35,1,
+  	0,0,0,329,327,1,0,0,0,22,39,45,58,74,81,96,98,110,130,135,164,184,187,
+  	211,222,242,254,257,280,285,325,327
   };
   staticData->serializedATN = antlr4::atn::SerializedATNView(serializedATNSegment, sizeof(serializedATNSegment) / sizeof(serializedATNSegment[0]));
 
@@ -269,28 +296,28 @@ TonParser::ProgramContext* TonParser::program() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(33);
-    _errHandler->sync(this);
-    _la = _input->LA(1);
-    while (_la == TonParser::USE) {
-      setState(30);
-      header();
-      setState(35);
-      _errHandler->sync(this);
-      _la = _input->LA(1);
-    }
     setState(39);
     _errHandler->sync(this);
     _la = _input->LA(1);
-    while ((((_la & ~ 0x3fULL) == 0) &&
-      ((1ULL << _la) & 144115188077664256) != 0)) {
+    while (_la == TonParser::USE) {
       setState(36);
-      statement();
+      header();
       setState(41);
       _errHandler->sync(this);
       _la = _input->LA(1);
     }
-    setState(42);
+    setState(45);
+    _errHandler->sync(this);
+    _la = _input->LA(1);
+    while (((((_la - 12) & ~ 0x3fULL) == 0) &&
+      ((1ULL << (_la - 12)) & 2305843009684849523) != 0)) {
+      setState(42);
+      statement();
+      setState(47);
+      _errHandler->sync(this);
+      _la = _input->LA(1);
+    }
+    setState(48);
     match(TonParser::EOF);
    
   }
@@ -347,11 +374,11 @@ TonParser::HeaderContext* TonParser::header() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(44);
+    setState(50);
     match(TonParser::USE);
-    setState(45);
+    setState(51);
     match(TonParser::ID);
-    setState(46);
+    setState(52);
     match(TonParser::SEMI);
    
   }
@@ -413,20 +440,20 @@ TonParser::BlockContext* TonParser::block() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(48);
+    setState(54);
     match(TonParser::L_BRACE);
-    setState(52);
+    setState(58);
     _errHandler->sync(this);
     _la = _input->LA(1);
-    while ((((_la & ~ 0x3fULL) == 0) &&
-      ((1ULL << _la) & 144115188077664256) != 0)) {
-      setState(49);
+    while (((((_la - 12) & ~ 0x3fULL) == 0) &&
+      ((1ULL << (_la - 12)) & 2305843009684849523) != 0)) {
+      setState(55);
       statement();
-      setState(54);
+      setState(60);
       _errHandler->sync(this);
       _la = _input->LA(1);
     }
-    setState(55);
+    setState(61);
     match(TonParser::R_BRACE);
    
   }
@@ -447,6 +474,10 @@ TonParser::StatementContext::StatementContext(ParserRuleContext *parent, size_t 
 
 TonParser::VarDeclContext* TonParser::StatementContext::varDecl() {
   return getRuleContext<TonParser::VarDeclContext>(0);
+}
+
+TonParser::TrackDeclContext* TonParser::StatementContext::trackDecl() {
+  return getRuleContext<TonParser::TrackDeclContext>(0);
 }
 
 TonParser::AssignmentContext* TonParser::StatementContext::assignment() {
@@ -481,6 +512,10 @@ TonParser::SaveStatContext* TonParser::StatementContext::saveStat() {
   return getRuleContext<TonParser::SaveStatContext>(0);
 }
 
+TonParser::PlayStatContext* TonParser::StatementContext::playStat() {
+  return getRuleContext<TonParser::PlayStatContext>(0);
+}
+
 
 size_t TonParser::StatementContext::getRuleIndex() const {
   return TonParser::RuleStatement;
@@ -506,69 +541,83 @@ TonParser::StatementContext* TonParser::statement() {
     exitRule();
   });
   try {
-    setState(66);
+    setState(74);
     _errHandler->sync(this);
     switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 3, _ctx)) {
     case 1: {
       enterOuterAlt(_localctx, 1);
-      setState(57);
+      setState(63);
       varDecl();
       break;
     }
 
     case 2: {
       enterOuterAlt(_localctx, 2);
-      setState(58);
-      assignment();
+      setState(64);
+      trackDecl();
       break;
     }
 
     case 3: {
       enterOuterAlt(_localctx, 3);
-      setState(59);
-      ifStat();
+      setState(65);
+      assignment();
       break;
     }
 
     case 4: {
       enterOuterAlt(_localctx, 4);
-      setState(60);
-      loopStat();
+      setState(66);
+      ifStat();
       break;
     }
 
     case 5: {
       enterOuterAlt(_localctx, 5);
-      setState(61);
-      untilStat();
+      setState(67);
+      loopStat();
       break;
     }
 
     case 6: {
       enterOuterAlt(_localctx, 6);
-      setState(62);
-      shoutStat();
+      setState(68);
+      untilStat();
       break;
     }
 
     case 7: {
       enterOuterAlt(_localctx, 7);
-      setState(63);
-      funcDef();
+      setState(69);
+      shoutStat();
       break;
     }
 
     case 8: {
       enterOuterAlt(_localctx, 8);
-      setState(64);
-      audioOpStat();
+      setState(70);
+      funcDef();
       break;
     }
 
     case 9: {
       enterOuterAlt(_localctx, 9);
-      setState(65);
+      setState(71);
+      audioOpStat();
+      break;
+    }
+
+    case 10: {
+      enterOuterAlt(_localctx, 10);
+      setState(72);
       saveStat();
+      break;
+    }
+
+    case 11: {
+      enterOuterAlt(_localctx, 11);
+      setState(73);
+      playStat();
       break;
     }
 
@@ -604,16 +653,16 @@ tree::TerminalNode* TonParser::VarDeclContext::ID() {
   return getToken(TonParser::ID, 0);
 }
 
+tree::TerminalNode* TonParser::VarDeclContext::SEMI() {
+  return getToken(TonParser::SEMI, 0);
+}
+
 tree::TerminalNode* TonParser::VarDeclContext::ASSIGN() {
   return getToken(TonParser::ASSIGN, 0);
 }
 
 TonParser::ExprContext* TonParser::VarDeclContext::expr() {
   return getRuleContext<TonParser::ExprContext>(0);
-}
-
-tree::TerminalNode* TonParser::VarDeclContext::SEMI() {
-  return getToken(TonParser::SEMI, 0);
 }
 
 
@@ -632,6 +681,7 @@ std::any TonParser::VarDeclContext::accept(tree::ParseTreeVisitor *visitor) {
 TonParser::VarDeclContext* TonParser::varDecl() {
   VarDeclContext *_localctx = _tracker.createInstance<VarDeclContext>(_ctx, getState());
   enterRule(_localctx, 8, TonParser::RuleVarDecl);
+  size_t _la = 0;
 
 #if __cplusplus > 201703L
   auto onExit = finally([=, this] {
@@ -642,18 +692,192 @@ TonParser::VarDeclContext* TonParser::varDecl() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(68);
+    setState(76);
     match(TonParser::MAKE);
-    setState(69);
+    setState(77);
     type();
-    setState(70);
+    setState(78);
     match(TonParser::ID);
-    setState(71);
-    match(TonParser::ASSIGN);
-    setState(72);
-    expr(0);
-    setState(73);
+    setState(81);
+    _errHandler->sync(this);
+
+    _la = _input->LA(1);
+    if (_la == TonParser::ASSIGN) {
+      setState(79);
+      match(TonParser::ASSIGN);
+      setState(80);
+      expr(0);
+    }
+    setState(83);
     match(TonParser::SEMI);
+   
+  }
+  catch (RecognitionException &e) {
+    _errHandler->reportError(this, e);
+    _localctx->exception = std::current_exception();
+    _errHandler->recover(this, _localctx->exception);
+  }
+
+  return _localctx;
+}
+
+//----------------- TrackDeclContext ------------------------------------------------------------------
+
+TonParser::TrackDeclContext::TrackDeclContext(ParserRuleContext *parent, size_t invokingState)
+  : ParserRuleContext(parent, invokingState) {
+}
+
+std::vector<tree::TerminalNode *> TonParser::TrackDeclContext::ID() {
+  return getTokens(TonParser::ID);
+}
+
+tree::TerminalNode* TonParser::TrackDeclContext::ID(size_t i) {
+  return getToken(TonParser::ID, i);
+}
+
+tree::TerminalNode* TonParser::TrackDeclContext::NEW() {
+  return getToken(TonParser::NEW, 0);
+}
+
+tree::TerminalNode* TonParser::TrackDeclContext::TRACK() {
+  return getToken(TonParser::TRACK, 0);
+}
+
+tree::TerminalNode* TonParser::TrackDeclContext::SEMI() {
+  return getToken(TonParser::SEMI, 0);
+}
+
+
+size_t TonParser::TrackDeclContext::getRuleIndex() const {
+  return TonParser::RuleTrackDecl;
+}
+
+
+std::any TonParser::TrackDeclContext::accept(tree::ParseTreeVisitor *visitor) {
+  if (auto parserVisitor = dynamic_cast<TonVisitor*>(visitor))
+    return parserVisitor->visitTrackDecl(this);
+  else
+    return visitor->visitChildren(this);
+}
+
+TonParser::TrackDeclContext* TonParser::trackDecl() {
+  TrackDeclContext *_localctx = _tracker.createInstance<TrackDeclContext>(_ctx, getState());
+  enterRule(_localctx, 10, TonParser::RuleTrackDecl);
+
+#if __cplusplus > 201703L
+  auto onExit = finally([=, this] {
+#else
+  auto onExit = finally([=] {
+#endif
+    exitRule();
+  });
+  try {
+    enterOuterAlt(_localctx, 1);
+    setState(85);
+    match(TonParser::ID);
+    setState(86);
+    match(TonParser::NEW);
+    setState(87);
+    match(TonParser::TRACK);
+    setState(88);
+    match(TonParser::ID);
+    setState(89);
+    match(TonParser::SEMI);
+   
+  }
+  catch (RecognitionException &e) {
+    _errHandler->reportError(this, e);
+    _localctx->exception = std::current_exception();
+    _errHandler->recover(this, _localctx->exception);
+  }
+
+  return _localctx;
+}
+
+//----------------- TargetContext ------------------------------------------------------------------
+
+TonParser::TargetContext::TargetContext(ParserRuleContext *parent, size_t invokingState)
+  : ParserRuleContext(parent, invokingState) {
+}
+
+std::vector<tree::TerminalNode *> TonParser::TargetContext::ID() {
+  return getTokens(TonParser::ID);
+}
+
+tree::TerminalNode* TonParser::TargetContext::ID(size_t i) {
+  return getToken(TonParser::ID, i);
+}
+
+std::vector<tree::TerminalNode *> TonParser::TargetContext::DOT() {
+  return getTokens(TonParser::DOT);
+}
+
+tree::TerminalNode* TonParser::TargetContext::DOT(size_t i) {
+  return getToken(TonParser::DOT, i);
+}
+
+tree::TerminalNode* TonParser::TargetContext::STRING_VAL() {
+  return getToken(TonParser::STRING_VAL, 0);
+}
+
+
+size_t TonParser::TargetContext::getRuleIndex() const {
+  return TonParser::RuleTarget;
+}
+
+
+std::any TonParser::TargetContext::accept(tree::ParseTreeVisitor *visitor) {
+  if (auto parserVisitor = dynamic_cast<TonVisitor*>(visitor))
+    return parserVisitor->visitTarget(this);
+  else
+    return visitor->visitChildren(this);
+}
+
+TonParser::TargetContext* TonParser::target() {
+  TargetContext *_localctx = _tracker.createInstance<TargetContext>(_ctx, getState());
+  enterRule(_localctx, 12, TonParser::RuleTarget);
+
+#if __cplusplus > 201703L
+  auto onExit = finally([=, this] {
+#else
+  auto onExit = finally([=] {
+#endif
+    exitRule();
+  });
+  try {
+    enterOuterAlt(_localctx, 1);
+    setState(91);
+    match(TonParser::ID);
+    setState(98);
+    _errHandler->sync(this);
+
+    switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 6, _ctx)) {
+    case 1: {
+      setState(92);
+      match(TonParser::DOT);
+      setState(93);
+      match(TonParser::ID);
+      setState(96);
+      _errHandler->sync(this);
+
+      switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 5, _ctx)) {
+      case 1: {
+        setState(94);
+        match(TonParser::DOT);
+        setState(95);
+        match(TonParser::STRING_VAL);
+        break;
+      }
+
+      default:
+        break;
+      }
+      break;
+    }
+
+    default:
+      break;
+    }
    
   }
   catch (RecognitionException &e) {
@@ -671,8 +895,8 @@ TonParser::AssignmentContext::AssignmentContext(ParserRuleContext *parent, size_
   : ParserRuleContext(parent, invokingState) {
 }
 
-tree::TerminalNode* TonParser::AssignmentContext::ID() {
-  return getToken(TonParser::ID, 0);
+TonParser::TargetContext* TonParser::AssignmentContext::target() {
+  return getRuleContext<TonParser::TargetContext>(0);
 }
 
 tree::TerminalNode* TonParser::AssignmentContext::ASSIGN() {
@@ -685,6 +909,10 @@ TonParser::ExprContext* TonParser::AssignmentContext::expr() {
 
 tree::TerminalNode* TonParser::AssignmentContext::SEMI() {
   return getToken(TonParser::SEMI, 0);
+}
+
+tree::TerminalNode* TonParser::AssignmentContext::ADD_ASSIGN() {
+  return getToken(TonParser::ADD_ASSIGN, 0);
 }
 
 
@@ -702,7 +930,7 @@ std::any TonParser::AssignmentContext::accept(tree::ParseTreeVisitor *visitor) {
 
 TonParser::AssignmentContext* TonParser::assignment() {
   AssignmentContext *_localctx = _tracker.createInstance<AssignmentContext>(_ctx, getState());
-  enterRule(_localctx, 10, TonParser::RuleAssignment);
+  enterRule(_localctx, 14, TonParser::RuleAssignment);
 
 #if __cplusplus > 201703L
   auto onExit = finally([=, this] {
@@ -712,15 +940,38 @@ TonParser::AssignmentContext* TonParser::assignment() {
     exitRule();
   });
   try {
-    enterOuterAlt(_localctx, 1);
-    setState(75);
-    match(TonParser::ID);
-    setState(76);
-    match(TonParser::ASSIGN);
-    setState(77);
-    expr(0);
-    setState(78);
-    match(TonParser::SEMI);
+    setState(110);
+    _errHandler->sync(this);
+    switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 7, _ctx)) {
+    case 1: {
+      enterOuterAlt(_localctx, 1);
+      setState(100);
+      target();
+      setState(101);
+      match(TonParser::ASSIGN);
+      setState(102);
+      expr(0);
+      setState(103);
+      match(TonParser::SEMI);
+      break;
+    }
+
+    case 2: {
+      enterOuterAlt(_localctx, 2);
+      setState(105);
+      target();
+      setState(106);
+      match(TonParser::ADD_ASSIGN);
+      setState(107);
+      expr(0);
+      setState(108);
+      match(TonParser::SEMI);
+      break;
+    }
+
+    default:
+      break;
+    }
    
   }
   catch (RecognitionException &e) {
@@ -765,7 +1016,7 @@ std::any TonParser::ShoutStatContext::accept(tree::ParseTreeVisitor *visitor) {
 
 TonParser::ShoutStatContext* TonParser::shoutStat() {
   ShoutStatContext *_localctx = _tracker.createInstance<ShoutStatContext>(_ctx, getState());
-  enterRule(_localctx, 12, TonParser::RuleShoutStat);
+  enterRule(_localctx, 16, TonParser::RuleShoutStat);
 
 #if __cplusplus > 201703L
   auto onExit = finally([=, this] {
@@ -776,11 +1027,11 @@ TonParser::ShoutStatContext* TonParser::shoutStat() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(80);
+    setState(112);
     match(TonParser::SHOUT);
-    setState(81);
+    setState(113);
     expr(0);
-    setState(82);
+    setState(114);
     match(TonParser::SEMI);
    
   }
@@ -866,7 +1117,7 @@ std::any TonParser::IfStatContext::accept(tree::ParseTreeVisitor *visitor) {
 
 TonParser::IfStatContext* TonParser::ifStat() {
   IfStatContext *_localctx = _tracker.createInstance<IfStatContext>(_ctx, getState());
-  enterRule(_localctx, 14, TonParser::RuleIfStat);
+  enterRule(_localctx, 18, TonParser::RuleIfStat);
   size_t _la = 0;
 
 #if __cplusplus > 201703L
@@ -879,46 +1130,46 @@ TonParser::IfStatContext* TonParser::ifStat() {
   try {
     size_t alt;
     enterOuterAlt(_localctx, 1);
-    setState(84);
+    setState(116);
     match(TonParser::IF);
-    setState(85);
+    setState(117);
     match(TonParser::L_ANGLE);
-    setState(86);
+    setState(118);
     expr(0);
-    setState(87);
+    setState(119);
     match(TonParser::R_ANGLE);
-    setState(88);
+    setState(120);
     block();
-    setState(98);
+    setState(130);
     _errHandler->sync(this);
-    alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 4, _ctx);
+    alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 8, _ctx);
     while (alt != 2 && alt != atn::ATN::INVALID_ALT_NUMBER) {
       if (alt == 1) {
-        setState(89);
+        setState(121);
         match(TonParser::OTHERWISE);
-        setState(90);
+        setState(122);
         match(TonParser::IF_PLAIN);
-        setState(91);
+        setState(123);
         match(TonParser::L_ANGLE);
-        setState(92);
+        setState(124);
         expr(0);
-        setState(93);
+        setState(125);
         match(TonParser::R_ANGLE);
-        setState(94);
+        setState(126);
         block(); 
       }
-      setState(100);
+      setState(132);
       _errHandler->sync(this);
-      alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 4, _ctx);
+      alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 8, _ctx);
     }
-    setState(103);
+    setState(135);
     _errHandler->sync(this);
 
     _la = _input->LA(1);
     if (_la == TonParser::OTHERWISE) {
-      setState(101);
+      setState(133);
       match(TonParser::OTHERWISE);
-      setState(102);
+      setState(134);
       block();
     }
    
@@ -1001,7 +1252,7 @@ std::any TonParser::LoopStatContext::accept(tree::ParseTreeVisitor *visitor) {
 
 TonParser::LoopStatContext* TonParser::loopStat() {
   LoopStatContext *_localctx = _tracker.createInstance<LoopStatContext>(_ctx, getState());
-  enterRule(_localctx, 16, TonParser::RuleLoopStat);
+  enterRule(_localctx, 20, TonParser::RuleLoopStat);
 
 #if __cplusplus > 201703L
   auto onExit = finally([=, this] {
@@ -1011,68 +1262,68 @@ TonParser::LoopStatContext* TonParser::loopStat() {
     exitRule();
   });
   try {
-    setState(132);
+    setState(164);
     _errHandler->sync(this);
-    switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 6, _ctx)) {
+    switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 10, _ctx)) {
     case 1: {
       enterOuterAlt(_localctx, 1);
-      setState(105);
+      setState(137);
       match(TonParser::LOOP);
-      setState(106);
+      setState(138);
       match(TonParser::L_ANGLE);
-      setState(107);
+      setState(139);
       expr(0);
-      setState(108);
+      setState(140);
       match(TonParser::TIMES);
-      setState(109);
+      setState(141);
       match(TonParser::R_ANGLE);
-      setState(110);
+      setState(142);
       block();
       break;
     }
 
     case 2: {
       enterOuterAlt(_localctx, 2);
-      setState(112);
+      setState(144);
       match(TonParser::LOOP);
-      setState(113);
+      setState(145);
       match(TonParser::L_ANGLE);
-      setState(114);
+      setState(146);
       type();
-      setState(115);
+      setState(147);
       match(TonParser::ID);
-      setState(116);
+      setState(148);
       match(TonParser::FROM);
-      setState(117);
+      setState(149);
       expr(0);
-      setState(118);
+      setState(150);
       match(TonParser::TO);
-      setState(119);
+      setState(151);
       expr(0);
-      setState(120);
+      setState(152);
       match(TonParser::R_ANGLE);
-      setState(121);
+      setState(153);
       block();
       break;
     }
 
     case 3: {
       enterOuterAlt(_localctx, 3);
-      setState(123);
+      setState(155);
       match(TonParser::LOOP);
-      setState(124);
+      setState(156);
       match(TonParser::L_ANGLE);
-      setState(125);
+      setState(157);
       type();
-      setState(126);
+      setState(158);
       match(TonParser::ID);
-      setState(127);
+      setState(159);
       match(TonParser::ASSIGN);
-      setState(128);
+      setState(160);
       expr(0);
-      setState(129);
+      setState(161);
       match(TonParser::R_ANGLE);
-      setState(130);
+      setState(162);
       block();
       break;
     }
@@ -1132,7 +1383,7 @@ std::any TonParser::UntilStatContext::accept(tree::ParseTreeVisitor *visitor) {
 
 TonParser::UntilStatContext* TonParser::untilStat() {
   UntilStatContext *_localctx = _tracker.createInstance<UntilStatContext>(_ctx, getState());
-  enterRule(_localctx, 18, TonParser::RuleUntilStat);
+  enterRule(_localctx, 22, TonParser::RuleUntilStat);
 
 #if __cplusplus > 201703L
   auto onExit = finally([=, this] {
@@ -1143,15 +1394,15 @@ TonParser::UntilStatContext* TonParser::untilStat() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(134);
+    setState(166);
     match(TonParser::UNTIL);
-    setState(135);
+    setState(167);
     match(TonParser::L_ANGLE);
-    setState(136);
+    setState(168);
     expr(0);
-    setState(137);
+    setState(169);
     match(TonParser::R_ANGLE);
-    setState(138);
+    setState(170);
     block();
    
   }
@@ -1225,7 +1476,7 @@ std::any TonParser::FuncDefContext::accept(tree::ParseTreeVisitor *visitor) {
 
 TonParser::FuncDefContext* TonParser::funcDef() {
   FuncDefContext *_localctx = _tracker.createInstance<FuncDefContext>(_ctx, getState());
-  enterRule(_localctx, 20, TonParser::RuleFuncDef);
+  enterRule(_localctx, 24, TonParser::RuleFuncDef);
   size_t _la = 0;
 
 #if __cplusplus > 201703L
@@ -1237,42 +1488,42 @@ TonParser::FuncDefContext* TonParser::funcDef() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(140);
+    setState(172);
     match(TonParser::DEFINE);
-    setState(141);
+    setState(173);
     type();
-    setState(142);
+    setState(174);
     match(TonParser::ID);
-    setState(143);
+    setState(175);
     match(TonParser::L_ANGLE);
-    setState(155);
+    setState(187);
     _errHandler->sync(this);
 
     _la = _input->LA(1);
     if ((((_la & ~ 0x3fULL) == 0) &&
-      ((1ULL << _la) & 2046) != 0)) {
-      setState(144);
+      ((1ULL << _la) & 4094) != 0)) {
+      setState(176);
       type();
-      setState(145);
+      setState(177);
       match(TonParser::ID);
-      setState(152);
+      setState(184);
       _errHandler->sync(this);
       _la = _input->LA(1);
       while (_la == TonParser::COMMA) {
-        setState(146);
+        setState(178);
         match(TonParser::COMMA);
-        setState(147);
+        setState(179);
         type();
-        setState(148);
+        setState(180);
         match(TonParser::ID);
-        setState(154);
+        setState(186);
         _errHandler->sync(this);
         _la = _input->LA(1);
       }
     }
-    setState(157);
+    setState(189);
     match(TonParser::R_ANGLE);
-    setState(158);
+    setState(190);
     block();
    
   }
@@ -1291,36 +1542,52 @@ TonParser::AudioOpStatContext::AudioOpStatContext(ParserRuleContext *parent, siz
   : ParserRuleContext(parent, invokingState) {
 }
 
-tree::TerminalNode* TonParser::AudioOpStatContext::ID() {
-  return getToken(TonParser::ID, 0);
+tree::TerminalNode* TonParser::AudioOpStatContext::SHIFT() {
+  return getToken(TonParser::SHIFT, 0);
 }
 
-tree::TerminalNode* TonParser::AudioOpStatContext::TRASH() {
-  return getToken(TonParser::TRASH, 0);
+TonParser::TargetContext* TonParser::AudioOpStatContext::target() {
+  return getRuleContext<TonParser::TargetContext>(0);
 }
 
-std::vector<TonParser::ExprContext *> TonParser::AudioOpStatContext::expr() {
-  return getRuleContexts<TonParser::ExprContext>();
+tree::TerminalNode* TonParser::AudioOpStatContext::BY() {
+  return getToken(TonParser::BY, 0);
 }
 
-TonParser::ExprContext* TonParser::AudioOpStatContext::expr(size_t i) {
-  return getRuleContext<TonParser::ExprContext>(i);
-}
-
-tree::TerminalNode* TonParser::AudioOpStatContext::COLON() {
-  return getToken(TonParser::COLON, 0);
+TonParser::ExprContext* TonParser::AudioOpStatContext::expr() {
+  return getRuleContext<TonParser::ExprContext>(0);
 }
 
 tree::TerminalNode* TonParser::AudioOpStatContext::SEMI() {
   return getToken(TonParser::SEMI, 0);
 }
 
+tree::TerminalNode* TonParser::AudioOpStatContext::MOVE() {
+  return getToken(TonParser::MOVE, 0);
+}
+
+tree::TerminalNode* TonParser::AudioOpStatContext::TO() {
+  return getToken(TonParser::TO, 0);
+}
+
 tree::TerminalNode* TonParser::AudioOpStatContext::MUTE() {
   return getToken(TonParser::MUTE, 0);
 }
 
-tree::TerminalNode* TonParser::AudioOpStatContext::DIVIDE() {
-  return getToken(TonParser::DIVIDE, 0);
+tree::TerminalNode* TonParser::AudioOpStatContext::UNMUTE() {
+  return getToken(TonParser::UNMUTE, 0);
+}
+
+tree::TerminalNode* TonParser::AudioOpStatContext::ALL() {
+  return getToken(TonParser::ALL, 0);
+}
+
+tree::TerminalNode* TonParser::AudioOpStatContext::ISOLATE() {
+  return getToken(TonParser::ISOLATE, 0);
+}
+
+tree::TerminalNode* TonParser::AudioOpStatContext::TRASH() {
+  return getToken(TonParser::TRASH, 0);
 }
 
 
@@ -1338,7 +1605,7 @@ std::any TonParser::AudioOpStatContext::accept(tree::ParseTreeVisitor *visitor) 
 
 TonParser::AudioOpStatContext* TonParser::audioOpStat() {
   AudioOpStatContext *_localctx = _tracker.createInstance<AudioOpStatContext>(_ctx, getState());
-  enterRule(_localctx, 22, TonParser::RuleAudioOpStat);
+  enterRule(_localctx, 26, TonParser::RuleAudioOpStat);
 
 #if __cplusplus > 201703L
   auto onExit = finally([=, this] {
@@ -1348,58 +1615,101 @@ TonParser::AudioOpStatContext* TonParser::audioOpStat() {
     exitRule();
   });
   try {
-    setState(179);
+    setState(222);
     _errHandler->sync(this);
-    switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 9, _ctx)) {
-    case 1: {
-      enterOuterAlt(_localctx, 1);
-      setState(160);
-      match(TonParser::ID);
-      setState(161);
-      match(TonParser::TRASH);
-      setState(162);
-      expr(0);
-      setState(163);
-      match(TonParser::COLON);
-      setState(164);
-      expr(0);
-      setState(165);
-      match(TonParser::SEMI);
-      break;
-    }
+    switch (_input->LA(1)) {
+      case TonParser::SHIFT: {
+        enterOuterAlt(_localctx, 1);
+        setState(192);
+        match(TonParser::SHIFT);
+        setState(193);
+        target();
+        setState(194);
+        match(TonParser::BY);
+        setState(195);
+        expr(0);
+        setState(196);
+        match(TonParser::SEMI);
+        break;
+      }
 
-    case 2: {
-      enterOuterAlt(_localctx, 2);
-      setState(167);
-      match(TonParser::ID);
-      setState(168);
-      match(TonParser::MUTE);
-      setState(169);
-      expr(0);
-      setState(170);
-      match(TonParser::COLON);
-      setState(171);
-      expr(0);
-      setState(172);
-      match(TonParser::SEMI);
-      break;
-    }
+      case TonParser::MOVE: {
+        enterOuterAlt(_localctx, 2);
+        setState(198);
+        match(TonParser::MOVE);
+        setState(199);
+        target();
+        setState(200);
+        match(TonParser::TO);
+        setState(201);
+        expr(0);
+        setState(202);
+        match(TonParser::SEMI);
+        break;
+      }
 
-    case 3: {
-      enterOuterAlt(_localctx, 3);
-      setState(174);
-      match(TonParser::ID);
-      setState(175);
-      match(TonParser::DIVIDE);
-      setState(176);
-      expr(0);
-      setState(177);
-      match(TonParser::SEMI);
-      break;
-    }
+      case TonParser::MUTE: {
+        enterOuterAlt(_localctx, 3);
+        setState(204);
+        match(TonParser::MUTE);
+        setState(205);
+        target();
+        setState(206);
+        match(TonParser::SEMI);
+        break;
+      }
+
+      case TonParser::UNMUTE: {
+        enterOuterAlt(_localctx, 4);
+        setState(208);
+        match(TonParser::UNMUTE);
+        setState(211);
+        _errHandler->sync(this);
+        switch (_input->LA(1)) {
+          case TonParser::ID: {
+            setState(209);
+            target();
+            break;
+          }
+
+          case TonParser::ALL: {
+            setState(210);
+            match(TonParser::ALL);
+            break;
+          }
+
+        default:
+          throw NoViableAltException(this);
+        }
+        setState(213);
+        match(TonParser::SEMI);
+        break;
+      }
+
+      case TonParser::ISOLATE: {
+        enterOuterAlt(_localctx, 5);
+        setState(214);
+        match(TonParser::ISOLATE);
+        setState(215);
+        target();
+        setState(216);
+        match(TonParser::SEMI);
+        break;
+      }
+
+      case TonParser::TRASH: {
+        enterOuterAlt(_localctx, 6);
+        setState(218);
+        match(TonParser::TRASH);
+        setState(219);
+        target();
+        setState(220);
+        match(TonParser::SEMI);
+        break;
+      }
 
     default:
-      break;
+      throw NoViableAltException(this);
     }
    
   }
@@ -1449,7 +1759,7 @@ std::any TonParser::SaveStatContext::accept(tree::ParseTreeVisitor *visitor) {
 
 TonParser::SaveStatContext* TonParser::saveStat() {
   SaveStatContext *_localctx = _tracker.createInstance<SaveStatContext>(_ctx, getState());
-  enterRule(_localctx, 24, TonParser::RuleSaveStat);
+  enterRule(_localctx, 28, TonParser::RuleSaveStat);
 
 #if __cplusplus > 201703L
   auto onExit = finally([=, this] {
@@ -1460,13 +1770,74 @@ TonParser::SaveStatContext* TonParser::saveStat() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(181);
+    setState(224);
     match(TonParser::SAVE);
-    setState(182);
+    setState(225);
     expr(0);
-    setState(183);
+    setState(226);
     match(TonParser::STRING_VAL);
-    setState(184);
+    setState(227);
+    match(TonParser::SEMI);
+   
+  }
+  catch (RecognitionException &e) {
+    _errHandler->reportError(this, e);
+    _localctx->exception = std::current_exception();
+    _errHandler->recover(this, _localctx->exception);
+  }
+
+  return _localctx;
+}
+
+//----------------- PlayStatContext ------------------------------------------------------------------
+
+TonParser::PlayStatContext::PlayStatContext(ParserRuleContext *parent, size_t invokingState)
+  : ParserRuleContext(parent, invokingState) {
+}
+
+tree::TerminalNode* TonParser::PlayStatContext::PLAY() {
+  return getToken(TonParser::PLAY, 0);
+}
+
+TonParser::TargetContext* TonParser::PlayStatContext::target() {
+  return getRuleContext<TonParser::TargetContext>(0);
+}
+
+tree::TerminalNode* TonParser::PlayStatContext::SEMI() {
+  return getToken(TonParser::SEMI, 0);
+}
+
+
+size_t TonParser::PlayStatContext::getRuleIndex() const {
+  return TonParser::RulePlayStat;
+}
+
+
+std::any TonParser::PlayStatContext::accept(tree::ParseTreeVisitor *visitor) {
+  if (auto parserVisitor = dynamic_cast<TonVisitor*>(visitor))
+    return parserVisitor->visitPlayStat(this);
+  else
+    return visitor->visitChildren(this);
+}
+
+TonParser::PlayStatContext* TonParser::playStat() {
+  PlayStatContext *_localctx = _tracker.createInstance<PlayStatContext>(_ctx, getState());
+  enterRule(_localctx, 30, TonParser::RulePlayStat);
+
+#if __cplusplus > 201703L
+  auto onExit = finally([=, this] {
+#else
+  auto onExit = finally([=] {
+#endif
+    exitRule();
+  });
+  try {
+    enterOuterAlt(_localctx, 1);
+    setState(229);
+    match(TonParser::PLAY);
+    setState(230);
+    target();
+    setState(231);
     match(TonParser::SEMI);
    
   }
@@ -1525,6 +1896,10 @@ tree::TerminalNode* TonParser::TypeContext::TYPE_INSTR() {
   return getToken(TonParser::TYPE_INSTR, 0);
 }
 
+tree::TerminalNode* TonParser::TypeContext::TYPE_TIMELINE() {
+  return getToken(TonParser::TYPE_TIMELINE, 0);
+}
+
 
 size_t TonParser::TypeContext::getRuleIndex() const {
   return TonParser::RuleType;
@@ -1540,7 +1915,7 @@ std::any TonParser::TypeContext::accept(tree::ParseTreeVisitor *visitor) {
 
 TonParser::TypeContext* TonParser::type() {
   TypeContext *_localctx = _tracker.createInstance<TypeContext>(_ctx, getState());
-  enterRule(_localctx, 26, TonParser::RuleType);
+  enterRule(_localctx, 32, TonParser::RuleType);
   size_t _la = 0;
 
 #if __cplusplus > 201703L
@@ -1552,10 +1927,10 @@ TonParser::TypeContext* TonParser::type() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(186);
+    setState(233);
     _la = _input->LA(1);
     if (!((((_la & ~ 0x3fULL) == 0) &&
-      ((1ULL << _la) & 2046) != 0))) {
+      ((1ULL << _la) & 4094) != 0))) {
     _errHandler->recoverInline(this);
     }
     else {
@@ -1611,18 +1986,30 @@ std::any TonParser::AndExprContext::accept(tree::ParseTreeVisitor *visitor) {
   else
     return visitor->visitChildren(this);
 }
-//----------------- IdExprContext ------------------------------------------------------------------
+//----------------- AddSubMixExprContext ------------------------------------------------------------------
 
-tree::TerminalNode* TonParser::IdExprContext::ID() {
-  return getToken(TonParser::ID, 0);
+std::vector<TonParser::ExprContext *> TonParser::AddSubMixExprContext::expr() {
+  return getRuleContexts<TonParser::ExprContext>();
 }
 
-TonParser::IdExprContext::IdExprContext(ExprContext *ctx) { copyFrom(ctx); }
+TonParser::ExprContext* TonParser::AddSubMixExprContext::expr(size_t i) {
+  return getRuleContext<TonParser::ExprContext>(i);
+}
+
+tree::TerminalNode* TonParser::AddSubMixExprContext::PLUS() {
+  return getToken(TonParser::PLUS, 0);
+}
+
+tree::TerminalNode* TonParser::AddSubMixExprContext::MINUS() {
+  return getToken(TonParser::MINUS, 0);
+}
+
+TonParser::AddSubMixExprContext::AddSubMixExprContext(ExprContext *ctx) { copyFrom(ctx); }
 
 
-std::any TonParser::IdExprContext::accept(tree::ParseTreeVisitor *visitor) {
+std::any TonParser::AddSubMixExprContext::accept(tree::ParseTreeVisitor *visitor) {
   if (auto parserVisitor = dynamic_cast<TonVisitor*>(visitor))
-    return parserVisitor->visitIdExpr(this);
+    return parserVisitor->visitAddSubMixExpr(this);
   else
     return visitor->visitChildren(this);
 }
@@ -1721,6 +2108,21 @@ std::any TonParser::MixWithExprContext::accept(tree::ParseTreeVisitor *visitor) 
   else
     return visitor->visitChildren(this);
 }
+//----------------- TargetExprContext ------------------------------------------------------------------
+
+TonParser::TargetContext* TonParser::TargetExprContext::target() {
+  return getRuleContext<TonParser::TargetContext>(0);
+}
+
+TonParser::TargetExprContext::TargetExprContext(ExprContext *ctx) { copyFrom(ctx); }
+
+
+std::any TonParser::TargetExprContext::accept(tree::ParseTreeVisitor *visitor) {
+  if (auto parserVisitor = dynamic_cast<TonVisitor*>(visitor))
+    return parserVisitor->visitTargetExpr(this);
+  else
+    return visitor->visitChildren(this);
+}
 //----------------- RelationalExprContext ------------------------------------------------------------------
 
 std::vector<TonParser::ExprContext *> TonParser::RelationalExprContext::expr() {
@@ -1803,6 +2205,29 @@ TonParser::IndexExprContext::IndexExprContext(ExprContext *ctx) { copyFrom(ctx);
 std::any TonParser::IndexExprContext::accept(tree::ParseTreeVisitor *visitor) {
   if (auto parserVisitor = dynamic_cast<TonVisitor*>(visitor))
     return parserVisitor->visitIndexExpr(this);
+  else
+    return visitor->visitChildren(this);
+}
+//----------------- ConcatExprContext ------------------------------------------------------------------
+
+std::vector<TonParser::ExprContext *> TonParser::ConcatExprContext::expr() {
+  return getRuleContexts<TonParser::ExprContext>();
+}
+
+TonParser::ExprContext* TonParser::ConcatExprContext::expr(size_t i) {
+  return getRuleContext<TonParser::ExprContext>(i);
+}
+
+tree::TerminalNode* TonParser::ConcatExprContext::AMPERSAND() {
+  return getToken(TonParser::AMPERSAND, 0);
+}
+
+TonParser::ConcatExprContext::ConcatExprContext(ExprContext *ctx) { copyFrom(ctx); }
+
+
+std::any TonParser::ConcatExprContext::accept(tree::ParseTreeVisitor *visitor) {
+  if (auto parserVisitor = dynamic_cast<TonVisitor*>(visitor))
+    return parserVisitor->visitConcatExpr(this);
   else
     return visitor->visitChildren(this);
 }
@@ -1994,6 +2419,37 @@ std::any TonParser::ParensExprContext::accept(tree::ParseTreeVisitor *visitor) {
   else
     return visitor->visitChildren(this);
 }
+//----------------- TrackEventExprContext ------------------------------------------------------------------
+
+std::vector<TonParser::ExprContext *> TonParser::TrackEventExprContext::expr() {
+  return getRuleContexts<TonParser::ExprContext>();
+}
+
+TonParser::ExprContext* TonParser::TrackEventExprContext::expr(size_t i) {
+  return getRuleContext<TonParser::ExprContext>(i);
+}
+
+tree::TerminalNode* TonParser::TrackEventExprContext::AT() {
+  return getToken(TonParser::AT, 0);
+}
+
+tree::TerminalNode* TonParser::TrackEventExprContext::AS() {
+  return getToken(TonParser::AS, 0);
+}
+
+tree::TerminalNode* TonParser::TrackEventExprContext::STRING_VAL() {
+  return getToken(TonParser::STRING_VAL, 0);
+}
+
+TonParser::TrackEventExprContext::TrackEventExprContext(ExprContext *ctx) { copyFrom(ctx); }
+
+
+std::any TonParser::TrackEventExprContext::accept(tree::ParseTreeVisitor *visitor) {
+  if (auto parserVisitor = dynamic_cast<TonVisitor*>(visitor))
+    return parserVisitor->visitTrackEventExpr(this);
+  else
+    return visitor->visitChildren(this);
+}
 //----------------- SliceExprContext ------------------------------------------------------------------
 
 std::vector<TonParser::ExprContext *> TonParser::SliceExprContext::expr() {
@@ -2044,30 +2500,22 @@ std::any TonParser::NotExprContext::accept(tree::ParseTreeVisitor *visitor) {
   else
     return visitor->visitChildren(this);
 }
-//----------------- AddSubExprContext ------------------------------------------------------------------
+//----------------- LengthOfExprContext ------------------------------------------------------------------
 
-std::vector<TonParser::ExprContext *> TonParser::AddSubExprContext::expr() {
-  return getRuleContexts<TonParser::ExprContext>();
+tree::TerminalNode* TonParser::LengthOfExprContext::LENGTH() {
+  return getToken(TonParser::LENGTH, 0);
 }
 
-TonParser::ExprContext* TonParser::AddSubExprContext::expr(size_t i) {
-  return getRuleContext<TonParser::ExprContext>(i);
+TonParser::TargetContext* TonParser::LengthOfExprContext::target() {
+  return getRuleContext<TonParser::TargetContext>(0);
 }
 
-tree::TerminalNode* TonParser::AddSubExprContext::PLUS() {
-  return getToken(TonParser::PLUS, 0);
-}
-
-tree::TerminalNode* TonParser::AddSubExprContext::MINUS() {
-  return getToken(TonParser::MINUS, 0);
-}
-
-TonParser::AddSubExprContext::AddSubExprContext(ExprContext *ctx) { copyFrom(ctx); }
+TonParser::LengthOfExprContext::LengthOfExprContext(ExprContext *ctx) { copyFrom(ctx); }
 
 
-std::any TonParser::AddSubExprContext::accept(tree::ParseTreeVisitor *visitor) {
+std::any TonParser::LengthOfExprContext::accept(tree::ParseTreeVisitor *visitor) {
   if (auto parserVisitor = dynamic_cast<TonVisitor*>(visitor))
-    return parserVisitor->visitAddSubExpr(this);
+    return parserVisitor->visitLengthOfExpr(this);
   else
     return visitor->visitChildren(this);
 }
@@ -2082,8 +2530,8 @@ TonParser::ExprContext* TonParser::expr(int precedence) {
   TonParser::ExprContext *_localctx = _tracker.createInstance<ExprContext>(_ctx, parentState);
   TonParser::ExprContext *previousContext = _localctx;
   (void)previousContext; // Silence compiler, in case the context is not used by generated code.
-  size_t startState = 28;
-  enterRecursionRule(_localctx, 28, TonParser::RuleExpr, precedence);
+  size_t startState = 34;
+  enterRecursionRule(_localctx, 34, TonParser::RuleExpr, precedence);
 
     size_t _la = 0;
 
@@ -2097,31 +2545,31 @@ TonParser::ExprContext* TonParser::expr(int precedence) {
   try {
     size_t alt;
     enterOuterAlt(_localctx, 1);
-    setState(231);
+    setState(280);
     _errHandler->sync(this);
-    switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 13, _ctx)) {
+    switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 18, _ctx)) {
     case 1: {
       _localctx = _tracker.createInstance<ArrayExprContext>(_localctx);
       _ctx = _localctx;
       previousContext = _localctx;
 
-      setState(189);
+      setState(236);
       match(TonParser::L_BRACKET);
-      setState(190);
+      setState(237);
       expr(0);
-      setState(195);
+      setState(242);
       _errHandler->sync(this);
       _la = _input->LA(1);
       while (_la == TonParser::COMMA) {
-        setState(191);
+        setState(238);
         match(TonParser::COMMA);
-        setState(192);
+        setState(239);
         expr(0);
-        setState(197);
+        setState(244);
         _errHandler->sync(this);
         _la = _input->LA(1);
       }
-      setState(198);
+      setState(245);
       match(TonParser::R_BRACKET);
       break;
     }
@@ -2130,32 +2578,32 @@ TonParser::ExprContext* TonParser::expr(int precedence) {
       _localctx = _tracker.createInstance<FunctionCallExprContext>(_localctx);
       _ctx = _localctx;
       previousContext = _localctx;
-      setState(200);
+      setState(247);
       match(TonParser::ID);
-      setState(201);
+      setState(248);
       match(TonParser::L_PAREN);
-      setState(210);
+      setState(257);
       _errHandler->sync(this);
 
       _la = _input->LA(1);
-      if ((((_la & ~ 0x3fULL) == 0) &&
-        ((1ULL << _la) & 286154507325276160) != 0)) {
-        setState(202);
+      if (((((_la - 31) & ~ 0x3fULL) == 0) &&
+        ((1ULL << (_la - 31)) & 8732742322177) != 0)) {
+        setState(249);
         expr(0);
-        setState(207);
+        setState(254);
         _errHandler->sync(this);
         _la = _input->LA(1);
         while (_la == TonParser::COMMA) {
-          setState(203);
+          setState(250);
           match(TonParser::COMMA);
-          setState(204);
+          setState(251);
           expr(0);
-          setState(209);
+          setState(256);
           _errHandler->sync(this);
           _la = _input->LA(1);
         }
       }
-      setState(212);
+      setState(259);
       match(TonParser::R_PAREN);
       break;
     }
@@ -2164,12 +2612,12 @@ TonParser::ExprContext* TonParser::expr(int precedence) {
       _localctx = _tracker.createInstance<CreateSoundExprContext>(_localctx);
       _ctx = _localctx;
       previousContext = _localctx;
-      setState(213);
+      setState(260);
       match(TonParser::ID);
-      setState(214);
+      setState(261);
       expr(0);
-      setState(215);
-      expr(19);
+      setState(262);
+      expr(22);
       break;
     }
 
@@ -2177,11 +2625,11 @@ TonParser::ExprContext* TonParser::expr(int precedence) {
       _localctx = _tracker.createInstance<ParensExprContext>(_localctx);
       _ctx = _localctx;
       previousContext = _localctx;
-      setState(217);
+      setState(264);
       match(TonParser::L_PAREN);
-      setState(218);
+      setState(265);
       expr(0);
-      setState(219);
+      setState(266);
       match(TonParser::R_PAREN);
       break;
     }
@@ -2191,10 +2639,10 @@ TonParser::ExprContext* TonParser::expr(int precedence) {
       _ctx = _localctx;
       previousContext = _localctx;
 
-      setState(221);
+      setState(268);
       match(TonParser::NOT_KW);
-      setState(222);
-      expr(15);
+      setState(269);
+      expr(17);
       break;
     }
 
@@ -2202,7 +2650,7 @@ TonParser::ExprContext* TonParser::expr(int precedence) {
       _localctx = _tracker.createInstance<NoteValExprContext>(_localctx);
       _ctx = _localctx;
       previousContext = _localctx;
-      setState(223);
+      setState(270);
       match(TonParser::NOTE_VAL);
       break;
     }
@@ -2211,7 +2659,7 @@ TonParser::ExprContext* TonParser::expr(int precedence) {
       _localctx = _tracker.createInstance<IntValExprContext>(_localctx);
       _ctx = _localctx;
       previousContext = _localctx;
-      setState(224);
+      setState(271);
       match(TonParser::INT_VAL);
       break;
     }
@@ -2220,7 +2668,7 @@ TonParser::ExprContext* TonParser::expr(int precedence) {
       _localctx = _tracker.createInstance<NumValExprContext>(_localctx);
       _ctx = _localctx;
       previousContext = _localctx;
-      setState(225);
+      setState(272);
       match(TonParser::NUM_VAL);
       break;
     }
@@ -2229,7 +2677,7 @@ TonParser::ExprContext* TonParser::expr(int precedence) {
       _localctx = _tracker.createInstance<BoolValExprContext>(_localctx);
       _ctx = _localctx;
       previousContext = _localctx;
-      setState(226);
+      setState(273);
       match(TonParser::BOOL_VAL);
       break;
     }
@@ -2238,7 +2686,7 @@ TonParser::ExprContext* TonParser::expr(int precedence) {
       _localctx = _tracker.createInstance<CharValExprContext>(_localctx);
       _ctx = _localctx;
       previousContext = _localctx;
-      setState(227);
+      setState(274);
       match(TonParser::CHAR_VAL);
       break;
     }
@@ -2247,25 +2695,36 @@ TonParser::ExprContext* TonParser::expr(int precedence) {
       _localctx = _tracker.createInstance<StringValExprContext>(_localctx);
       _ctx = _localctx;
       previousContext = _localctx;
-      setState(228);
+      setState(275);
       match(TonParser::STRING_VAL);
       break;
     }
 
     case 12: {
-      _localctx = _tracker.createInstance<IdExprContext>(_localctx);
+      _localctx = _tracker.createInstance<TargetExprContext>(_localctx);
       _ctx = _localctx;
       previousContext = _localctx;
-      setState(229);
-      match(TonParser::ID);
+      setState(276);
+      target();
       break;
     }
 
     case 13: {
+      _localctx = _tracker.createInstance<LengthOfExprContext>(_localctx);
+      _ctx = _localctx;
+      previousContext = _localctx;
+      setState(277);
+      match(TonParser::LENGTH);
+      setState(278);
+      target();
+      break;
+    }
+
+    case 14: {
       _localctx = _tracker.createInstance<EmptySoundExprContext>(_localctx);
       _ctx = _localctx;
       previousContext = _localctx;
-      setState(230);
+      setState(279);
       match(TonParser::EMPTYSOUND);
       break;
     }
@@ -2274,47 +2733,71 @@ TonParser::ExprContext* TonParser::expr(int precedence) {
       break;
     }
     _ctx->stop = _input->LT(-1);
-    setState(268);
+    setState(327);
     _errHandler->sync(this);
-    alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 15, _ctx);
+    alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 21, _ctx);
     while (alt != 2 && alt != atn::ATN::INVALID_ALT_NUMBER) {
       if (alt == 1) {
         if (!_parseListeners.empty())
           triggerExitRuleEvent();
         previousContext = _localctx;
-        setState(266);
+        setState(325);
         _errHandler->sync(this);
-        switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 14, _ctx)) {
+        switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 20, _ctx)) {
         case 1: {
+          auto newContext = _tracker.createInstance<TrackEventExprContext>(_tracker.createInstance<ExprContext>(parentContext, parentState));
+          _localctx = newContext;
+          pushNewRecursionContext(newContext, startState, RuleExpr);
+          setState(282);
+
+          if (!(precpred(_ctx, 21))) throw FailedPredicateException(this, "precpred(_ctx, 21)");
+          setState(285);
+          _errHandler->sync(this);
+
+          _la = _input->LA(1);
+          if (_la == TonParser::AS) {
+            setState(283);
+            match(TonParser::AS);
+            setState(284);
+            match(TonParser::STRING_VAL);
+          }
+          setState(287);
+          match(TonParser::AT);
+          setState(288);
+          expr(22);
+          break;
+        }
+
+        case 2: {
           auto newContext = _tracker.createInstance<MulDivExprContext>(_tracker.createInstance<ExprContext>(parentContext, parentState));
           _localctx = newContext;
           pushNewRecursionContext(newContext, startState, RuleExpr);
-          setState(233);
+          setState(289);
 
-          if (!(precpred(_ctx, 14))) throw FailedPredicateException(this, "precpred(_ctx, 14)");
-          setState(234);
+          if (!(precpred(_ctx, 16))) throw FailedPredicateException(this, "precpred(_ctx, 16)");
+          setState(290);
           _la = _input->LA(1);
           if (!((((_la & ~ 0x3fULL) == 0) &&
-            ((1ULL << _la) & 1924145348608) != 0))) {
+            ((1ULL << _la) & 31525197391593472) != 0))) {
           _errHandler->recoverInline(this);
           }
           else {
             _errHandler->reportMatch(this);
             consume();
           }
-          setState(235);
-          expr(15);
+          setState(291);
+          expr(17);
           break;
         }
 
-        case 2: {
-          auto newContext = _tracker.createInstance<AddSubExprContext>(_tracker.createInstance<ExprContext>(parentContext, parentState));
+        case 3: {
+          auto newContext = _tracker.createInstance<AddSubMixExprContext>(_tracker.createInstance<ExprContext>(parentContext, parentState));
           _localctx = newContext;
           pushNewRecursionContext(newContext, startState, RuleExpr);
-          setState(236);
+          setState(292);
 
-          if (!(precpred(_ctx, 13))) throw FailedPredicateException(this, "precpred(_ctx, 13)");
-          setState(237);
+          if (!(precpred(_ctx, 15))) throw FailedPredicateException(this, "precpred(_ctx, 15)");
+          setState(293);
           _la = _input->LA(1);
           if (!(_la == TonParser::PLUS
 
@@ -2325,111 +2808,125 @@ TonParser::ExprContext* TonParser::expr(int precedence) {
             _errHandler->reportMatch(this);
             consume();
           }
-          setState(238);
-          expr(14);
-          break;
-        }
-
-        case 3: {
-          auto newContext = _tracker.createInstance<MixWithExprContext>(_tracker.createInstance<ExprContext>(parentContext, parentState));
-          _localctx = newContext;
-          pushNewRecursionContext(newContext, startState, RuleExpr);
-          setState(239);
-
-          if (!(precpred(_ctx, 12))) throw FailedPredicateException(this, "precpred(_ctx, 12)");
-          setState(240);
-          match(TonParser::MIXWITH);
-          setState(241);
-          expr(0);
-          setState(242);
-          match(TonParser::FROM);
-          setState(243);
-          expr(13);
+          setState(294);
+          expr(16);
           break;
         }
 
         case 4: {
+          auto newContext = _tracker.createInstance<ConcatExprContext>(_tracker.createInstance<ExprContext>(parentContext, parentState));
+          _localctx = newContext;
+          pushNewRecursionContext(newContext, startState, RuleExpr);
+          setState(295);
+
+          if (!(precpred(_ctx, 14))) throw FailedPredicateException(this, "precpred(_ctx, 14)");
+          setState(296);
+          match(TonParser::AMPERSAND);
+          setState(297);
+          expr(15);
+          break;
+        }
+
+        case 5: {
+          auto newContext = _tracker.createInstance<MixWithExprContext>(_tracker.createInstance<ExprContext>(parentContext, parentState));
+          _localctx = newContext;
+          pushNewRecursionContext(newContext, startState, RuleExpr);
+          setState(298);
+
+          if (!(precpred(_ctx, 13))) throw FailedPredicateException(this, "precpred(_ctx, 13)");
+          setState(299);
+          match(TonParser::MIXWITH);
+          setState(300);
+          expr(0);
+          setState(301);
+          match(TonParser::FROM);
+          setState(302);
+          expr(14);
+          break;
+        }
+
+        case 6: {
           auto newContext = _tracker.createInstance<RelationalExprContext>(_tracker.createInstance<ExprContext>(parentContext, parentState));
           _localctx = newContext;
           pushNewRecursionContext(newContext, startState, RuleExpr);
-          setState(245);
+          setState(304);
 
-          if (!(precpred(_ctx, 11))) throw FailedPredicateException(this, "precpred(_ctx, 11)");
-          setState(246);
+          if (!(precpred(_ctx, 12))) throw FailedPredicateException(this, "precpred(_ctx, 12)");
+          setState(305);
           _la = _input->LA(1);
           if (!((((_la & ~ 0x3fULL) == 0) &&
-            ((1ULL << _la) & 6648609374208) != 0))) {
+            ((1ULL << _la) & 433189989157699584) != 0))) {
           _errHandler->recoverInline(this);
           }
           else {
             _errHandler->reportMatch(this);
             consume();
           }
-          setState(247);
-          expr(12);
-          break;
-        }
-
-        case 5: {
-          auto newContext = _tracker.createInstance<AndExprContext>(_tracker.createInstance<ExprContext>(parentContext, parentState));
-          _localctx = newContext;
-          pushNewRecursionContext(newContext, startState, RuleExpr);
-          setState(248);
-
-          if (!(precpred(_ctx, 10))) throw FailedPredicateException(this, "precpred(_ctx, 10)");
-          setState(249);
-          match(TonParser::AND_OP);
-          setState(250);
-          expr(11);
-          break;
-        }
-
-        case 6: {
-          auto newContext = _tracker.createInstance<OrExprContext>(_tracker.createInstance<ExprContext>(parentContext, parentState));
-          _localctx = newContext;
-          pushNewRecursionContext(newContext, startState, RuleExpr);
-          setState(251);
-
-          if (!(precpred(_ctx, 9))) throw FailedPredicateException(this, "precpred(_ctx, 9)");
-          setState(252);
-          match(TonParser::OR_OP);
-          setState(253);
-          expr(10);
+          setState(306);
+          expr(13);
           break;
         }
 
         case 7: {
-          auto newContext = _tracker.createInstance<IndexExprContext>(_tracker.createInstance<ExprContext>(parentContext, parentState));
+          auto newContext = _tracker.createInstance<AndExprContext>(_tracker.createInstance<ExprContext>(parentContext, parentState));
           _localctx = newContext;
           pushNewRecursionContext(newContext, startState, RuleExpr);
-          setState(254);
+          setState(307);
 
-          if (!(precpred(_ctx, 18))) throw FailedPredicateException(this, "precpred(_ctx, 18)");
-          setState(255);
-          match(TonParser::L_BRACKET);
-          setState(256);
-          expr(0);
-          setState(257);
-          match(TonParser::R_BRACKET);
+          if (!(precpred(_ctx, 11))) throw FailedPredicateException(this, "precpred(_ctx, 11)");
+          setState(308);
+          match(TonParser::AND_OP);
+          setState(309);
+          expr(12);
           break;
         }
 
         case 8: {
+          auto newContext = _tracker.createInstance<OrExprContext>(_tracker.createInstance<ExprContext>(parentContext, parentState));
+          _localctx = newContext;
+          pushNewRecursionContext(newContext, startState, RuleExpr);
+          setState(310);
+
+          if (!(precpred(_ctx, 10))) throw FailedPredicateException(this, "precpred(_ctx, 10)");
+          setState(311);
+          match(TonParser::OR_OP);
+          setState(312);
+          expr(11);
+          break;
+        }
+
+        case 9: {
+          auto newContext = _tracker.createInstance<IndexExprContext>(_tracker.createInstance<ExprContext>(parentContext, parentState));
+          _localctx = newContext;
+          pushNewRecursionContext(newContext, startState, RuleExpr);
+          setState(313);
+
+          if (!(precpred(_ctx, 20))) throw FailedPredicateException(this, "precpred(_ctx, 20)");
+          setState(314);
+          match(TonParser::L_BRACKET);
+          setState(315);
+          expr(0);
+          setState(316);
+          match(TonParser::R_BRACKET);
+          break;
+        }
+
+        case 10: {
           auto newContext = _tracker.createInstance<SliceExprContext>(_tracker.createInstance<ExprContext>(parentContext, parentState));
           _localctx = newContext;
           pushNewRecursionContext(newContext, startState, RuleExpr);
-          setState(259);
+          setState(318);
 
-          if (!(precpred(_ctx, 17))) throw FailedPredicateException(this, "precpred(_ctx, 17)");
-          setState(260);
+          if (!(precpred(_ctx, 19))) throw FailedPredicateException(this, "precpred(_ctx, 19)");
+          setState(319);
           match(TonParser::L_BRACKET);
-          setState(261);
+          setState(320);
           expr(0);
-          setState(262);
+          setState(321);
           match(TonParser::COLON);
-          setState(263);
+          setState(322);
           expr(0);
-          setState(264);
+          setState(323);
           match(TonParser::R_BRACKET);
           break;
         }
@@ -2438,9 +2935,9 @@ TonParser::ExprContext* TonParser::expr(int precedence) {
           break;
         } 
       }
-      setState(270);
+      setState(329);
       _errHandler->sync(this);
-      alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 15, _ctx);
+      alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 21, _ctx);
     }
   }
   catch (RecognitionException &e) {
@@ -2453,7 +2950,7 @@ TonParser::ExprContext* TonParser::expr(int precedence) {
 
 bool TonParser::sempred(RuleContext *context, size_t ruleIndex, size_t predicateIndex) {
   switch (ruleIndex) {
-    case 14: return exprSempred(antlrcpp::downCast<ExprContext *>(context), predicateIndex);
+    case 17: return exprSempred(antlrcpp::downCast<ExprContext *>(context), predicateIndex);
 
   default:
     break;
@@ -2463,14 +2960,16 @@ bool TonParser::sempred(RuleContext *context, size_t ruleIndex, size_t predicate
 
 bool TonParser::exprSempred(ExprContext *_localctx, size_t predicateIndex) {
   switch (predicateIndex) {
-    case 0: return precpred(_ctx, 14);
-    case 1: return precpred(_ctx, 13);
-    case 2: return precpred(_ctx, 12);
-    case 3: return precpred(_ctx, 11);
-    case 4: return precpred(_ctx, 10);
-    case 5: return precpred(_ctx, 9);
-    case 6: return precpred(_ctx, 18);
-    case 7: return precpred(_ctx, 17);
+    case 0: return precpred(_ctx, 21);
+    case 1: return precpred(_ctx, 16);
+    case 2: return precpred(_ctx, 15);
+    case 3: return precpred(_ctx, 14);
+    case 4: return precpred(_ctx, 13);
+    case 5: return precpred(_ctx, 12);
+    case 6: return precpred(_ctx, 11);
+    case 7: return precpred(_ctx, 10);
+    case 8: return precpred(_ctx, 20);
+    case 9: return precpred(_ctx, 19);
 
   default:
     break;
