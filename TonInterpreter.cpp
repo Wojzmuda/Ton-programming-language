@@ -154,13 +154,48 @@ std::any TonInterpreter::visitSaveStat(TonParser::SaveStatContext *ctx) {
 
     return {};
 }
+
+
 std::any TonInterpreter::visitCreateSoundExpr(TonParser::CreateSoundExprContext *ctx) {
     std::string instrumentOrSoundId = ctx->ID()->getText();
     std::any arg1 = visit(ctx->expr(0));
     std::any arg2 = visit(ctx->expr(1));
 
-    // TODO returning just instrument id for now. Need Sound class for further work
-    return instrumentOrSoundId;
+    Note note;
+    int durationMs;
+    if (arg1.type() == typeid(Note)) {
+        note = std::any_cast<Note>(arg1);
+    }
+    else {
+        // ? How are we handling this ?
+        throw std::runtime_error{"Error: got wrong argument - not Note type"};
+    }
+    if (arg2.type() == typeid(int)) {
+        durationMs = std::any_cast<int>(arg2);
+    }
+    else {
+        // ? How are we handling this ?
+        throw std::runtime_error{"Error: got wrong argument - not int type"};
+    }
+
+    // TODO choose right sample instead of using temp lambda
+    // -----
+    auto createTemporarySinWave = [](Note note, int dur) {
+        Sound generatedSound;
+        int totalSamples = (dur / 1000.0) * generatedSound.sampleRate;
+        for (int i = 0; i < totalSamples; ++i) {
+            double time = (double)i / generatedSound.sampleRate;
+            double sampleValue = std::sin(2.0 * M_PI * note.getFrequency() * time);
+            generatedSound.samples.push_back(sampleValue);
+        }
+        return generatedSound;
+    };
+    // ------
+    
+    Sound sound = createTemporarySinWave(note, durationMs);
+
+    
+    return sound;
 }
 
 std::any TonInterpreter::visitStringValExpr(TonParser::StringValExprContext *ctx) {
@@ -169,7 +204,12 @@ std::any TonInterpreter::visitStringValExpr(TonParser::StringValExprContext *ctx
 }
 
 std::any TonInterpreter::visitNoteValExpr(TonParser::NoteValExprContext *ctx) {
-    return ctx->NOTE_VAL()->getText();
+    std::string noteStr = ctx->NOTE_VAL()->getText();
+    Note note = Note{
+        noteStr.substr(0,noteStr.length() - 1), 
+        std::stoi(noteStr.substr(noteStr.length() - 1))
+    };
+    return note;
 }
 
 std::any TonInterpreter::visitIntValExpr(TonParser::IntValExprContext *ctx) {

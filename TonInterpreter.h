@@ -7,12 +7,24 @@
 #include <vector>
 
 
+
 struct Instrument {
     std::string name;
+    std::vector<double> sampleData;
     // Tutaj w przyszłości można dodać wskaźnik do mapy sampli
     Instrument(std::string n) : name(n) {}
+    Instrument(std::string n, std::string filePath) : name(n) {
+        AudioFile<double> audioFile;
+        if (audioFile.load(filePath)) {
+            sampleData = audioFile.samples[0];
+            std::cout << ">>> [SYSTEM] Loaded sample for " << name << " (" << sampleData.size() << " samples)\n";
+        } else {
+            std::cerr << ">>> [ERROR] Could not load sample: " << filePath << "\n";
+        }
+    }
     Instrument() : name("SineWave") {}
 };
+
 
 struct Note {
     std::string pitchClass; 
@@ -26,6 +38,20 @@ struct Note {
     Note() {
         pitchClass = "C";
         octave = 4;
+    }
+
+    double getFrequency() const {
+        std::map<std::string, int> pitchToSemitone = {
+            {"C", -9}, {"C#", -8}, {"Db", -8}, {"D", -7}, {"D#", -6}, {"Eb", -6},
+            {"E", -5}, {"F", -4}, {"F#", -3}, {"Gb", -3}, {"G", -2}, {"G#", -1},
+            {"Ab", -1}, {"A", 0}, {"A#", 1}, {"Bb", 1}, {"B", 2}
+        };
+        
+        int semitoneOffset = pitchToSemitone[pitchClass];
+        int octaveOffset = (octave - 4) * 12;
+        int totalOffset = semitoneOffset + octaveOffset;
+        
+        return 440.0 * std::pow(2.0, totalOffset / 12.0);
     }
 };
 
