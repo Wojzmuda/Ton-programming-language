@@ -8,7 +8,6 @@
 #include "AudioFile.h"
 
 
-
 struct Instrument {
     std::string name;
     std::vector<double> sampleData;
@@ -65,6 +64,24 @@ struct Sound {
 };
 
 
+struct TrackEvent {
+    Sound sound;
+    int startTimeMs;
+    std::string alias;
+};
+
+struct Track {
+    std::string name;
+    std::vector<TrackEvent> events;
+    bool isMuted = false;
+    bool isIsolated = false;
+};
+
+struct Timeline {
+    std::string name;
+    std::map<std::string, Track> tracks;
+};
+
 class TonInterpreter: public TonBaseVisitor {
     private:
         std::map<std::string, std::any> memory;
@@ -76,6 +93,8 @@ class TonInterpreter: public TonBaseVisitor {
         std::any visitVarDecl(TonParser::VarDeclContext *ctx) override;
 
         std::any visitAssignment(TonParser::AssignmentContext *ctx) override;
+        std::any visitArrayExpr(TonParser::ArrayExprContext *ctx);
+        std::any visitTrackEventExpr(TonParser::TrackEventExprContext *ctx);
         std::any visitShoutStat(TonParser::ShoutStatContext *ctx) override;
         std::any visitSaveStat(TonParser::SaveStatContext *ctx) override;
         //std::any visitIdExpr(TonParser::IdExprContext *ctx) override;
@@ -86,6 +105,8 @@ class TonInterpreter: public TonBaseVisitor {
     virtual std::any visitStringValExpr(TonParser::StringValExprContext *ctx) override;
     virtual std::any visitNoteValExpr(TonParser::NoteValExprContext *ctx) override;
     virtual std::any visitIntValExpr(TonParser::IntValExprContext *ctx) override;
+    virtual std::any visitAudioOpStat(TonParser::AudioOpStatContext *ctx) override;
 
+    virtual std::any visitTrackDecl(TonParser::TrackDeclContext *ctx) override;
 
 };

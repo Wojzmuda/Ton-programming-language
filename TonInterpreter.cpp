@@ -1,3 +1,4 @@
+#define _USE_MATH_DEFINES
 #include "TonInterpreter.h"
 #include <cmath>
 #include "AudioFile.h"
@@ -16,7 +17,28 @@ std::any TonInterpreter::visitStatement(TonParser::StatementContext *ctx) {
 
 std::any TonInterpreter::visitVarDecl(TonParser::VarDeclContext *ctx) {
     std::string varName = ctx->ID()->getText();
-    std::any value = visit(ctx->expr());
+    std::string typeName = ctx->type()->getText(); 
+
+    std::any value;
+
+  
+    if (ctx->expr()) {
+        value = visit(ctx->expr());
+    } 
+    else {
+   
+        if (typeName == "TIMELINE") {
+            Timeline tl;
+            tl.name = varName;
+            value = tl;
+        }
+        else if (typeName == "SOUND") value = Sound();
+        else if (typeName == "INT") value = 0;
+        else if (typeName == "NOTE") value = Note();
+        else if (typeName == "STRING") value = std::string("");
+        else value = {};
+    }
+
     memory[varName] = value;
     return value;
 }
@@ -29,32 +51,122 @@ std::any TonInterpreter::visitVarDecl(TonParser::VarDeclContext *ctx) {
 
 //     throw std::runtime_error("Error: Use of undefined variable '" + varName + "'.");
 // }
+//
+// std::any TonInterpreter::visitTargetExpr(TonParser::TargetExprContext *ctx) {
+//    std::string targetName = ctx->getText(); 
+//
+    // TODO: how to memory ?
+//    if (memory.find(targetName) != memory.end()) {
+//       return memory[targetName]; 
+//    }
+
+//    throw std::runtime_error("Error: Use of undefined target '" + targetName + "'.");
+//}
+
 
 std::any TonInterpreter::visitTargetExpr(TonParser::TargetExprContext *ctx) {
-    std::string targetName = ctx->getText(); 
 
-    // TODO: how to memory ?
-    if (memory.find(targetName) != memory.end()) {
-        return memory[targetName]; 
+    auto targetNode = ctx->target(); 
+    std::string baseName = targetNode->ID(0)->getText();
+
+    if (memory.find(baseName) == memory.end()) {
+        throw std::runtime_error("Error: Undefined variable or timeline '" + baseName + "'.");
     }
 
-    throw std::runtime_error("Error: Use of undefined target '" + targetName + "'.");
+    if (targetNode->ID().size() == 1) {
+        return memory[baseName];
+    }
+
+    std::string trackName = targetNode->ID(1)->getText();
+    
+    std::any baseObj = memory[baseName];
+    if (baseObj.type() != typeid(Timeline)) {
+        throw std::runtime_error("Error: '" + baseName + "' is not a TIMELINE, cannot access tracks.");
+    }
+
+    Timeline timeline = std::any_cast<Timeline>(baseObj);
+
+    if (timeline.tracks.find(trackName) == timeline.tracks.end()) {
+        throw std::runtime_error("Error: Track '" + trackName + "' does not exist in timeline '" + baseName + "'.");
+    }
+    return ctx->getText(); 
 }
 
 
-std::any TonInterpreter::visitAssignment(TonParser::AssignmentContext *ctx) {
-    std::string varName = ctx->target()->getText();
 
-    if (memory.find(varName) == memory.end()) {
-        throw std::runtime_error("Error: Variable '" + varName + "' must be declared using !make before assignment.");
+
+
+std::any TonInterpreter::visitAssignment(TonParser::AssignmentContext *ctx) {
+    auto targetNode = ctx->target();
+
+
+    if (targetNode->ID().size() == 1) {
+        std::string varName = targetNode->ID(0)->getText();
+        if (memory.find(varName) == memory.end()) {
+            throw std::runtime_error("Error: Variable '" + varName + "' must be declared first.");
+        }
+        memory[varName] = visit(ctx->expr());
+        return {};
     }
 
-    std::any newValue = visit(ctx->expr());
-    memory[varName] = newValue;
+  
+    std::string timelineName = targetNode->ID(0)->getText();
+    std::string trackName = targetNode->ID(1)->getText();
+
+    if (memory.find(timelineName) == memory.end()) throw std::runtime_error("Timeline not found");
+    
+    std::any& baseObj = memory[timelineName];
+    Timeline& timeline = std::any_cast<Timeline&>(baseObj);
+
+    if (timeline.tracks.find(trackName) == timeline.tracks.end()) throw std::runtime_error("Track not found");
+
+
+    std::any rightSide = visit(ctx->expr());
+    timeline.tracks[trackName].events.clear(); 
+
+    if (rightSide.type() == typeid(std::vector<std::any>)) {
+        auto elements = std::any_cast<std::vector<std::any>>(rightSide);
+        for (auto& el : elements) {
+            if (el.type() == typeid(TrackEvent)) timeline.tracks[trackName].events.push_back(std::any_cast<TrackEvent>(el));
+        }
+    } else if (rightSide.type() == typeid(TrackEvent)) {
+        timeline.tracks[trackName].events.push_back(std::any_cast<TrackEvent>(rightSide));
+    }
 
     return {};
 }
 
+
+std::any TonInterpreter::visitArrayExpr(TonParser::ArrayExprContext *ctx) {
+    std::vector<std::any> elements;
+    for (auto exprCtx : ctx->expr()) {
+        elements.push_back(visit(exprCtx));
+    }
+    return elements;
+}
+
+
+std::any TonInterpreter::visitTrackEventExpr(TonParser::TrackEventExprContext *ctx) {
+    TrackEvent event;
+    
+
+    std::any soundAny = visit(ctx->expr(0));
+    if (soundAny.type() != typeid(Sound)) throw std::runtime_error("Error: Track event requires a SOUND.");
+    event.sound = std::any_cast<Sound>(soundAny);
+
+
+    std::any timeAny = visit(ctx->expr(1));
+    if (timeAny.type() != typeid(int)) throw std::runtime_error("Error: AT requires an integer time.");
+    event.startTimeMs = std::any_cast<int>(timeAny);
+
+ 
+    if (ctx->STRING_VAL()) {
+        std::string aliasStr = ctx->STRING_VAL()->getText();
+        event.alias = aliasStr.substr(1, aliasStr.length() - 2);
+    }
+
+    return event;
+}
 
 
 
@@ -121,35 +233,64 @@ std::any TonInterpreter::visitShoutStat(TonParser::ShoutStatContext *ctx) {
     return {};
 }
 
-
 std::any TonInterpreter::visitSaveStat(TonParser::SaveStatContext *ctx) {
-
     std::string rawFileName = ctx->STRING_VAL()->getText();
     std::string fileName = rawFileName.substr(1, rawFileName.length() - 2);
     std::any exportedValue = visit(ctx->expr());
 
     if (exportedValue.type() == typeid(Sound)) {
         Sound soundToSave = std::any_cast<Sound>(exportedValue);
-
         AudioFile<double> audioFile;
-        
         audioFile.setNumChannels(1);
         audioFile.setNumSamplesPerChannel(soundToSave.samples.size());
         audioFile.setSampleRate(soundToSave.sampleRate);
-
         audioFile.samples[0] = soundToSave.samples;
-
-        bool success = audioFile.save(fileName);
-
-        if (success) {
-            std::cout << ">>> [SYSTEM] Successfully exported " << soundToSave.samples.size() 
-                      << " samples to: " << fileName << std::endl;
-        } else {
-            throw std::runtime_error("Error: Failed to write WAV file to disk.");
-        }
+        
+        if (audioFile.save(fileName)) {
+            std::cout << ">>> [SYSTEM] Successfully exported SOUND to: " << fileName << std::endl;
+        } else throw std::runtime_error("Error: Failed to write WAV.");
     } 
+    else if (exportedValue.type() == typeid(Timeline)) {
+  
+        Timeline tl = std::any_cast<Timeline>(exportedValue);
+        int sampleRate = 44100;
+        int maxSamples = sampleRate; 
+
+   
+        for (const auto& pair : tl.tracks) {
+            if (pair.second.isMuted) continue;
+            for (const auto& ev : pair.second.events) {
+                int endSample = (ev.startTimeMs / 1000.0) * sampleRate + ev.sound.samples.size();
+                if (endSample > maxSamples) maxSamples = endSample;
+            }
+        }
+
+        std::vector<double> mixedSamples(maxSamples, 0.0);
+
+    
+        for (const auto& pair : tl.tracks) {
+            if (pair.second.isMuted) continue;
+            for (const auto& ev : pair.second.events) {
+                int startSample = (ev.startTimeMs / 1000.0) * sampleRate;
+                for (size_t i = 0; i < ev.sound.samples.size(); ++i) {
+                    mixedSamples[startSample + i] += ev.sound.samples[i];
+                }
+            }
+        }
+
+
+        AudioFile<double> audioFile;
+        audioFile.setNumChannels(1);
+        audioFile.setSampleRate(sampleRate);
+        audioFile.setNumSamplesPerChannel(maxSamples);
+        audioFile.samples[0] = mixedSamples;
+        
+        if (audioFile.save(fileName)) {
+            std::cout << ">>> [SYSTEM] Successfully mixed and exported TIMELINE to: " << fileName << std::endl;
+        } else throw std::runtime_error("Error: Failed to write WAV.");
+    }
     else {
-        throw std::runtime_error("Error: !save command requires a SOUND type.");
+        throw std::runtime_error("Error: !save command requires a SOUND or TIMELINE type.");
     }
 
     return {};
@@ -214,4 +355,91 @@ std::any TonInterpreter::visitNoteValExpr(TonParser::NoteValExprContext *ctx) {
 
 std::any TonInterpreter::visitIntValExpr(TonParser::IntValExprContext *ctx) {
     return std::stoi(ctx->INT_VAL()->getText());
+}
+
+
+
+std::any TonInterpreter::visitTrackDecl(TonParser::TrackDeclContext *ctx) {
+
+    std::string timelineName = ctx->ID(0)->getText(); 
+    std::string trackName = ctx->ID(1)->getText();    
+
+
+    if (memory.find(timelineName) == memory.end()) {
+        throw std::runtime_error("Error: Timeline '" + timelineName + "' not found.");
+    }
+
+
+    std::any& baseObj = memory[timelineName];
+    if (baseObj.type() != typeid(Timeline)) {
+        throw std::runtime_error("Error: '" + timelineName + "' is not a TIMELINE.");
+    }
+
+    Timeline& timeline = std::any_cast<Timeline&>(baseObj);
+
+    Track newTrack;
+    newTrack.name = trackName;
+    timeline.tracks[trackName] = newTrack;
+
+    return {};
+}
+
+std::any TonInterpreter::visitAudioOpStat(TonParser::AudioOpStatContext *ctx) {
+    auto targetNode = ctx->target();
+    std::string timelineName = targetNode->ID(0)->getText();
+
+
+    if (memory.find(timelineName) == memory.end()) {
+        throw std::runtime_error("Error: Timeline '" + timelineName + "' not found.");
+    }
+    std::any& baseObj = memory[timelineName];
+    if (baseObj.type() != typeid(Timeline)) throw std::runtime_error("Error: Target is not a TIMELINE.");
+    Timeline& timeline = std::any_cast<Timeline&>(baseObj);
+
+
+    std::string trackName = "";
+    if (targetNode->ID().size() > 1) {
+        trackName = targetNode->ID(1)->getText();
+        if (timeline.tracks.find(trackName) == timeline.tracks.end()) {
+            throw std::runtime_error("Error: Track '" + trackName + "' not found.");
+        }
+    }
+
+    std::string aliasName = "";
+    if (targetNode->STRING_VAL()) {
+        std::string rawAlias = targetNode->STRING_VAL()->getText();
+        aliasName = rawAlias.substr(1, rawAlias.length() - 2); // usuwamy " "
+    }
+
+
+    if (ctx->SHIFT()) {
+        if (trackName.empty() || aliasName.empty()) {
+            throw std::runtime_error("Error: SHIFT requires a track and an event alias (e.g., t1.pianos.\"intro\").");
+        }
+        int shiftMs = std::any_cast<int>(visit(ctx->expr()));
+        
+        bool found = false;
+        for (auto& ev : timeline.tracks[trackName].events) {
+            if (ev.alias == aliasName) {
+                ev.startTimeMs += shiftMs;
+                found = true;
+            }
+        }
+        if (!found) throw std::runtime_error("Error: Alias '" + aliasName + "' not found on track.");
+    }
+    
+    else if (ctx->ISOLATE()) {
+        if (trackName.empty()) throw std::runtime_error("Error: ISOLATE requires a track.");
+        
+        for (auto& pair : timeline.tracks) {
+            if (pair.first == trackName) {
+                pair.second.isMuted = false;
+                pair.second.isIsolated = true;
+            } else {
+                pair.second.isMuted = true;
+            }
+        }
+    }
+
+    return {};
 }
