@@ -12,5 +12,10 @@ cmake-build-*/
 *.a
 *.lib
 
+
+
+*.wav
+
+
 .DS_Store
 Thumbs.db
