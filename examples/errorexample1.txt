@@ -1,0 +1,4 @@
+$ SYNTAX ERROR 1: Brak średnika
+
+!make SOUND x <- synth C4 1000
+!make TIMELINE t1;

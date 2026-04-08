@@ -1,0 +1,5 @@
+$ ERROR TEST 5: Zła składnia i literówki
+
+!make SOUND x <- synth C4 1000;;;  $ <--- Trzy średniki
+
+!make TIMLINE t1;                  $ <--- Literówka: TIMLINE zamiast TIMELINE

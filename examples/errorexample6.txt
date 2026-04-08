@@ -1,0 +1,3 @@
+$ SYNTAX ERROR 5: Krzaczki i losowe znaki
+
+!make SOUND x <- synth C#4 @@@@@ 1000;

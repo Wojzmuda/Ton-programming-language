@@ -1,0 +1,7 @@
+$ SYNTAX ERROR 3: Brak nawiasu zamykającego
+
+!make SOUND x <- synth C4 1000;
+!make TIMELINE t1;
+t1 NEW TRACK pianos;
+
+t1.pianos <- [x AT 0, x AT 1000 ;
