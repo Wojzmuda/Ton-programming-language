@@ -1,0 +1,51 @@
+$______________________________________________
+$
+$ PROGRAM 6: Space Arpeggio 
+$______________________________________________
+
+
+!make SOUND bassC <- synth C2 2000;
+!make SOUND bassF <- synth F2 2000;
+!make SOUND n1 <- synth C4 250;
+!make SOUND n2 <- synth E4 250;
+!make SOUND n3 <- synth G4 250;
+!make SOUND n4 <- synth B4 250;
+!make SOUND n5 <- synth A4 250;
+!make SOUND n6 <- synth F4 250;
+
+!make TIMELINE song;
+
+song NEW TRACK bass;
+song.bass <- [
+    bassC AT 0,     
+    bassF AT 2000    
+];
+
+
+
+song NEW TRACK arp;
+song.arp <- [
+ 
+    n1 AT 0,
+    n2 AT 250,
+    n3 AT 500,
+    n4 AT 750,
+
+    n1 AT 1000,
+    n2 AT 1250,
+    n3 AT 1500,
+    n4 AT 1750,
+
+
+    n5 AT 2000,
+    n6 AT 2250,
+    n3 AT 2500,
+    n2 AT 2750,
+
+    n5 AT 3000,
+    n6 AT 3250,
+    n3 AT 3500,
+    n2 AT 3750
+];
+
+!save song "space_hit.wav";
