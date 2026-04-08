@@ -1,0 +1,27 @@
+$______________________________________________
+$
+$ PROGRAM 5: Operations on Tracks (Retro Groove)
+$______________________________________________
+
+
+!make SOUND wysoki_dzwiek <- synth C#4 200;
+!make SOUND niski_bas <- synth D2 400;
+
+!make TIMELINE t1;
+
+
+t1 NEW TRACK pianos;
+
+t1.pianos <- [wysoki_dzwiek AS "intro" AT 0, wysoki_dzwiek AT 500, wysoki_dzwiek AT 1000];
+
+SHIFT t1.pianos."intro" BY 250;
+
+t1 NEW TRACK noise;
+t1.noise <- [niski_bas AS "bass1" AT 0, niski_bas AT 500, niski_bas AT 1000];
+
+$ 4. Miksujemy i zapisujemy (Zagra fajny chiptune'owy groove)
+!save t1 "all.wav";
+
+$ 5. Izolujemy i zapisujemy sam, połamany rytm (bez basu)
+ISOLATE t1.pianos;
+!save t1 "isolated-pianos.wav";

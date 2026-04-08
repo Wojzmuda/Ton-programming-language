@@ -1,0 +1,13 @@
+$______________________________________________
+$
+$ PROGRAM 4: Introducing Timelines
+$______________________________________________
+
+
+!make SOUND x <- piano C#4 1000;
+!make TIMELINE t1;
+t1 NEW TRACK pianos;
+
+t1.pianos <- [x AT 0, x AT 1000, x AT 2000];
+
+!save t1 "a.wav";

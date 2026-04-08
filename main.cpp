@@ -35,9 +35,18 @@ int main(int argc, const char* argv[]){
     TonInterpreter interpreter;
     try {
         interpreter.visit(treeAST);
-        std::cout << "\n Provided program executed succesfully" << std::endl;
-    } catch (const std::exception& e) {
-        std::cerr << "\n[RUNTIME ERROR]: " << e.what() << std::endl;
+        std::cout << "\n Provided program executed successfully!" << std::endl;
+    } 
+    catch (const std::bad_any_cast& e) {
+        std::cerr << "\n>>> [RUNTIME ERROR - TYPE MISMATCH]: Incorrect data type! (" << e.what() << ")" << std::endl;
+        return 1;
+    }
+    catch (const std::exception& e) {
+        std::cerr << "\n>>> [RUNTIME ERROR]: " << e.what() << std::endl;
+        return 1;
+    } 
+    catch (...) {
+        std::cerr << "\n>>> [FATAL ERROR]: Critical memory error!" << std::endl;
         return 1;
     }
 
