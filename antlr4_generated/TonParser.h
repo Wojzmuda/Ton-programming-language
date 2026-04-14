@@ -18,13 +18,14 @@ public:
     UNTIL = 16, LOOP = 17, DEFINE = 18, OUT = 19, SHOUT = 20, SAVE = 21, 
     NEW = 22, TRACK = 23, AS = 24, AT = 25, SHIFT = 26, BY = 27, MOVE = 28, 
     ALL = 29, ISOLATE = 30, LENGTH = 31, PLAY = 32, FROM = 33, TO = 34, 
-    TIMES = 35, USE = 36, MIXWITH = 37, TRASH = 38, MUTE = 39, UNMUTE = 40, 
-    DIVIDE = 41, EMPTYSOUND = 42, ASSIGN = 43, ADD_ASSIGN = 44, AND_OP = 45, 
-    OR_OP = 46, NOT_KW = 47, EQ = 48, NEQ = 49, PLUS = 50, MINUS = 51, MULT = 52, 
-    DIV_OP = 53, COLON = 54, DOT = 55, AMPERSAND = 56, L_ANGLE = 57, R_ANGLE = 58, 
-    L_BRACE = 59, R_BRACE = 60, L_BRACKET = 61, R_BRACKET = 62, L_PAREN = 63, 
-    R_PAREN = 64, SEMI = 65, COMMA = 66, NOTE_VAL = 67, INT_VAL = 68, NUM_VAL = 69, 
-    BOOL_VAL = 70, CHAR_VAL = 71, STRING_VAL = 72, ID = 73, WS = 74, COMMENT = 75
+    TIMES = 35, USE = 36, TRASH = 37, MUTE = 38, UNMUTE = 39, DIVIDE = 40, 
+    EMPTYSOUND = 41, ASSIGN = 42, ADD_ASSIGN = 43, SUB_ASSIGN = 44, MULT_ASSIGN = 45, 
+    DIV_ASSIGN = 46, AND_OP = 47, OR_OP = 48, NOT_KW = 49, EQ = 50, NEQ = 51, 
+    PLUS = 52, MINUS = 53, MULT = 54, DIV_OP = 55, COLON = 56, DOT = 57, 
+    AMPERSAND = 58, L_ANGLE = 59, R_ANGLE = 60, L_BRACE = 61, R_BRACE = 62, 
+    L_BRACKET = 63, R_BRACKET = 64, L_PAREN = 65, R_PAREN = 66, SEMI = 67, 
+    COMMA = 68, NOTE_VAL = 69, INT_VAL = 70, NUM_VAL = 71, BOOL_VAL = 72, 
+    CHAR_VAL = 73, STRING_VAL = 74, ID = 75, WS = 76, COMMENT = 77
   };
 
   enum {
@@ -203,6 +204,9 @@ public:
     ExprContext *expr();
     antlr4::tree::TerminalNode *SEMI();
     antlr4::tree::TerminalNode *ADD_ASSIGN();
+    antlr4::tree::TerminalNode *SUB_ASSIGN();
+    antlr4::tree::TerminalNode *MULT_ASSIGN();
+    antlr4::tree::TerminalNode *DIV_ASSIGN();
 
 
     virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
@@ -462,18 +466,6 @@ public:
     NumValExprContext(ExprContext *ctx);
 
     antlr4::tree::TerminalNode *NUM_VAL();
-
-    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-  };
-
-  class  MixWithExprContext : public ExprContext {
-  public:
-    MixWithExprContext(ExprContext *ctx);
-
-    std::vector<ExprContext *> expr();
-    ExprContext* expr(size_t i);
-    antlr4::tree::TerminalNode *MIXWITH();
-    antlr4::tree::TerminalNode *FROM();
 
     virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
   };

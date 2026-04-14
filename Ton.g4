@@ -30,6 +30,9 @@ target : ID (DOT ID (DOT STRING_VAL)?)? ;
 assignment 
     : target ASSIGN expr SEMI 
     | target ADD_ASSIGN expr SEMI 
+    | target SUB_ASSIGN expr SEMI
+    | target MULT_ASSIGN expr SEMI
+    | target DIV_ASSIGN expr SEMI
     ;
 
 shoutStat : SHOUT expr SEMI ;
@@ -79,7 +82,6 @@ expr
     | expr (MULT | DIV_OP | COLON) expr                        # MulDivExpr   
     | expr (PLUS | MINUS ) expr                                # AddSubMixExpr    // + służy teraz do miksowania
     | expr AMPERSAND expr                                      # ConcatExpr       // & służy do konkatenacji
-    | expr MIXWITH expr FROM expr                              # MixWithExpr      // Stary operator (można usunąć, jeśli + w pełni go zastępuje)
     | expr (EQ | NEQ | L_ANGLE | R_ANGLE) expr                 # RelationalExpr 
     | expr AND_OP expr                                         # AndExpr
     | expr OR_OP expr                                          # OrExpr
@@ -136,7 +138,6 @@ FROM           : 'FROM' ;
 TO             : 'TO' ;
 TIMES          : 'TIMES' ;
 USE            : 'USE' ;
-MIXWITH        : 'MIXWITH' ;
 TRASH          : 'TRASH' ;
 MUTE           : 'MUTE' ;
 UNMUTE         : 'UNMUTE' ;
@@ -144,7 +145,10 @@ DIVIDE         : 'DIVIDE' ;
 EMPTYSOUND     : 'EMPTYSOUND' ;
 
 ASSIGN         : '<-' ; 
-ADD_ASSIGN     : '+=' ; 
+ADD_ASSIGN     : '+<-' ;
+SUB_ASSIGN     : '-<-' ;
+MULT_ASSIGN    : '*<-' ;
+DIV_ASSIGN     : '/<-' ; 
 AND_OP         : 'AND' ; 
 OR_OP          : 'OR' ;
 NOT_KW         : 'NOT' ;

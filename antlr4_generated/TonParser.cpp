@@ -62,11 +62,11 @@ void tonParserInitialize() {
       "'!if'", "'if'", "'!otherwise'", "'!until'", "'!loop'", "'!define'", 
       "'!out'", "'!shout'", "'!save'", "'NEW'", "'TRACK'", "'AS'", "'AT'", 
       "'SHIFT'", "'BY'", "'MOVE'", "'ALL'", "'ISOLATE'", "'LENGTH'", "'PLAY'", 
-      "'FROM'", "'TO'", "'TIMES'", "'USE'", "'MIXWITH'", "'TRASH'", "'MUTE'", 
-      "'UNMUTE'", "'DIVIDE'", "'EMPTYSOUND'", "'<-'", "'+='", "'AND'", "'OR'", 
-      "'NOT'", "'=='", "'!='", "'+'", "'-'", "'*'", "'/'", "':'", "'.'", 
-      "'&'", "'<'", "'>'", "'{'", "'}'", "'['", "']'", "'('", "')'", "';'", 
-      "','"
+      "'FROM'", "'TO'", "'TIMES'", "'USE'", "'TRASH'", "'MUTE'", "'UNMUTE'", 
+      "'DIVIDE'", "'EMPTYSOUND'", "'<-'", "'+<-'", "'-<-'", "'*<-'", "'/<-'", 
+      "'AND'", "'OR'", "'NOT'", "'=='", "'!='", "'+'", "'-'", "'*'", "'/'", 
+      "':'", "'.'", "'&'", "'<'", "'>'", "'{'", "'}'", "'['", "']'", "'('", 
+      "')'", "';'", "','"
     },
     std::vector<std::string>{
       "", "TYPE_BOOL", "TYPE_INT", "TYPE_NUM", "TYPE_CHAR", "TYPE_STRING", 
@@ -74,127 +74,131 @@ void tonParserInitialize() {
       "TYPE_TIMELINE", "MAKE", "IF", "IF_PLAIN", "OTHERWISE", "UNTIL", "LOOP", 
       "DEFINE", "OUT", "SHOUT", "SAVE", "NEW", "TRACK", "AS", "AT", "SHIFT", 
       "BY", "MOVE", "ALL", "ISOLATE", "LENGTH", "PLAY", "FROM", "TO", "TIMES", 
-      "USE", "MIXWITH", "TRASH", "MUTE", "UNMUTE", "DIVIDE", "EMPTYSOUND", 
-      "ASSIGN", "ADD_ASSIGN", "AND_OP", "OR_OP", "NOT_KW", "EQ", "NEQ", 
-      "PLUS", "MINUS", "MULT", "DIV_OP", "COLON", "DOT", "AMPERSAND", "L_ANGLE", 
-      "R_ANGLE", "L_BRACE", "R_BRACE", "L_BRACKET", "R_BRACKET", "L_PAREN", 
-      "R_PAREN", "SEMI", "COMMA", "NOTE_VAL", "INT_VAL", "NUM_VAL", "BOOL_VAL", 
-      "CHAR_VAL", "STRING_VAL", "ID", "WS", "COMMENT"
+      "USE", "TRASH", "MUTE", "UNMUTE", "DIVIDE", "EMPTYSOUND", "ASSIGN", 
+      "ADD_ASSIGN", "SUB_ASSIGN", "MULT_ASSIGN", "DIV_ASSIGN", "AND_OP", 
+      "OR_OP", "NOT_KW", "EQ", "NEQ", "PLUS", "MINUS", "MULT", "DIV_OP", 
+      "COLON", "DOT", "AMPERSAND", "L_ANGLE", "R_ANGLE", "L_BRACE", "R_BRACE", 
+      "L_BRACKET", "R_BRACKET", "L_PAREN", "R_PAREN", "SEMI", "COMMA", "NOTE_VAL", 
+      "INT_VAL", "NUM_VAL", "BOOL_VAL", "CHAR_VAL", "STRING_VAL", "ID", 
+      "WS", "COMMENT"
     }
   );
   static const int32_t serializedATNSegment[] = {
-  	4,1,75,331,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,2,5,7,5,2,6,7,6,2,
+  	4,1,77,340,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,2,5,7,5,2,6,7,6,2,
   	7,7,7,2,8,7,8,2,9,7,9,2,10,7,10,2,11,7,11,2,12,7,12,2,13,7,13,2,14,7,
   	14,2,15,7,15,2,16,7,16,2,17,7,17,1,0,5,0,38,8,0,10,0,12,0,41,9,0,1,0,
   	5,0,44,8,0,10,0,12,0,47,9,0,1,0,1,0,1,1,1,1,1,1,1,1,1,2,1,2,5,2,57,8,
   	2,10,2,12,2,60,9,2,1,2,1,2,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,
   	3,3,3,75,8,3,1,4,1,4,1,4,1,4,1,4,3,4,82,8,4,1,4,1,4,1,5,1,5,1,5,1,5,1,
   	5,1,5,1,6,1,6,1,6,1,6,1,6,3,6,97,8,6,3,6,99,8,6,1,7,1,7,1,7,1,7,1,7,1,
-  	7,1,7,1,7,1,7,1,7,3,7,111,8,7,1,8,1,8,1,8,1,8,1,9,1,9,1,9,1,9,1,9,1,9,
-  	1,9,1,9,1,9,1,9,1,9,1,9,5,9,129,8,9,10,9,12,9,132,9,9,1,9,1,9,3,9,136,
-  	8,9,1,10,1,10,1,10,1,10,1,10,1,10,1,10,1,10,1,10,1,10,1,10,1,10,1,10,
+  	7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,
+  	1,7,1,7,3,7,126,8,7,1,8,1,8,1,8,1,8,1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,
+  	9,1,9,1,9,1,9,5,9,144,8,9,10,9,12,9,147,9,9,1,9,1,9,3,9,151,8,9,1,10,
   	1,10,1,10,1,10,1,10,1,10,1,10,1,10,1,10,1,10,1,10,1,10,1,10,1,10,1,10,
-  	3,10,165,8,10,1,11,1,11,1,11,1,11,1,11,1,11,1,12,1,12,1,12,1,12,1,12,
-  	1,12,1,12,1,12,1,12,1,12,5,12,183,8,12,10,12,12,12,186,9,12,3,12,188,
-  	8,12,1,12,1,12,1,12,1,13,1,13,1,13,1,13,1,13,1,13,1,13,1,13,1,13,1,13,
-  	1,13,1,13,1,13,1,13,1,13,1,13,1,13,1,13,1,13,3,13,212,8,13,1,13,1,13,
-  	1,13,1,13,1,13,1,13,1,13,1,13,1,13,3,13,223,8,13,1,14,1,14,1,14,1,14,
-  	1,14,1,15,1,15,1,15,1,15,1,16,1,16,1,17,1,17,1,17,1,17,1,17,5,17,241,
-  	8,17,10,17,12,17,244,9,17,1,17,1,17,1,17,1,17,1,17,1,17,1,17,5,17,253,
-  	8,17,10,17,12,17,256,9,17,3,17,258,8,17,1,17,1,17,1,17,1,17,1,17,1,17,
-  	1,17,1,17,1,17,1,17,1,17,1,17,1,17,1,17,1,17,1,17,1,17,1,17,1,17,1,17,
-  	1,17,3,17,281,8,17,1,17,1,17,1,17,3,17,286,8,17,1,17,1,17,1,17,1,17,1,
+  	1,10,1,10,1,10,1,10,1,10,1,10,1,10,1,10,1,10,1,10,1,10,1,10,3,10,180,
+  	8,10,1,11,1,11,1,11,1,11,1,11,1,11,1,12,1,12,1,12,1,12,1,12,1,12,1,12,
+  	1,12,1,12,1,12,5,12,198,8,12,10,12,12,12,201,9,12,3,12,203,8,12,1,12,
+  	1,12,1,12,1,13,1,13,1,13,1,13,1,13,1,13,1,13,1,13,1,13,1,13,1,13,1,13,
+  	1,13,1,13,1,13,1,13,1,13,1,13,1,13,3,13,227,8,13,1,13,1,13,1,13,1,13,
+  	1,13,1,13,1,13,1,13,1,13,3,13,238,8,13,1,14,1,14,1,14,1,14,1,14,1,15,
+  	1,15,1,15,1,15,1,16,1,16,1,17,1,17,1,17,1,17,1,17,5,17,256,8,17,10,17,
+  	12,17,259,9,17,1,17,1,17,1,17,1,17,1,17,1,17,1,17,5,17,268,8,17,10,17,
+  	12,17,271,9,17,3,17,273,8,17,1,17,1,17,1,17,1,17,1,17,1,17,1,17,1,17,
+  	1,17,1,17,1,17,1,17,1,17,1,17,1,17,1,17,1,17,1,17,1,17,1,17,1,17,3,17,
+  	296,8,17,1,17,1,17,1,17,3,17,301,8,17,1,17,1,17,1,17,1,17,1,17,1,17,1,
   	17,1,17,1,17,1,17,1,17,1,17,1,17,1,17,1,17,1,17,1,17,1,17,1,17,1,17,1,
-  	17,1,17,1,17,1,17,1,17,1,17,1,17,1,17,1,17,1,17,1,17,1,17,1,17,1,17,1,
-  	17,1,17,1,17,1,17,1,17,1,17,5,17,326,8,17,10,17,12,17,329,9,17,1,17,0,
-  	1,34,18,0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34,0,4,1,0,1,11,
-  	1,0,52,54,1,0,50,51,2,0,48,49,57,58,368,0,39,1,0,0,0,2,50,1,0,0,0,4,54,
-  	1,0,0,0,6,74,1,0,0,0,8,76,1,0,0,0,10,85,1,0,0,0,12,91,1,0,0,0,14,110,
-  	1,0,0,0,16,112,1,0,0,0,18,116,1,0,0,0,20,164,1,0,0,0,22,166,1,0,0,0,24,
-  	172,1,0,0,0,26,222,1,0,0,0,28,224,1,0,0,0,30,229,1,0,0,0,32,233,1,0,0,
-  	0,34,280,1,0,0,0,36,38,3,2,1,0,37,36,1,0,0,0,38,41,1,0,0,0,39,37,1,0,
-  	0,0,39,40,1,0,0,0,40,45,1,0,0,0,41,39,1,0,0,0,42,44,3,6,3,0,43,42,1,0,
-  	0,0,44,47,1,0,0,0,45,43,1,0,0,0,45,46,1,0,0,0,46,48,1,0,0,0,47,45,1,0,
-  	0,0,48,49,5,0,0,1,49,1,1,0,0,0,50,51,5,36,0,0,51,52,5,73,0,0,52,53,5,
-  	65,0,0,53,3,1,0,0,0,54,58,5,59,0,0,55,57,3,6,3,0,56,55,1,0,0,0,57,60,
-  	1,0,0,0,58,56,1,0,0,0,58,59,1,0,0,0,59,61,1,0,0,0,60,58,1,0,0,0,61,62,
-  	5,60,0,0,62,5,1,0,0,0,63,75,3,8,4,0,64,75,3,10,5,0,65,75,3,14,7,0,66,
-  	75,3,18,9,0,67,75,3,20,10,0,68,75,3,22,11,0,69,75,3,16,8,0,70,75,3,24,
-  	12,0,71,75,3,26,13,0,72,75,3,28,14,0,73,75,3,30,15,0,74,63,1,0,0,0,74,
-  	64,1,0,0,0,74,65,1,0,0,0,74,66,1,0,0,0,74,67,1,0,0,0,74,68,1,0,0,0,74,
-  	69,1,0,0,0,74,70,1,0,0,0,74,71,1,0,0,0,74,72,1,0,0,0,74,73,1,0,0,0,75,
-  	7,1,0,0,0,76,77,5,12,0,0,77,78,3,32,16,0,78,81,5,73,0,0,79,80,5,43,0,
-  	0,80,82,3,34,17,0,81,79,1,0,0,0,81,82,1,0,0,0,82,83,1,0,0,0,83,84,5,65,
-  	0,0,84,9,1,0,0,0,85,86,5,73,0,0,86,87,5,22,0,0,87,88,5,23,0,0,88,89,5,
-  	73,0,0,89,90,5,65,0,0,90,11,1,0,0,0,91,98,5,73,0,0,92,93,5,55,0,0,93,
-  	96,5,73,0,0,94,95,5,55,0,0,95,97,5,72,0,0,96,94,1,0,0,0,96,97,1,0,0,0,
-  	97,99,1,0,0,0,98,92,1,0,0,0,98,99,1,0,0,0,99,13,1,0,0,0,100,101,3,12,
-  	6,0,101,102,5,43,0,0,102,103,3,34,17,0,103,104,5,65,0,0,104,111,1,0,0,
-  	0,105,106,3,12,6,0,106,107,5,44,0,0,107,108,3,34,17,0,108,109,5,65,0,
-  	0,109,111,1,0,0,0,110,100,1,0,0,0,110,105,1,0,0,0,111,15,1,0,0,0,112,
-  	113,5,20,0,0,113,114,3,34,17,0,114,115,5,65,0,0,115,17,1,0,0,0,116,117,
-  	5,13,0,0,117,118,5,57,0,0,118,119,3,34,17,0,119,120,5,58,0,0,120,130,
-  	3,4,2,0,121,122,5,15,0,0,122,123,5,14,0,0,123,124,5,57,0,0,124,125,3,
-  	34,17,0,125,126,5,58,0,0,126,127,3,4,2,0,127,129,1,0,0,0,128,121,1,0,
-  	0,0,129,132,1,0,0,0,130,128,1,0,0,0,130,131,1,0,0,0,131,135,1,0,0,0,132,
-  	130,1,0,0,0,133,134,5,15,0,0,134,136,3,4,2,0,135,133,1,0,0,0,135,136,
-  	1,0,0,0,136,19,1,0,0,0,137,138,5,17,0,0,138,139,5,57,0,0,139,140,3,34,
-  	17,0,140,141,5,35,0,0,141,142,5,58,0,0,142,143,3,4,2,0,143,165,1,0,0,
-  	0,144,145,5,17,0,0,145,146,5,57,0,0,146,147,3,32,16,0,147,148,5,73,0,
-  	0,148,149,5,33,0,0,149,150,3,34,17,0,150,151,5,34,0,0,151,152,3,34,17,
-  	0,152,153,5,58,0,0,153,154,3,4,2,0,154,165,1,0,0,0,155,156,5,17,0,0,156,
-  	157,5,57,0,0,157,158,3,32,16,0,158,159,5,73,0,0,159,160,5,43,0,0,160,
-  	161,3,34,17,0,161,162,5,58,0,0,162,163,3,4,2,0,163,165,1,0,0,0,164,137,
-  	1,0,0,0,164,144,1,0,0,0,164,155,1,0,0,0,165,21,1,0,0,0,166,167,5,16,0,
-  	0,167,168,5,57,0,0,168,169,3,34,17,0,169,170,5,58,0,0,170,171,3,4,2,0,
-  	171,23,1,0,0,0,172,173,5,18,0,0,173,174,3,32,16,0,174,175,5,73,0,0,175,
-  	187,5,57,0,0,176,177,3,32,16,0,177,184,5,73,0,0,178,179,5,66,0,0,179,
-  	180,3,32,16,0,180,181,5,73,0,0,181,183,1,0,0,0,182,178,1,0,0,0,183,186,
-  	1,0,0,0,184,182,1,0,0,0,184,185,1,0,0,0,185,188,1,0,0,0,186,184,1,0,0,
-  	0,187,176,1,0,0,0,187,188,1,0,0,0,188,189,1,0,0,0,189,190,5,58,0,0,190,
-  	191,3,4,2,0,191,25,1,0,0,0,192,193,5,26,0,0,193,194,3,12,6,0,194,195,
-  	5,27,0,0,195,196,3,34,17,0,196,197,5,65,0,0,197,223,1,0,0,0,198,199,5,
-  	28,0,0,199,200,3,12,6,0,200,201,5,34,0,0,201,202,3,34,17,0,202,203,5,
-  	65,0,0,203,223,1,0,0,0,204,205,5,39,0,0,205,206,3,12,6,0,206,207,5,65,
-  	0,0,207,223,1,0,0,0,208,211,5,40,0,0,209,212,3,12,6,0,210,212,5,29,0,
-  	0,211,209,1,0,0,0,211,210,1,0,0,0,212,213,1,0,0,0,213,223,5,65,0,0,214,
-  	215,5,30,0,0,215,216,3,12,6,0,216,217,5,65,0,0,217,223,1,0,0,0,218,219,
-  	5,38,0,0,219,220,3,12,6,0,220,221,5,65,0,0,221,223,1,0,0,0,222,192,1,
-  	0,0,0,222,198,1,0,0,0,222,204,1,0,0,0,222,208,1,0,0,0,222,214,1,0,0,0,
-  	222,218,1,0,0,0,223,27,1,0,0,0,224,225,5,21,0,0,225,226,3,34,17,0,226,
-  	227,5,72,0,0,227,228,5,65,0,0,228,29,1,0,0,0,229,230,5,32,0,0,230,231,
-  	3,12,6,0,231,232,5,65,0,0,232,31,1,0,0,0,233,234,7,0,0,0,234,33,1,0,0,
-  	0,235,236,6,17,-1,0,236,237,5,61,0,0,237,242,3,34,17,0,238,239,5,66,0,
-  	0,239,241,3,34,17,0,240,238,1,0,0,0,241,244,1,0,0,0,242,240,1,0,0,0,242,
-  	243,1,0,0,0,243,245,1,0,0,0,244,242,1,0,0,0,245,246,5,62,0,0,246,281,
-  	1,0,0,0,247,248,5,73,0,0,248,257,5,63,0,0,249,254,3,34,17,0,250,251,5,
-  	66,0,0,251,253,3,34,17,0,252,250,1,0,0,0,253,256,1,0,0,0,254,252,1,0,
-  	0,0,254,255,1,0,0,0,255,258,1,0,0,0,256,254,1,0,0,0,257,249,1,0,0,0,257,
-  	258,1,0,0,0,258,259,1,0,0,0,259,281,5,64,0,0,260,261,5,73,0,0,261,262,
-  	3,34,17,0,262,263,3,34,17,22,263,281,1,0,0,0,264,265,5,63,0,0,265,266,
-  	3,34,17,0,266,267,5,64,0,0,267,281,1,0,0,0,268,269,5,47,0,0,269,281,3,
-  	34,17,17,270,281,5,67,0,0,271,281,5,68,0,0,272,281,5,69,0,0,273,281,5,
-  	70,0,0,274,281,5,71,0,0,275,281,5,72,0,0,276,281,3,12,6,0,277,278,5,31,
-  	0,0,278,281,3,12,6,0,279,281,5,42,0,0,280,235,1,0,0,0,280,247,1,0,0,0,
-  	280,260,1,0,0,0,280,264,1,0,0,0,280,268,1,0,0,0,280,270,1,0,0,0,280,271,
-  	1,0,0,0,280,272,1,0,0,0,280,273,1,0,0,0,280,274,1,0,0,0,280,275,1,0,0,
-  	0,280,276,1,0,0,0,280,277,1,0,0,0,280,279,1,0,0,0,281,327,1,0,0,0,282,
-  	285,10,21,0,0,283,284,5,24,0,0,284,286,5,72,0,0,285,283,1,0,0,0,285,286,
-  	1,0,0,0,286,287,1,0,0,0,287,288,5,25,0,0,288,326,3,34,17,22,289,290,10,
-  	16,0,0,290,291,7,1,0,0,291,326,3,34,17,17,292,293,10,15,0,0,293,294,7,
-  	2,0,0,294,326,3,34,17,16,295,296,10,14,0,0,296,297,5,56,0,0,297,326,3,
-  	34,17,15,298,299,10,13,0,0,299,300,5,37,0,0,300,301,3,34,17,0,301,302,
-  	5,33,0,0,302,303,3,34,17,14,303,326,1,0,0,0,304,305,10,12,0,0,305,306,
-  	7,3,0,0,306,326,3,34,17,13,307,308,10,11,0,0,308,309,5,45,0,0,309,326,
-  	3,34,17,12,310,311,10,10,0,0,311,312,5,46,0,0,312,326,3,34,17,11,313,
-  	314,10,20,0,0,314,315,5,61,0,0,315,316,3,34,17,0,316,317,5,62,0,0,317,
-  	326,1,0,0,0,318,319,10,19,0,0,319,320,5,61,0,0,320,321,3,34,17,0,321,
-  	322,5,54,0,0,322,323,3,34,17,0,323,324,5,62,0,0,324,326,1,0,0,0,325,282,
-  	1,0,0,0,325,289,1,0,0,0,325,292,1,0,0,0,325,295,1,0,0,0,325,298,1,0,0,
-  	0,325,304,1,0,0,0,325,307,1,0,0,0,325,310,1,0,0,0,325,313,1,0,0,0,325,
-  	318,1,0,0,0,326,329,1,0,0,0,327,325,1,0,0,0,327,328,1,0,0,0,328,35,1,
-  	0,0,0,329,327,1,0,0,0,22,39,45,58,74,81,96,98,110,130,135,164,184,187,
-  	211,222,242,254,257,280,285,325,327
+  	17,1,17,1,17,1,17,1,17,1,17,1,17,1,17,1,17,1,17,1,17,1,17,5,17,335,8,
+  	17,10,17,12,17,338,9,17,1,17,0,1,34,18,0,2,4,6,8,10,12,14,16,18,20,22,
+  	24,26,28,30,32,34,0,4,1,0,1,11,1,0,54,56,1,0,52,53,2,0,50,51,59,60,379,
+  	0,39,1,0,0,0,2,50,1,0,0,0,4,54,1,0,0,0,6,74,1,0,0,0,8,76,1,0,0,0,10,85,
+  	1,0,0,0,12,91,1,0,0,0,14,125,1,0,0,0,16,127,1,0,0,0,18,131,1,0,0,0,20,
+  	179,1,0,0,0,22,181,1,0,0,0,24,187,1,0,0,0,26,237,1,0,0,0,28,239,1,0,0,
+  	0,30,244,1,0,0,0,32,248,1,0,0,0,34,295,1,0,0,0,36,38,3,2,1,0,37,36,1,
+  	0,0,0,38,41,1,0,0,0,39,37,1,0,0,0,39,40,1,0,0,0,40,45,1,0,0,0,41,39,1,
+  	0,0,0,42,44,3,6,3,0,43,42,1,0,0,0,44,47,1,0,0,0,45,43,1,0,0,0,45,46,1,
+  	0,0,0,46,48,1,0,0,0,47,45,1,0,0,0,48,49,5,0,0,1,49,1,1,0,0,0,50,51,5,
+  	36,0,0,51,52,5,75,0,0,52,53,5,67,0,0,53,3,1,0,0,0,54,58,5,61,0,0,55,57,
+  	3,6,3,0,56,55,1,0,0,0,57,60,1,0,0,0,58,56,1,0,0,0,58,59,1,0,0,0,59,61,
+  	1,0,0,0,60,58,1,0,0,0,61,62,5,62,0,0,62,5,1,0,0,0,63,75,3,8,4,0,64,75,
+  	3,10,5,0,65,75,3,14,7,0,66,75,3,18,9,0,67,75,3,20,10,0,68,75,3,22,11,
+  	0,69,75,3,16,8,0,70,75,3,24,12,0,71,75,3,26,13,0,72,75,3,28,14,0,73,75,
+  	3,30,15,0,74,63,1,0,0,0,74,64,1,0,0,0,74,65,1,0,0,0,74,66,1,0,0,0,74,
+  	67,1,0,0,0,74,68,1,0,0,0,74,69,1,0,0,0,74,70,1,0,0,0,74,71,1,0,0,0,74,
+  	72,1,0,0,0,74,73,1,0,0,0,75,7,1,0,0,0,76,77,5,12,0,0,77,78,3,32,16,0,
+  	78,81,5,75,0,0,79,80,5,42,0,0,80,82,3,34,17,0,81,79,1,0,0,0,81,82,1,0,
+  	0,0,82,83,1,0,0,0,83,84,5,67,0,0,84,9,1,0,0,0,85,86,5,75,0,0,86,87,5,
+  	22,0,0,87,88,5,23,0,0,88,89,5,75,0,0,89,90,5,67,0,0,90,11,1,0,0,0,91,
+  	98,5,75,0,0,92,93,5,57,0,0,93,96,5,75,0,0,94,95,5,57,0,0,95,97,5,74,0,
+  	0,96,94,1,0,0,0,96,97,1,0,0,0,97,99,1,0,0,0,98,92,1,0,0,0,98,99,1,0,0,
+  	0,99,13,1,0,0,0,100,101,3,12,6,0,101,102,5,42,0,0,102,103,3,34,17,0,103,
+  	104,5,67,0,0,104,126,1,0,0,0,105,106,3,12,6,0,106,107,5,43,0,0,107,108,
+  	3,34,17,0,108,109,5,67,0,0,109,126,1,0,0,0,110,111,3,12,6,0,111,112,5,
+  	44,0,0,112,113,3,34,17,0,113,114,5,67,0,0,114,126,1,0,0,0,115,116,3,12,
+  	6,0,116,117,5,45,0,0,117,118,3,34,17,0,118,119,5,67,0,0,119,126,1,0,0,
+  	0,120,121,3,12,6,0,121,122,5,46,0,0,122,123,3,34,17,0,123,124,5,67,0,
+  	0,124,126,1,0,0,0,125,100,1,0,0,0,125,105,1,0,0,0,125,110,1,0,0,0,125,
+  	115,1,0,0,0,125,120,1,0,0,0,126,15,1,0,0,0,127,128,5,20,0,0,128,129,3,
+  	34,17,0,129,130,5,67,0,0,130,17,1,0,0,0,131,132,5,13,0,0,132,133,5,59,
+  	0,0,133,134,3,34,17,0,134,135,5,60,0,0,135,145,3,4,2,0,136,137,5,15,0,
+  	0,137,138,5,14,0,0,138,139,5,59,0,0,139,140,3,34,17,0,140,141,5,60,0,
+  	0,141,142,3,4,2,0,142,144,1,0,0,0,143,136,1,0,0,0,144,147,1,0,0,0,145,
+  	143,1,0,0,0,145,146,1,0,0,0,146,150,1,0,0,0,147,145,1,0,0,0,148,149,5,
+  	15,0,0,149,151,3,4,2,0,150,148,1,0,0,0,150,151,1,0,0,0,151,19,1,0,0,0,
+  	152,153,5,17,0,0,153,154,5,59,0,0,154,155,3,34,17,0,155,156,5,35,0,0,
+  	156,157,5,60,0,0,157,158,3,4,2,0,158,180,1,0,0,0,159,160,5,17,0,0,160,
+  	161,5,59,0,0,161,162,3,32,16,0,162,163,5,75,0,0,163,164,5,33,0,0,164,
+  	165,3,34,17,0,165,166,5,34,0,0,166,167,3,34,17,0,167,168,5,60,0,0,168,
+  	169,3,4,2,0,169,180,1,0,0,0,170,171,5,17,0,0,171,172,5,59,0,0,172,173,
+  	3,32,16,0,173,174,5,75,0,0,174,175,5,42,0,0,175,176,3,34,17,0,176,177,
+  	5,60,0,0,177,178,3,4,2,0,178,180,1,0,0,0,179,152,1,0,0,0,179,159,1,0,
+  	0,0,179,170,1,0,0,0,180,21,1,0,0,0,181,182,5,16,0,0,182,183,5,59,0,0,
+  	183,184,3,34,17,0,184,185,5,60,0,0,185,186,3,4,2,0,186,23,1,0,0,0,187,
+  	188,5,18,0,0,188,189,3,32,16,0,189,190,5,75,0,0,190,202,5,59,0,0,191,
+  	192,3,32,16,0,192,199,5,75,0,0,193,194,5,68,0,0,194,195,3,32,16,0,195,
+  	196,5,75,0,0,196,198,1,0,0,0,197,193,1,0,0,0,198,201,1,0,0,0,199,197,
+  	1,0,0,0,199,200,1,0,0,0,200,203,1,0,0,0,201,199,1,0,0,0,202,191,1,0,0,
+  	0,202,203,1,0,0,0,203,204,1,0,0,0,204,205,5,60,0,0,205,206,3,4,2,0,206,
+  	25,1,0,0,0,207,208,5,26,0,0,208,209,3,12,6,0,209,210,5,27,0,0,210,211,
+  	3,34,17,0,211,212,5,67,0,0,212,238,1,0,0,0,213,214,5,28,0,0,214,215,3,
+  	12,6,0,215,216,5,34,0,0,216,217,3,34,17,0,217,218,5,67,0,0,218,238,1,
+  	0,0,0,219,220,5,38,0,0,220,221,3,12,6,0,221,222,5,67,0,0,222,238,1,0,
+  	0,0,223,226,5,39,0,0,224,227,3,12,6,0,225,227,5,29,0,0,226,224,1,0,0,
+  	0,226,225,1,0,0,0,227,228,1,0,0,0,228,238,5,67,0,0,229,230,5,30,0,0,230,
+  	231,3,12,6,0,231,232,5,67,0,0,232,238,1,0,0,0,233,234,5,37,0,0,234,235,
+  	3,12,6,0,235,236,5,67,0,0,236,238,1,0,0,0,237,207,1,0,0,0,237,213,1,0,
+  	0,0,237,219,1,0,0,0,237,223,1,0,0,0,237,229,1,0,0,0,237,233,1,0,0,0,238,
+  	27,1,0,0,0,239,240,5,21,0,0,240,241,3,34,17,0,241,242,5,74,0,0,242,243,
+  	5,67,0,0,243,29,1,0,0,0,244,245,5,32,0,0,245,246,3,12,6,0,246,247,5,67,
+  	0,0,247,31,1,0,0,0,248,249,7,0,0,0,249,33,1,0,0,0,250,251,6,17,-1,0,251,
+  	252,5,63,0,0,252,257,3,34,17,0,253,254,5,68,0,0,254,256,3,34,17,0,255,
+  	253,1,0,0,0,256,259,1,0,0,0,257,255,1,0,0,0,257,258,1,0,0,0,258,260,1,
+  	0,0,0,259,257,1,0,0,0,260,261,5,64,0,0,261,296,1,0,0,0,262,263,5,75,0,
+  	0,263,272,5,65,0,0,264,269,3,34,17,0,265,266,5,68,0,0,266,268,3,34,17,
+  	0,267,265,1,0,0,0,268,271,1,0,0,0,269,267,1,0,0,0,269,270,1,0,0,0,270,
+  	273,1,0,0,0,271,269,1,0,0,0,272,264,1,0,0,0,272,273,1,0,0,0,273,274,1,
+  	0,0,0,274,296,5,66,0,0,275,276,5,75,0,0,276,277,3,34,17,0,277,278,3,34,
+  	17,21,278,296,1,0,0,0,279,280,5,65,0,0,280,281,3,34,17,0,281,282,5,66,
+  	0,0,282,296,1,0,0,0,283,284,5,49,0,0,284,296,3,34,17,16,285,296,5,69,
+  	0,0,286,296,5,70,0,0,287,296,5,71,0,0,288,296,5,72,0,0,289,296,5,73,0,
+  	0,290,296,5,74,0,0,291,296,3,12,6,0,292,293,5,31,0,0,293,296,3,12,6,0,
+  	294,296,5,41,0,0,295,250,1,0,0,0,295,262,1,0,0,0,295,275,1,0,0,0,295,
+  	279,1,0,0,0,295,283,1,0,0,0,295,285,1,0,0,0,295,286,1,0,0,0,295,287,1,
+  	0,0,0,295,288,1,0,0,0,295,289,1,0,0,0,295,290,1,0,0,0,295,291,1,0,0,0,
+  	295,292,1,0,0,0,295,294,1,0,0,0,296,336,1,0,0,0,297,300,10,20,0,0,298,
+  	299,5,24,0,0,299,301,5,74,0,0,300,298,1,0,0,0,300,301,1,0,0,0,301,302,
+  	1,0,0,0,302,303,5,25,0,0,303,335,3,34,17,21,304,305,10,15,0,0,305,306,
+  	7,1,0,0,306,335,3,34,17,16,307,308,10,14,0,0,308,309,7,2,0,0,309,335,
+  	3,34,17,15,310,311,10,13,0,0,311,312,5,58,0,0,312,335,3,34,17,14,313,
+  	314,10,12,0,0,314,315,7,3,0,0,315,335,3,34,17,13,316,317,10,11,0,0,317,
+  	318,5,47,0,0,318,335,3,34,17,12,319,320,10,10,0,0,320,321,5,48,0,0,321,
+  	335,3,34,17,11,322,323,10,19,0,0,323,324,5,63,0,0,324,325,3,34,17,0,325,
+  	326,5,64,0,0,326,335,1,0,0,0,327,328,10,18,0,0,328,329,5,63,0,0,329,330,
+  	3,34,17,0,330,331,5,56,0,0,331,332,3,34,17,0,332,333,5,64,0,0,333,335,
+  	1,0,0,0,334,297,1,0,0,0,334,304,1,0,0,0,334,307,1,0,0,0,334,310,1,0,0,
+  	0,334,313,1,0,0,0,334,316,1,0,0,0,334,319,1,0,0,0,334,322,1,0,0,0,334,
+  	327,1,0,0,0,335,338,1,0,0,0,336,334,1,0,0,0,336,337,1,0,0,0,337,35,1,
+  	0,0,0,338,336,1,0,0,0,22,39,45,58,74,81,96,98,125,145,150,179,199,202,
+  	226,237,257,269,272,295,300,334,336
   };
   staticData->serializedATN = antlr4::atn::SerializedATNView(serializedATNSegment, sizeof(serializedATNSegment) / sizeof(serializedATNSegment[0]));
 
@@ -310,7 +314,7 @@ TonParser::ProgramContext* TonParser::program() {
     _errHandler->sync(this);
     _la = _input->LA(1);
     while (((((_la - 12) & ~ 0x3fULL) == 0) &&
-      ((1ULL << (_la - 12)) & 2305843009684849523) != 0)) {
+      ((1ULL << (_la - 12)) & -9223372036618501261) != 0)) {
       setState(42);
       statement();
       setState(47);
@@ -446,7 +450,7 @@ TonParser::BlockContext* TonParser::block() {
     _errHandler->sync(this);
     _la = _input->LA(1);
     while (((((_la - 12) & ~ 0x3fULL) == 0) &&
-      ((1ULL << (_la - 12)) & 2305843009684849523) != 0)) {
+      ((1ULL << (_la - 12)) & -9223372036618501261) != 0)) {
       setState(55);
       statement();
       setState(60);
@@ -915,6 +919,18 @@ tree::TerminalNode* TonParser::AssignmentContext::ADD_ASSIGN() {
   return getToken(TonParser::ADD_ASSIGN, 0);
 }
 
+tree::TerminalNode* TonParser::AssignmentContext::SUB_ASSIGN() {
+  return getToken(TonParser::SUB_ASSIGN, 0);
+}
+
+tree::TerminalNode* TonParser::AssignmentContext::MULT_ASSIGN() {
+  return getToken(TonParser::MULT_ASSIGN, 0);
+}
+
+tree::TerminalNode* TonParser::AssignmentContext::DIV_ASSIGN() {
+  return getToken(TonParser::DIV_ASSIGN, 0);
+}
+
 
 size_t TonParser::AssignmentContext::getRuleIndex() const {
   return TonParser::RuleAssignment;
@@ -940,7 +956,7 @@ TonParser::AssignmentContext* TonParser::assignment() {
     exitRule();
   });
   try {
-    setState(110);
+    setState(125);
     _errHandler->sync(this);
     switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 7, _ctx)) {
     case 1: {
@@ -965,6 +981,45 @@ TonParser::AssignmentContext* TonParser::assignment() {
       setState(107);
       expr(0);
       setState(108);
+      match(TonParser::SEMI);
+      break;
+    }
+
+    case 3: {
+      enterOuterAlt(_localctx, 3);
+      setState(110);
+      target();
+      setState(111);
+      match(TonParser::SUB_ASSIGN);
+      setState(112);
+      expr(0);
+      setState(113);
+      match(TonParser::SEMI);
+      break;
+    }
+
+    case 4: {
+      enterOuterAlt(_localctx, 4);
+      setState(115);
+      target();
+      setState(116);
+      match(TonParser::MULT_ASSIGN);
+      setState(117);
+      expr(0);
+      setState(118);
+      match(TonParser::SEMI);
+      break;
+    }
+
+    case 5: {
+      enterOuterAlt(_localctx, 5);
+      setState(120);
+      target();
+      setState(121);
+      match(TonParser::DIV_ASSIGN);
+      setState(122);
+      expr(0);
+      setState(123);
       match(TonParser::SEMI);
       break;
     }
@@ -1027,11 +1082,11 @@ TonParser::ShoutStatContext* TonParser::shoutStat() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(112);
+    setState(127);
     match(TonParser::SHOUT);
-    setState(113);
+    setState(128);
     expr(0);
-    setState(114);
+    setState(129);
     match(TonParser::SEMI);
    
   }
@@ -1130,46 +1185,46 @@ TonParser::IfStatContext* TonParser::ifStat() {
   try {
     size_t alt;
     enterOuterAlt(_localctx, 1);
-    setState(116);
+    setState(131);
     match(TonParser::IF);
-    setState(117);
+    setState(132);
     match(TonParser::L_ANGLE);
-    setState(118);
+    setState(133);
     expr(0);
-    setState(119);
+    setState(134);
     match(TonParser::R_ANGLE);
-    setState(120);
+    setState(135);
     block();
-    setState(130);
+    setState(145);
     _errHandler->sync(this);
     alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 8, _ctx);
     while (alt != 2 && alt != atn::ATN::INVALID_ALT_NUMBER) {
       if (alt == 1) {
-        setState(121);
+        setState(136);
         match(TonParser::OTHERWISE);
-        setState(122);
+        setState(137);
         match(TonParser::IF_PLAIN);
-        setState(123);
+        setState(138);
         match(TonParser::L_ANGLE);
-        setState(124);
+        setState(139);
         expr(0);
-        setState(125);
+        setState(140);
         match(TonParser::R_ANGLE);
-        setState(126);
+        setState(141);
         block(); 
       }
-      setState(132);
+      setState(147);
       _errHandler->sync(this);
       alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 8, _ctx);
     }
-    setState(135);
+    setState(150);
     _errHandler->sync(this);
 
     _la = _input->LA(1);
     if (_la == TonParser::OTHERWISE) {
-      setState(133);
+      setState(148);
       match(TonParser::OTHERWISE);
-      setState(134);
+      setState(149);
       block();
     }
    
@@ -1262,68 +1317,68 @@ TonParser::LoopStatContext* TonParser::loopStat() {
     exitRule();
   });
   try {
-    setState(164);
+    setState(179);
     _errHandler->sync(this);
     switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 10, _ctx)) {
     case 1: {
       enterOuterAlt(_localctx, 1);
-      setState(137);
+      setState(152);
       match(TonParser::LOOP);
-      setState(138);
+      setState(153);
       match(TonParser::L_ANGLE);
-      setState(139);
+      setState(154);
       expr(0);
-      setState(140);
+      setState(155);
       match(TonParser::TIMES);
-      setState(141);
+      setState(156);
       match(TonParser::R_ANGLE);
-      setState(142);
+      setState(157);
       block();
       break;
     }
 
     case 2: {
       enterOuterAlt(_localctx, 2);
-      setState(144);
+      setState(159);
       match(TonParser::LOOP);
-      setState(145);
+      setState(160);
       match(TonParser::L_ANGLE);
-      setState(146);
+      setState(161);
       type();
-      setState(147);
+      setState(162);
       match(TonParser::ID);
-      setState(148);
+      setState(163);
       match(TonParser::FROM);
-      setState(149);
+      setState(164);
       expr(0);
-      setState(150);
+      setState(165);
       match(TonParser::TO);
-      setState(151);
+      setState(166);
       expr(0);
-      setState(152);
+      setState(167);
       match(TonParser::R_ANGLE);
-      setState(153);
+      setState(168);
       block();
       break;
     }
 
     case 3: {
       enterOuterAlt(_localctx, 3);
-      setState(155);
+      setState(170);
       match(TonParser::LOOP);
-      setState(156);
+      setState(171);
       match(TonParser::L_ANGLE);
-      setState(157);
+      setState(172);
       type();
-      setState(158);
+      setState(173);
       match(TonParser::ID);
-      setState(159);
+      setState(174);
       match(TonParser::ASSIGN);
-      setState(160);
+      setState(175);
       expr(0);
-      setState(161);
+      setState(176);
       match(TonParser::R_ANGLE);
-      setState(162);
+      setState(177);
       block();
       break;
     }
@@ -1394,15 +1449,15 @@ TonParser::UntilStatContext* TonParser::untilStat() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(166);
+    setState(181);
     match(TonParser::UNTIL);
-    setState(167);
+    setState(182);
     match(TonParser::L_ANGLE);
-    setState(168);
+    setState(183);
     expr(0);
-    setState(169);
+    setState(184);
     match(TonParser::R_ANGLE);
-    setState(170);
+    setState(185);
     block();
    
   }
@@ -1488,42 +1543,42 @@ TonParser::FuncDefContext* TonParser::funcDef() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(172);
-    match(TonParser::DEFINE);
-    setState(173);
-    type();
-    setState(174);
-    match(TonParser::ID);
-    setState(175);
-    match(TonParser::L_ANGLE);
     setState(187);
+    match(TonParser::DEFINE);
+    setState(188);
+    type();
+    setState(189);
+    match(TonParser::ID);
+    setState(190);
+    match(TonParser::L_ANGLE);
+    setState(202);
     _errHandler->sync(this);
 
     _la = _input->LA(1);
     if ((((_la & ~ 0x3fULL) == 0) &&
       ((1ULL << _la) & 4094) != 0)) {
-      setState(176);
+      setState(191);
       type();
-      setState(177);
+      setState(192);
       match(TonParser::ID);
-      setState(184);
+      setState(199);
       _errHandler->sync(this);
       _la = _input->LA(1);
       while (_la == TonParser::COMMA) {
-        setState(178);
+        setState(193);
         match(TonParser::COMMA);
-        setState(179);
+        setState(194);
         type();
-        setState(180);
+        setState(195);
         match(TonParser::ID);
-        setState(186);
+        setState(201);
         _errHandler->sync(this);
         _la = _input->LA(1);
       }
     }
-    setState(189);
+    setState(204);
     match(TonParser::R_ANGLE);
-    setState(190);
+    setState(205);
     block();
    
   }
@@ -1615,65 +1670,65 @@ TonParser::AudioOpStatContext* TonParser::audioOpStat() {
     exitRule();
   });
   try {
-    setState(222);
+    setState(237);
     _errHandler->sync(this);
     switch (_input->LA(1)) {
       case TonParser::SHIFT: {
         enterOuterAlt(_localctx, 1);
-        setState(192);
+        setState(207);
         match(TonParser::SHIFT);
-        setState(193);
+        setState(208);
         target();
-        setState(194);
+        setState(209);
         match(TonParser::BY);
-        setState(195);
+        setState(210);
         expr(0);
-        setState(196);
+        setState(211);
         match(TonParser::SEMI);
         break;
       }
 
       case TonParser::MOVE: {
         enterOuterAlt(_localctx, 2);
-        setState(198);
+        setState(213);
         match(TonParser::MOVE);
-        setState(199);
+        setState(214);
         target();
-        setState(200);
+        setState(215);
         match(TonParser::TO);
-        setState(201);
+        setState(216);
         expr(0);
-        setState(202);
+        setState(217);
         match(TonParser::SEMI);
         break;
       }
 
       case TonParser::MUTE: {
         enterOuterAlt(_localctx, 3);
-        setState(204);
+        setState(219);
         match(TonParser::MUTE);
-        setState(205);
+        setState(220);
         target();
-        setState(206);
+        setState(221);
         match(TonParser::SEMI);
         break;
       }
 
       case TonParser::UNMUTE: {
         enterOuterAlt(_localctx, 4);
-        setState(208);
+        setState(223);
         match(TonParser::UNMUTE);
-        setState(211);
+        setState(226);
         _errHandler->sync(this);
         switch (_input->LA(1)) {
           case TonParser::ID: {
-            setState(209);
+            setState(224);
             target();
             break;
           }
 
           case TonParser::ALL: {
-            setState(210);
+            setState(225);
             match(TonParser::ALL);
             break;
           }
@@ -1681,29 +1736,29 @@ TonParser::AudioOpStatContext* TonParser::audioOpStat() {
         default:
           throw NoViableAltException(this);
         }
-        setState(213);
+        setState(228);
         match(TonParser::SEMI);
         break;
       }
 
       case TonParser::ISOLATE: {
         enterOuterAlt(_localctx, 5);
-        setState(214);
+        setState(229);
         match(TonParser::ISOLATE);
-        setState(215);
+        setState(230);
         target();
-        setState(216);
+        setState(231);
         match(TonParser::SEMI);
         break;
       }
 
       case TonParser::TRASH: {
         enterOuterAlt(_localctx, 6);
-        setState(218);
+        setState(233);
         match(TonParser::TRASH);
-        setState(219);
+        setState(234);
         target();
-        setState(220);
+        setState(235);
         match(TonParser::SEMI);
         break;
       }
@@ -1770,13 +1825,13 @@ TonParser::SaveStatContext* TonParser::saveStat() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(224);
+    setState(239);
     match(TonParser::SAVE);
-    setState(225);
+    setState(240);
     expr(0);
-    setState(226);
+    setState(241);
     match(TonParser::STRING_VAL);
-    setState(227);
+    setState(242);
     match(TonParser::SEMI);
    
   }
@@ -1833,11 +1888,11 @@ TonParser::PlayStatContext* TonParser::playStat() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(229);
+    setState(244);
     match(TonParser::PLAY);
-    setState(230);
+    setState(245);
     target();
-    setState(231);
+    setState(246);
     match(TonParser::SEMI);
    
   }
@@ -1927,7 +1982,7 @@ TonParser::TypeContext* TonParser::type() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(233);
+    setState(248);
     _la = _input->LA(1);
     if (!((((_la & ~ 0x3fULL) == 0) &&
       ((1ULL << _la) & 4094) != 0))) {
@@ -2078,33 +2133,6 @@ TonParser::NumValExprContext::NumValExprContext(ExprContext *ctx) { copyFrom(ctx
 std::any TonParser::NumValExprContext::accept(tree::ParseTreeVisitor *visitor) {
   if (auto parserVisitor = dynamic_cast<TonVisitor*>(visitor))
     return parserVisitor->visitNumValExpr(this);
-  else
-    return visitor->visitChildren(this);
-}
-//----------------- MixWithExprContext ------------------------------------------------------------------
-
-std::vector<TonParser::ExprContext *> TonParser::MixWithExprContext::expr() {
-  return getRuleContexts<TonParser::ExprContext>();
-}
-
-TonParser::ExprContext* TonParser::MixWithExprContext::expr(size_t i) {
-  return getRuleContext<TonParser::ExprContext>(i);
-}
-
-tree::TerminalNode* TonParser::MixWithExprContext::MIXWITH() {
-  return getToken(TonParser::MIXWITH, 0);
-}
-
-tree::TerminalNode* TonParser::MixWithExprContext::FROM() {
-  return getToken(TonParser::FROM, 0);
-}
-
-TonParser::MixWithExprContext::MixWithExprContext(ExprContext *ctx) { copyFrom(ctx); }
-
-
-std::any TonParser::MixWithExprContext::accept(tree::ParseTreeVisitor *visitor) {
-  if (auto parserVisitor = dynamic_cast<TonVisitor*>(visitor))
-    return parserVisitor->visitMixWithExpr(this);
   else
     return visitor->visitChildren(this);
 }
@@ -2545,7 +2573,7 @@ TonParser::ExprContext* TonParser::expr(int precedence) {
   try {
     size_t alt;
     enterOuterAlt(_localctx, 1);
-    setState(280);
+    setState(295);
     _errHandler->sync(this);
     switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 18, _ctx)) {
     case 1: {
@@ -2553,23 +2581,23 @@ TonParser::ExprContext* TonParser::expr(int precedence) {
       _ctx = _localctx;
       previousContext = _localctx;
 
-      setState(236);
+      setState(251);
       match(TonParser::L_BRACKET);
-      setState(237);
+      setState(252);
       expr(0);
-      setState(242);
+      setState(257);
       _errHandler->sync(this);
       _la = _input->LA(1);
       while (_la == TonParser::COMMA) {
-        setState(238);
+        setState(253);
         match(TonParser::COMMA);
-        setState(239);
+        setState(254);
         expr(0);
-        setState(244);
+        setState(259);
         _errHandler->sync(this);
         _la = _input->LA(1);
       }
-      setState(245);
+      setState(260);
       match(TonParser::R_BRACKET);
       break;
     }
@@ -2578,32 +2606,32 @@ TonParser::ExprContext* TonParser::expr(int precedence) {
       _localctx = _tracker.createInstance<FunctionCallExprContext>(_localctx);
       _ctx = _localctx;
       previousContext = _localctx;
-      setState(247);
+      setState(262);
       match(TonParser::ID);
-      setState(248);
+      setState(263);
       match(TonParser::L_PAREN);
-      setState(257);
+      setState(272);
       _errHandler->sync(this);
 
       _la = _input->LA(1);
       if (((((_la - 31) & ~ 0x3fULL) == 0) &&
-        ((1ULL << (_la - 31)) & 8732742322177) != 0)) {
-        setState(249);
+        ((1ULL << (_la - 31)) & 34930969281537) != 0)) {
+        setState(264);
         expr(0);
-        setState(254);
+        setState(269);
         _errHandler->sync(this);
         _la = _input->LA(1);
         while (_la == TonParser::COMMA) {
-          setState(250);
+          setState(265);
           match(TonParser::COMMA);
-          setState(251);
+          setState(266);
           expr(0);
-          setState(256);
+          setState(271);
           _errHandler->sync(this);
           _la = _input->LA(1);
         }
       }
-      setState(259);
+      setState(274);
       match(TonParser::R_PAREN);
       break;
     }
@@ -2612,12 +2640,12 @@ TonParser::ExprContext* TonParser::expr(int precedence) {
       _localctx = _tracker.createInstance<CreateSoundExprContext>(_localctx);
       _ctx = _localctx;
       previousContext = _localctx;
-      setState(260);
+      setState(275);
       match(TonParser::ID);
-      setState(261);
+      setState(276);
       expr(0);
-      setState(262);
-      expr(22);
+      setState(277);
+      expr(21);
       break;
     }
 
@@ -2625,11 +2653,11 @@ TonParser::ExprContext* TonParser::expr(int precedence) {
       _localctx = _tracker.createInstance<ParensExprContext>(_localctx);
       _ctx = _localctx;
       previousContext = _localctx;
-      setState(264);
+      setState(279);
       match(TonParser::L_PAREN);
-      setState(265);
+      setState(280);
       expr(0);
-      setState(266);
+      setState(281);
       match(TonParser::R_PAREN);
       break;
     }
@@ -2639,10 +2667,10 @@ TonParser::ExprContext* TonParser::expr(int precedence) {
       _ctx = _localctx;
       previousContext = _localctx;
 
-      setState(268);
+      setState(283);
       match(TonParser::NOT_KW);
-      setState(269);
-      expr(17);
+      setState(284);
+      expr(16);
       break;
     }
 
@@ -2650,7 +2678,7 @@ TonParser::ExprContext* TonParser::expr(int precedence) {
       _localctx = _tracker.createInstance<NoteValExprContext>(_localctx);
       _ctx = _localctx;
       previousContext = _localctx;
-      setState(270);
+      setState(285);
       match(TonParser::NOTE_VAL);
       break;
     }
@@ -2659,7 +2687,7 @@ TonParser::ExprContext* TonParser::expr(int precedence) {
       _localctx = _tracker.createInstance<IntValExprContext>(_localctx);
       _ctx = _localctx;
       previousContext = _localctx;
-      setState(271);
+      setState(286);
       match(TonParser::INT_VAL);
       break;
     }
@@ -2668,7 +2696,7 @@ TonParser::ExprContext* TonParser::expr(int precedence) {
       _localctx = _tracker.createInstance<NumValExprContext>(_localctx);
       _ctx = _localctx;
       previousContext = _localctx;
-      setState(272);
+      setState(287);
       match(TonParser::NUM_VAL);
       break;
     }
@@ -2677,7 +2705,7 @@ TonParser::ExprContext* TonParser::expr(int precedence) {
       _localctx = _tracker.createInstance<BoolValExprContext>(_localctx);
       _ctx = _localctx;
       previousContext = _localctx;
-      setState(273);
+      setState(288);
       match(TonParser::BOOL_VAL);
       break;
     }
@@ -2686,7 +2714,7 @@ TonParser::ExprContext* TonParser::expr(int precedence) {
       _localctx = _tracker.createInstance<CharValExprContext>(_localctx);
       _ctx = _localctx;
       previousContext = _localctx;
-      setState(274);
+      setState(289);
       match(TonParser::CHAR_VAL);
       break;
     }
@@ -2695,7 +2723,7 @@ TonParser::ExprContext* TonParser::expr(int precedence) {
       _localctx = _tracker.createInstance<StringValExprContext>(_localctx);
       _ctx = _localctx;
       previousContext = _localctx;
-      setState(275);
+      setState(290);
       match(TonParser::STRING_VAL);
       break;
     }
@@ -2704,7 +2732,7 @@ TonParser::ExprContext* TonParser::expr(int precedence) {
       _localctx = _tracker.createInstance<TargetExprContext>(_localctx);
       _ctx = _localctx;
       previousContext = _localctx;
-      setState(276);
+      setState(291);
       target();
       break;
     }
@@ -2713,9 +2741,9 @@ TonParser::ExprContext* TonParser::expr(int precedence) {
       _localctx = _tracker.createInstance<LengthOfExprContext>(_localctx);
       _ctx = _localctx;
       previousContext = _localctx;
-      setState(277);
+      setState(292);
       match(TonParser::LENGTH);
-      setState(278);
+      setState(293);
       target();
       break;
     }
@@ -2724,7 +2752,7 @@ TonParser::ExprContext* TonParser::expr(int precedence) {
       _localctx = _tracker.createInstance<EmptySoundExprContext>(_localctx);
       _ctx = _localctx;
       previousContext = _localctx;
-      setState(279);
+      setState(294);
       match(TonParser::EMPTYSOUND);
       break;
     }
@@ -2733,7 +2761,7 @@ TonParser::ExprContext* TonParser::expr(int precedence) {
       break;
     }
     _ctx->stop = _input->LT(-1);
-    setState(327);
+    setState(336);
     _errHandler->sync(this);
     alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 21, _ctx);
     while (alt != 2 && alt != atn::ATN::INVALID_ALT_NUMBER) {
@@ -2741,30 +2769,30 @@ TonParser::ExprContext* TonParser::expr(int precedence) {
         if (!_parseListeners.empty())
           triggerExitRuleEvent();
         previousContext = _localctx;
-        setState(325);
+        setState(334);
         _errHandler->sync(this);
         switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 20, _ctx)) {
         case 1: {
           auto newContext = _tracker.createInstance<TrackEventExprContext>(_tracker.createInstance<ExprContext>(parentContext, parentState));
           _localctx = newContext;
           pushNewRecursionContext(newContext, startState, RuleExpr);
-          setState(282);
+          setState(297);
 
-          if (!(precpred(_ctx, 21))) throw FailedPredicateException(this, "precpred(_ctx, 21)");
-          setState(285);
+          if (!(precpred(_ctx, 20))) throw FailedPredicateException(this, "precpred(_ctx, 20)");
+          setState(300);
           _errHandler->sync(this);
 
           _la = _input->LA(1);
           if (_la == TonParser::AS) {
-            setState(283);
+            setState(298);
             match(TonParser::AS);
-            setState(284);
+            setState(299);
             match(TonParser::STRING_VAL);
           }
-          setState(287);
+          setState(302);
           match(TonParser::AT);
-          setState(288);
-          expr(22);
+          setState(303);
+          expr(21);
           break;
         }
 
@@ -2772,21 +2800,21 @@ TonParser::ExprContext* TonParser::expr(int precedence) {
           auto newContext = _tracker.createInstance<MulDivExprContext>(_tracker.createInstance<ExprContext>(parentContext, parentState));
           _localctx = newContext;
           pushNewRecursionContext(newContext, startState, RuleExpr);
-          setState(289);
+          setState(304);
 
-          if (!(precpred(_ctx, 16))) throw FailedPredicateException(this, "precpred(_ctx, 16)");
-          setState(290);
+          if (!(precpred(_ctx, 15))) throw FailedPredicateException(this, "precpred(_ctx, 15)");
+          setState(305);
           _la = _input->LA(1);
           if (!((((_la & ~ 0x3fULL) == 0) &&
-            ((1ULL << _la) & 31525197391593472) != 0))) {
+            ((1ULL << _la) & 126100789566373888) != 0))) {
           _errHandler->recoverInline(this);
           }
           else {
             _errHandler->reportMatch(this);
             consume();
           }
-          setState(291);
-          expr(17);
+          setState(306);
+          expr(16);
           break;
         }
 
@@ -2794,10 +2822,10 @@ TonParser::ExprContext* TonParser::expr(int precedence) {
           auto newContext = _tracker.createInstance<AddSubMixExprContext>(_tracker.createInstance<ExprContext>(parentContext, parentState));
           _localctx = newContext;
           pushNewRecursionContext(newContext, startState, RuleExpr);
-          setState(292);
+          setState(307);
 
-          if (!(precpred(_ctx, 15))) throw FailedPredicateException(this, "precpred(_ctx, 15)");
-          setState(293);
+          if (!(precpred(_ctx, 14))) throw FailedPredicateException(this, "precpred(_ctx, 14)");
+          setState(308);
           _la = _input->LA(1);
           if (!(_la == TonParser::PLUS
 
@@ -2808,8 +2836,8 @@ TonParser::ExprContext* TonParser::expr(int precedence) {
             _errHandler->reportMatch(this);
             consume();
           }
-          setState(294);
-          expr(16);
+          setState(309);
+          expr(15);
           break;
         }
 
@@ -2817,116 +2845,98 @@ TonParser::ExprContext* TonParser::expr(int precedence) {
           auto newContext = _tracker.createInstance<ConcatExprContext>(_tracker.createInstance<ExprContext>(parentContext, parentState));
           _localctx = newContext;
           pushNewRecursionContext(newContext, startState, RuleExpr);
-          setState(295);
-
-          if (!(precpred(_ctx, 14))) throw FailedPredicateException(this, "precpred(_ctx, 14)");
-          setState(296);
-          match(TonParser::AMPERSAND);
-          setState(297);
-          expr(15);
-          break;
-        }
-
-        case 5: {
-          auto newContext = _tracker.createInstance<MixWithExprContext>(_tracker.createInstance<ExprContext>(parentContext, parentState));
-          _localctx = newContext;
-          pushNewRecursionContext(newContext, startState, RuleExpr);
-          setState(298);
+          setState(310);
 
           if (!(precpred(_ctx, 13))) throw FailedPredicateException(this, "precpred(_ctx, 13)");
-          setState(299);
-          match(TonParser::MIXWITH);
-          setState(300);
-          expr(0);
-          setState(301);
-          match(TonParser::FROM);
-          setState(302);
+          setState(311);
+          match(TonParser::AMPERSAND);
+          setState(312);
           expr(14);
           break;
         }
 
-        case 6: {
+        case 5: {
           auto newContext = _tracker.createInstance<RelationalExprContext>(_tracker.createInstance<ExprContext>(parentContext, parentState));
           _localctx = newContext;
           pushNewRecursionContext(newContext, startState, RuleExpr);
-          setState(304);
+          setState(313);
 
           if (!(precpred(_ctx, 12))) throw FailedPredicateException(this, "precpred(_ctx, 12)");
-          setState(305);
+          setState(314);
           _la = _input->LA(1);
           if (!((((_la & ~ 0x3fULL) == 0) &&
-            ((1ULL << _la) & 433189989157699584) != 0))) {
+            ((1ULL << _la) & 1732759956630798336) != 0))) {
           _errHandler->recoverInline(this);
           }
           else {
             _errHandler->reportMatch(this);
             consume();
           }
-          setState(306);
+          setState(315);
           expr(13);
           break;
         }
 
-        case 7: {
+        case 6: {
           auto newContext = _tracker.createInstance<AndExprContext>(_tracker.createInstance<ExprContext>(parentContext, parentState));
           _localctx = newContext;
           pushNewRecursionContext(newContext, startState, RuleExpr);
-          setState(307);
+          setState(316);
 
           if (!(precpred(_ctx, 11))) throw FailedPredicateException(this, "precpred(_ctx, 11)");
-          setState(308);
+          setState(317);
           match(TonParser::AND_OP);
-          setState(309);
+          setState(318);
           expr(12);
           break;
         }
 
-        case 8: {
+        case 7: {
           auto newContext = _tracker.createInstance<OrExprContext>(_tracker.createInstance<ExprContext>(parentContext, parentState));
           _localctx = newContext;
           pushNewRecursionContext(newContext, startState, RuleExpr);
-          setState(310);
+          setState(319);
 
           if (!(precpred(_ctx, 10))) throw FailedPredicateException(this, "precpred(_ctx, 10)");
-          setState(311);
+          setState(320);
           match(TonParser::OR_OP);
-          setState(312);
+          setState(321);
           expr(11);
           break;
         }
 
-        case 9: {
+        case 8: {
           auto newContext = _tracker.createInstance<IndexExprContext>(_tracker.createInstance<ExprContext>(parentContext, parentState));
           _localctx = newContext;
           pushNewRecursionContext(newContext, startState, RuleExpr);
-          setState(313);
+          setState(322);
 
-          if (!(precpred(_ctx, 20))) throw FailedPredicateException(this, "precpred(_ctx, 20)");
-          setState(314);
+          if (!(precpred(_ctx, 19))) throw FailedPredicateException(this, "precpred(_ctx, 19)");
+          setState(323);
           match(TonParser::L_BRACKET);
-          setState(315);
+          setState(324);
           expr(0);
-          setState(316);
+          setState(325);
           match(TonParser::R_BRACKET);
           break;
         }
 
-        case 10: {
+        case 9: {
           auto newContext = _tracker.createInstance<SliceExprContext>(_tracker.createInstance<ExprContext>(parentContext, parentState));
           _localctx = newContext;
           pushNewRecursionContext(newContext, startState, RuleExpr);
-          setState(318);
+          setState(327);
 
-          if (!(precpred(_ctx, 19))) throw FailedPredicateException(this, "precpred(_ctx, 19)");
-          setState(319);
+          if (!(precpred(_ctx, 18))) throw FailedPredicateException(this, "precpred(_ctx, 18)");
+          setState(328);
           match(TonParser::L_BRACKET);
-          setState(320);
+          setState(329);
           expr(0);
-          setState(321);
+          setState(330);
           match(TonParser::COLON);
-          setState(322);
+          setState(331);
           expr(0);
-          setState(323);
+          setState(332);
           match(TonParser::R_BRACKET);
           break;
         }
@@ -2935,7 +2945,7 @@ TonParser::ExprContext* TonParser::expr(int precedence) {
           break;
         } 
       }
-      setState(329);
+      setState(338);
       _errHandler->sync(this);
       alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 21, _ctx);
     }
@@ -2960,16 +2970,15 @@ bool TonParser::sempred(RuleContext *context, size_t ruleIndex, size_t predicate
 
 bool TonParser::exprSempred(ExprContext *_localctx, size_t predicateIndex) {
   switch (predicateIndex) {
-    case 0: return precpred(_ctx, 21);
-    case 1: return precpred(_ctx, 16);
-    case 2: return precpred(_ctx, 15);
-    case 3: return precpred(_ctx, 14);
-    case 4: return precpred(_ctx, 13);
-    case 5: return precpred(_ctx, 12);
-    case 6: return precpred(_ctx, 11);
-    case 7: return precpred(_ctx, 10);
-    case 8: return precpred(_ctx, 20);
-    case 9: return precpred(_ctx, 19);
+    case 0: return precpred(_ctx, 20);
+    case 1: return precpred(_ctx, 15);
+    case 2: return precpred(_ctx, 14);
+    case 3: return precpred(_ctx, 13);
+    case 4: return precpred(_ctx, 12);
+    case 5: return precpred(_ctx, 11);
+    case 6: return precpred(_ctx, 10);
+    case 7: return precpred(_ctx, 19);
+    case 8: return precpred(_ctx, 18);
 
   default:
     break;
