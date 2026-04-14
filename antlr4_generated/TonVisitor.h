@@ -65,8 +65,6 @@ public:
 
     virtual std::any visitNumValExpr(TonParser::NumValExprContext *context) = 0;
 
-    virtual std::any visitMixWithExpr(TonParser::MixWithExprContext *context) = 0;
-
     virtual std::any visitTargetExpr(TonParser::TargetExprContext *context) = 0;
 
     virtual std::any visitRelationalExpr(TonParser::RelationalExprContext *context) = 0;

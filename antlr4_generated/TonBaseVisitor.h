@@ -107,10 +107,6 @@ public:
     return visitChildren(ctx);
   }
 
-  virtual std::any visitMixWithExpr(TonParser::MixWithExprContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
   virtual std::any visitTargetExpr(TonParser::TargetExprContext *ctx) override {
     return visitChildren(ctx);
   }

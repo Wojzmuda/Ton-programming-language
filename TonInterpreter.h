@@ -97,7 +97,7 @@ class TonInterpreter: public TonBaseVisitor {
         std::any visitTrackEventExpr(TonParser::TrackEventExprContext *ctx);
         std::any visitShoutStat(TonParser::ShoutStatContext *ctx) override;
         std::any visitSaveStat(TonParser::SaveStatContext *ctx) override;
-        //std::any visitIdExpr(TonParser::IdExprContext *ctx) override;
+
         std::any visitTargetExpr(TonParser::TargetExprContext *ctx) override;
 
     // 3rd functions batch
