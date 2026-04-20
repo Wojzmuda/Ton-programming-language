@@ -16,6 +16,7 @@ set(SOURCES
     antlr4_generated/TonParser.cpp
     antlr4_generated/TonBaseVisitor.cpp
     antlr4_generated/TonVisitor.cpp
+    TonSyntaxErrorListener.cpp
 )
 
 add_executable(ton_app ${SOURCES})

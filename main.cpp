@@ -2,6 +2,7 @@
 #include "antlr4_generated/TonLexer.h"
 #include "antlr4_generated/TonParser.h"
 #include "TonInterpreter.h"
+#include "TonSyntaxErrorListener.h"
 
 #include <iostream>
 #include <fstream>
@@ -17,19 +18,28 @@ int main(int argc, const char* argv[]){
 
     if(!stream.is_open()){
         std::cerr << "Cannot open file: "<< argv[1]<<std::endl;
+        return 1;
     }
 
+    TonSyntaxErrorListener myErrorListener;
     antlr4::ANTLRInputStream input(stream);
     TonLexer lexer(&input);
+    lexer.removeErrorListeners();
+    lexer.addErrorListener(&myErrorListener);
     antlr4::CommonTokenStream tokens(&lexer);
     TonParser parser(&tokens);
+    parser.removeErrorListeners();
+    parser.addErrorListener(&myErrorListener);
+    
 
     auto treeAST = parser.program();
     
-    if (parser.getNumberOfSyntaxErrors() > 0){
-        std::cerr << "Found " << parser.getNumberOfSyntaxErrors() << " syntax errors, fix your code."<< std::endl;
-        return 1;
-    }
+  size_t totalErrors = lexer.getNumberOfSyntaxErrors() + parser.getNumberOfSyntaxErrors();
+
+if (totalErrors > 0) {
+    std::cerr <<std::endl << "Found " << totalErrors << " syntax errors, fix your code." << std::endl;
+    return 1;
+}
 
 
     TonInterpreter interpreter;
