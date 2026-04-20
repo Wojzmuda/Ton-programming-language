@@ -71,6 +71,8 @@ public:
 
     virtual std::any visitRelationalExpr(TonParser::RelationalExprContext *context) = 0;
 
+    virtual std::any visitUnaryExpr(TonParser::UnaryExprContext *context) = 0;
+
     virtual std::any visitOrExpr(TonParser::OrExprContext *context) = 0;
 
     virtual std::any visitIndexExpr(TonParser::IndexExprContext *context) = 0;

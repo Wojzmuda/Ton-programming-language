@@ -74,7 +74,7 @@ type : TYPE_BOOL | TYPE_INT | TYPE_NUM | TYPE_CHAR | TYPE_STRING
      ;
 
 expr
-    : L_BRACKET expr (COMMA expr)* R_BRACKET                   # ArrayExpr
+    : L_BRACKET (expr (COMMA expr)*)? R_BRACKET                # ArrayExpr
     | ID L_PAREN (expr (COMMA expr)*)? R_PAREN                 # FunctionCallExpr
     | ID expr expr                                             # CreateSoundExpr
     | expr (AS STRING_VAL)? AT expr                            # TrackEventExpr
@@ -82,6 +82,7 @@ expr
     | expr L_BRACKET expr COLON expr R_BRACKET                 # SliceExpr    
     | L_PAREN expr R_PAREN                                     # ParensExpr
     | (NOT_KW) expr                                            # NotExpr
+    | (PLUS | MINUS) expr                                      # UnaryExpr
     | expr (MULT | DIV_OP | COLON) expr                        # MulDivExpr   
     | expr (PLUS | MINUS ) expr                                # AddSubMixExpr    // + służy teraz do miksowania
     | expr AMPERSAND expr                                      # ConcatExpr       // & służy do konkatenacji

@@ -518,6 +518,17 @@ public:
     virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
   };
 
+  class  UnaryExprContext : public ExprContext {
+  public:
+    UnaryExprContext(ExprContext *ctx);
+
+    ExprContext *expr();
+    antlr4::tree::TerminalNode *PLUS();
+    antlr4::tree::TerminalNode *MINUS();
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
   class  OrExprContext : public ExprContext {
   public:
     OrExprContext(ExprContext *ctx);
@@ -557,9 +568,9 @@ public:
     ArrayExprContext(ExprContext *ctx);
 
     antlr4::tree::TerminalNode *L_BRACKET();
+    antlr4::tree::TerminalNode *R_BRACKET();
     std::vector<ExprContext *> expr();
     ExprContext* expr(size_t i);
-    antlr4::tree::TerminalNode *R_BRACKET();
     std::vector<antlr4::tree::TerminalNode *> COMMA();
     antlr4::tree::TerminalNode* COMMA(size_t i);
 

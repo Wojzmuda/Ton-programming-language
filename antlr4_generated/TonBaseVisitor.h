@@ -119,6 +119,10 @@ public:
     return visitChildren(ctx);
   }
 
+  virtual std::any visitUnaryExpr(TonParser::UnaryExprContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
   virtual std::any visitOrExpr(TonParser::OrExprContext *ctx) override {
     return visitChildren(ctx);
   }
