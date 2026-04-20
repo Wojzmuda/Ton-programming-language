@@ -35,6 +35,8 @@ public:
 
     virtual std::any visitAssignment(TonParser::AssignmentContext *context) = 0;
 
+    virtual std::any visitReturnStat(TonParser::ReturnStatContext *context) = 0;
+
     virtual std::any visitShoutStat(TonParser::ShoutStatContext *context) = 0;
 
     virtual std::any visitIfStat(TonParser::IfStatContext *context) = 0;

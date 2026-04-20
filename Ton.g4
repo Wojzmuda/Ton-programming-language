@@ -18,9 +18,10 @@ statement
     | audioOpStat       // Operacje typu: A TRASH 2:8 ;
     | saveStat          // !save t1;
     | playStat          // PLAY t1;
+    | returnStat        // !out 5;
     ;
 
-varDecl : MAKE type ID (ASSIGN expr)? SEMI ;
+varDecl : EXCLAM_MARK MAKE type ID (ASSIGN expr)? SEMI ;
 
 trackDecl : ID NEW TRACK ID SEMI ;
 
@@ -35,22 +36,24 @@ assignment
     | target DIV_ASSIGN expr SEMI
     ;
 
-shoutStat : SHOUT expr SEMI ;
+returnStat : EXCLAM_MARK OUT expr? SEMI ;
+
+shoutStat : EXCLAM_MARK SHOUT expr SEMI ;
 
 ifStat 
-    : IF L_ANGLE expr R_ANGLE block 
-      (OTHERWISE IF_PLAIN L_ANGLE expr R_ANGLE block)* (OTHERWISE block)?
+    : EXCLAM_MARK IF L_ANGLE expr R_ANGLE block 
+      (EXCLAM_MARK OTHERWISE IF L_ANGLE expr R_ANGLE block)* (EXCLAM_MARK OTHERWISE block)?
     ;
 
 loopStat 
-    : LOOP L_ANGLE expr TIMES R_ANGLE block                                  
-    | LOOP L_ANGLE type ID FROM expr TO expr R_ANGLE block                   
-    | LOOP L_ANGLE type ID ASSIGN expr R_ANGLE block                         
+    : EXCLAM_MARK LOOP L_ANGLE expr TIMES R_ANGLE block                                  
+    | EXCLAM_MARK LOOP L_ANGLE type ID FROM expr TO expr R_ANGLE block                   
+    | EXCLAM_MARK LOOP L_ANGLE type ID ASSIGN expr R_ANGLE block                         
     ;
 
-untilStat : UNTIL L_ANGLE expr R_ANGLE block ;
+untilStat : EXCLAM_MARK UNTIL L_ANGLE expr R_ANGLE block ;
 
-funcDef : DEFINE type ID L_ANGLE (type ID (COMMA type ID)*)? R_ANGLE block ;
+funcDef : EXCLAM_MARK DEFINE type ID L_ANGLE (type ID (COMMA type ID)*)? R_ANGLE block ;
 
 audioOpStat
     : SHIFT target BY expr SEMI
@@ -61,7 +64,7 @@ audioOpStat
     | TRASH target SEMI
     ;
 
-saveStat : SAVE expr STRING_VAL SEMI ;
+saveStat : EXCLAM_MARK SAVE expr STRING_VAL SEMI ;
 
 playStat : PLAY target SEMI ;
 
@@ -110,16 +113,15 @@ TYPE_ARRAY     : 'ARRAY' ;
 TYPE_INSTR     : 'INSTRUMENT' ;
 TYPE_TIMELINE  : 'TIMELINE' ;
 
-MAKE           : '!make' ;
-IF             : '!if' ;
-IF_PLAIN       : 'if' ;
-OTHERWISE      : '!otherwise' ;
-UNTIL          : '!until' ; 
-LOOP           : '!loop' ;
-DEFINE         : '!define' ;
-OUT            : '!out' ; 
-SHOUT          : '!shout' ;   
-SAVE           : '!save' ;
+MAKE           : 'make' ;
+IF             : 'if' ;
+OTHERWISE      : 'otherwise' ;
+UNTIL          : 'until' ; 
+LOOP           : 'loop' ;
+DEFINE         : 'define' ;
+OUT            : 'out' ; 
+SHOUT          : 'shout' ;   
+SAVE           : 'save' ;
 
 // Nowe słowa kluczowe
 NEW            : 'NEW' ;
@@ -172,6 +174,7 @@ L_PAREN        : '(' ;
 R_PAREN        : ')' ;
 SEMI           : ';' ;
 COMMA          : ',' ;
+EXCLAM_MARK    : '!' ;
 
 NOTE_VAL       : [A-G] ('#' | 'b')? [0-9] ;
 INT_VAL        : [0-9]+ ;
