@@ -47,6 +47,10 @@ public:
     return visitChildren(ctx);
   }
 
+  virtual std::any visitReturnStat(TonParser::ReturnStatContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
   virtual std::any visitShoutStat(TonParser::ShoutStatContext *ctx) override {
     return visitChildren(ctx);
   }
@@ -112,6 +116,10 @@ public:
   }
 
   virtual std::any visitRelationalExpr(TonParser::RelationalExprContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitUnaryExpr(TonParser::UnaryExprContext *ctx) override {
     return visitChildren(ctx);
   }
 

@@ -14,26 +14,26 @@ public:
   enum {
     TYPE_BOOL = 1, TYPE_INT = 2, TYPE_NUM = 3, TYPE_CHAR = 4, TYPE_STRING = 5, 
     TYPE_NOTE = 6, TYPE_SOUND = 7, TYPE_VOID = 8, TYPE_ARRAY = 9, TYPE_INSTR = 10, 
-    TYPE_TIMELINE = 11, MAKE = 12, IF = 13, IF_PLAIN = 14, OTHERWISE = 15, 
-    UNTIL = 16, LOOP = 17, DEFINE = 18, OUT = 19, SHOUT = 20, SAVE = 21, 
-    NEW = 22, TRACK = 23, AS = 24, AT = 25, SHIFT = 26, BY = 27, MOVE = 28, 
-    ALL = 29, ISOLATE = 30, LENGTH = 31, PLAY = 32, FROM = 33, TO = 34, 
-    TIMES = 35, USE = 36, TRASH = 37, MUTE = 38, UNMUTE = 39, DIVIDE = 40, 
-    EMPTYSOUND = 41, ASSIGN = 42, ADD_ASSIGN = 43, SUB_ASSIGN = 44, MULT_ASSIGN = 45, 
-    DIV_ASSIGN = 46, AND_OP = 47, OR_OP = 48, NOT_KW = 49, EQ = 50, NEQ = 51, 
-    PLUS = 52, MINUS = 53, MULT = 54, DIV_OP = 55, COLON = 56, DOT = 57, 
-    AMPERSAND = 58, L_ANGLE = 59, R_ANGLE = 60, L_BRACE = 61, R_BRACE = 62, 
-    L_BRACKET = 63, R_BRACKET = 64, L_PAREN = 65, R_PAREN = 66, SEMI = 67, 
-    COMMA = 68, NOTE_VAL = 69, INT_VAL = 70, NUM_VAL = 71, BOOL_VAL = 72, 
-    CHAR_VAL = 73, STRING_VAL = 74, ID = 75, WS = 76, COMMENT = 77
+    TYPE_TIMELINE = 11, MAKE = 12, IF = 13, OTHERWISE = 14, UNTIL = 15, 
+    LOOP = 16, DEFINE = 17, OUT = 18, SHOUT = 19, SAVE = 20, NEW = 21, TRACK = 22, 
+    AS = 23, AT = 24, SHIFT = 25, BY = 26, MOVE = 27, ALL = 28, ISOLATE = 29, 
+    LENGTH = 30, PLAY = 31, FROM = 32, TO = 33, TIMES = 34, USE = 35, TRASH = 36, 
+    MUTE = 37, UNMUTE = 38, DIVIDE = 39, EMPTYSOUND = 40, ASSIGN = 41, ADD_ASSIGN = 42, 
+    SUB_ASSIGN = 43, MULT_ASSIGN = 44, DIV_ASSIGN = 45, AND_OP = 46, OR_OP = 47, 
+    NOT_KW = 48, EQ = 49, NEQ = 50, PLUS = 51, MINUS = 52, MULT = 53, DIV_OP = 54, 
+    COLON = 55, DOT = 56, AMPERSAND = 57, L_ANGLE = 58, R_ANGLE = 59, L_BRACE = 60, 
+    R_BRACE = 61, L_BRACKET = 62, R_BRACKET = 63, L_PAREN = 64, R_PAREN = 65, 
+    SEMI = 66, COMMA = 67, EXCLAM_MARK = 68, NOTE_VAL = 69, INT_VAL = 70, 
+    NUM_VAL = 71, BOOL_VAL = 72, CHAR_VAL = 73, STRING_VAL = 74, ID = 75, 
+    WS = 76, COMMENT = 77
   };
 
   enum {
     RuleProgram = 0, RuleHeader = 1, RuleBlock = 2, RuleStatement = 3, RuleVarDecl = 4, 
-    RuleTrackDecl = 5, RuleTarget = 6, RuleAssignment = 7, RuleShoutStat = 8, 
-    RuleIfStat = 9, RuleLoopStat = 10, RuleUntilStat = 11, RuleFuncDef = 12, 
-    RuleAudioOpStat = 13, RuleSaveStat = 14, RulePlayStat = 15, RuleType = 16, 
-    RuleExpr = 17
+    RuleTrackDecl = 5, RuleTarget = 6, RuleAssignment = 7, RuleReturnStat = 8, 
+    RuleShoutStat = 9, RuleIfStat = 10, RuleLoopStat = 11, RuleUntilStat = 12, 
+    RuleFuncDef = 13, RuleAudioOpStat = 14, RuleSaveStat = 15, RulePlayStat = 16, 
+    RuleType = 17, RuleExpr = 18
   };
 
   explicit TonParser(antlr4::TokenStream *input);
@@ -61,6 +61,7 @@ public:
   class TrackDeclContext;
   class TargetContext;
   class AssignmentContext;
+  class ReturnStatContext;
   class ShoutStatContext;
   class IfStatContext;
   class LoopStatContext;
@@ -135,6 +136,7 @@ public:
     AudioOpStatContext *audioOpStat();
     SaveStatContext *saveStat();
     PlayStatContext *playStat();
+    ReturnStatContext *returnStat();
 
 
     virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
@@ -147,6 +149,7 @@ public:
   public:
     VarDeclContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
+    antlr4::tree::TerminalNode *EXCLAM_MARK();
     antlr4::tree::TerminalNode *MAKE();
     TypeContext *type();
     antlr4::tree::TerminalNode *ID();
@@ -215,10 +218,27 @@ public:
 
   AssignmentContext* assignment();
 
+  class  ReturnStatContext : public antlr4::ParserRuleContext {
+  public:
+    ReturnStatContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    antlr4::tree::TerminalNode *EXCLAM_MARK();
+    antlr4::tree::TerminalNode *OUT();
+    antlr4::tree::TerminalNode *SEMI();
+    ExprContext *expr();
+
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  ReturnStatContext* returnStat();
+
   class  ShoutStatContext : public antlr4::ParserRuleContext {
   public:
     ShoutStatContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
+    antlr4::tree::TerminalNode *EXCLAM_MARK();
     antlr4::tree::TerminalNode *SHOUT();
     ExprContext *expr();
     antlr4::tree::TerminalNode *SEMI();
@@ -234,7 +254,10 @@ public:
   public:
     IfStatContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
-    antlr4::tree::TerminalNode *IF();
+    std::vector<antlr4::tree::TerminalNode *> EXCLAM_MARK();
+    antlr4::tree::TerminalNode* EXCLAM_MARK(size_t i);
+    std::vector<antlr4::tree::TerminalNode *> IF();
+    antlr4::tree::TerminalNode* IF(size_t i);
     std::vector<antlr4::tree::TerminalNode *> L_ANGLE();
     antlr4::tree::TerminalNode* L_ANGLE(size_t i);
     std::vector<ExprContext *> expr();
@@ -245,8 +268,6 @@ public:
     BlockContext* block(size_t i);
     std::vector<antlr4::tree::TerminalNode *> OTHERWISE();
     antlr4::tree::TerminalNode* OTHERWISE(size_t i);
-    std::vector<antlr4::tree::TerminalNode *> IF_PLAIN();
-    antlr4::tree::TerminalNode* IF_PLAIN(size_t i);
 
 
     virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
@@ -259,6 +280,7 @@ public:
   public:
     LoopStatContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
+    antlr4::tree::TerminalNode *EXCLAM_MARK();
     antlr4::tree::TerminalNode *LOOP();
     antlr4::tree::TerminalNode *L_ANGLE();
     std::vector<ExprContext *> expr();
@@ -283,6 +305,7 @@ public:
   public:
     UntilStatContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
+    antlr4::tree::TerminalNode *EXCLAM_MARK();
     antlr4::tree::TerminalNode *UNTIL();
     antlr4::tree::TerminalNode *L_ANGLE();
     ExprContext *expr();
@@ -300,6 +323,7 @@ public:
   public:
     FuncDefContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
+    antlr4::tree::TerminalNode *EXCLAM_MARK();
     antlr4::tree::TerminalNode *DEFINE();
     std::vector<TypeContext *> type();
     TypeContext* type(size_t i);
@@ -346,6 +370,7 @@ public:
   public:
     SaveStatContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
+    antlr4::tree::TerminalNode *EXCLAM_MARK();
     antlr4::tree::TerminalNode *SAVE();
     ExprContext *expr();
     antlr4::tree::TerminalNode *STRING_VAL();
@@ -493,6 +518,17 @@ public:
     virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
   };
 
+  class  UnaryExprContext : public ExprContext {
+  public:
+    UnaryExprContext(ExprContext *ctx);
+
+    ExprContext *expr();
+    antlr4::tree::TerminalNode *PLUS();
+    antlr4::tree::TerminalNode *MINUS();
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
   class  OrExprContext : public ExprContext {
   public:
     OrExprContext(ExprContext *ctx);
@@ -532,9 +568,9 @@ public:
     ArrayExprContext(ExprContext *ctx);
 
     antlr4::tree::TerminalNode *L_BRACKET();
+    antlr4::tree::TerminalNode *R_BRACKET();
     std::vector<ExprContext *> expr();
     ExprContext* expr(size_t i);
-    antlr4::tree::TerminalNode *R_BRACKET();
     std::vector<antlr4::tree::TerminalNode *> COMMA();
     antlr4::tree::TerminalNode* COMMA(size_t i);
 
