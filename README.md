@@ -27,7 +27,7 @@ cmake --build build
 ##  Generating the parser and lexer with antlr4 :deer:
 ```
 
-antlr4 -Dlanguage=Cpp -visitor -no-listener -o antlr4_generated Ton.g4
+antlr4 -Dlanguage=Cpp -visitor -listener -o antlr4_generated Ton.g4
 
 ```
 
