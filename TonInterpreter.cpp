@@ -596,3 +596,39 @@ std::any TonInterpreter::visitMulDivExpr(TonParser::MulDivExprContext *ctx) {
     }
     return {};
 }
+
+
+std::any TonInterpreter::visitAddSubMixExpr(TonParser::AddSubMixExprContext *ctx) {
+    std::any left = visit(ctx->expr(0));
+    std::any right = visit(ctx->expr(1));
+
+    double leftVal = (left.type() == typeid(int)) ? std::any_cast<int>(left) : std::any_cast<double>(left);
+    double rightVal = (right.type() == typeid(int)) ? std::any_cast<int>(right) : std::any_cast<double>(right);
+
+    if (ctx->PLUS()){
+        if (left.type() == typeid(int) && right.type() == typeid(int)) return (int)(leftVal + rightVal);
+        return leftVal + rightVal;
+    }
+    else if (ctx->MINUS()){
+        if (left.type() == typeid(int) && right.type() == typeid(int)) return (int)(leftVal - rightVal);
+        return leftVal - rightVal;
+    }
+    return {};
+}
+
+std::any TonInterpreter::visitRelationalExpr(TonParser::RelationalExprContext *ctx) {
+    std::any left = visit(ctx->expr(0));
+    std::any right = visit(ctx->expr(1));
+
+    double leftVal = (left.type() == typeid(int)) ? std::any_cast<int>(left) : std::any_cast<double>(left);
+    double rightVal = (right.type() == typeid(int)) ? std::any_cast<int>(right) : std::any_cast<double>(right);
+
+    if (ctx->EQ()) return leftVal == rightVal;
+    if (ctx->NEQ()) return leftVal != rightVal;
+    if (ctx->L_ANGLE_EQ()) return leftVal <= rightVal; 
+    if (ctx->R_ANGLE_EQ()) return leftVal >= rightVal; 
+    if (ctx->L_ANGLE()) return leftVal < rightVal;
+    if (ctx->R_ANGLE()) return leftVal > rightVal;
+
+    return false;
+}
