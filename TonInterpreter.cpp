@@ -375,6 +375,10 @@ std::any TonInterpreter::visitTrackDecl(TonParser::TrackDeclContext *ctx) {
 
     Timeline& timeline = std::any_cast<Timeline&>(baseObj);
 
+    if (timeline.tracks.find(trackName) != timeline.tracks.end()) {
+        throw std::runtime_error("Error: Track '" + trackName + "' already exists in timeline '" + timelineName + "'.");
+    }
+
     Track newTrack;
     newTrack.name = trackName;
     timeline.tracks[trackName] = newTrack;
