@@ -114,6 +114,8 @@ class TonInterpreter: public TonBaseVisitor {
     virtual std::any visitAndExpr(TonParser::AndExprContext *ctx) override;
     virtual std::any visitOrExpr(TonParser::OrExprContext *ctx) override;
 
+    virtual std::any visitRelationalExpr(TonParser::RelationalExprContext *ctx) override;
+
     // bracketing (is that a word in english xD?)
     virtual std::any visitParensExpr(TonParser::ParensExprContext *ctx) override;
 };

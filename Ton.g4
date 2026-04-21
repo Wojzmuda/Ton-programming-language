@@ -86,7 +86,7 @@ expr
     | expr (MULT | DIV_OP | COLON) expr                        # MulDivExpr   
     | expr (PLUS | MINUS ) expr                                # AddSubMixExpr    // + służy teraz do miksowania
     | expr AMPERSAND expr                                      # ConcatExpr       // & służy do konkatenacji
-    | expr (EQ | NEQ | L_ANGLE | R_ANGLE) expr                 # RelationalExpr 
+    | expr (EQ | NEQ | L_ANGLE | R_ANGLE | L_ANGLE_EQ | R_ANGLE_EQ) expr   # RelationalExpr 
     | expr AND_OP expr                                         # AndExpr
     | expr OR_OP expr                                          # OrExpr
     | NOTE_VAL                                                 # NoteValExpr
@@ -167,6 +167,8 @@ AMPERSAND      : '&' ;
 
 L_ANGLE        : '<' ;
 R_ANGLE        : '>' ;
+L_ANGLE_EQ     : '<=' ;
+R_ANGLE_EQ     : '>=' ;
 L_BRACE        : '{' ;
 R_BRACE        : '}' ;
 L_BRACKET      : '[' ;
