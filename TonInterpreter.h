@@ -84,9 +84,12 @@ struct Timeline {
 
 class TonInterpreter: public TonBaseVisitor {
     private:
-        std::map<std::string, std::any> memory;
+        std::map<std::string, std::string>& declaredTypes;
+        std::map<std::string, std::any>& memory;
 
     public:
+        TonInterpreter(std::map<std::string, std::string>& typesRef, std::map<std::string, std::any>& memoryRef): declaredTypes(typesRef), memory(memoryRef){}
+        
         std::any visitProgram(TonParser::ProgramContext *ctx) override;
         std::any visitBlock(TonParser::BlockContext *ctx) override;
         std::any visitStatement(TonParser::StatementContext *ctx) override;
@@ -100,22 +103,22 @@ class TonInterpreter: public TonBaseVisitor {
 
         std::any visitTargetExpr(TonParser::TargetExprContext *ctx) override;
 
-    virtual std::any visitCreateSoundExpr(TonParser::CreateSoundExprContext *ctx);
-    virtual std::any visitStringValExpr(TonParser::StringValExprContext *ctx) override;
-    virtual std::any visitNoteValExpr(TonParser::NoteValExprContext *ctx) override;
-    virtual std::any visitIntValExpr(TonParser::IntValExprContext *ctx) override;
-    virtual std::any visitAudioOpStat(TonParser::AudioOpStatContext *ctx) override;
+        std::any visitCreateSoundExpr(TonParser::CreateSoundExprContext *ctx) override;
+        std::any visitStringValExpr(TonParser::StringValExprContext *ctx) override;
+        std::any visitNoteValExpr(TonParser::NoteValExprContext *ctx) override;
+        std::any visitIntValExpr(TonParser::IntValExprContext *ctx) override;
+        std::any visitAudioOpStat(TonParser::AudioOpStatContext *ctx) override;
 
-    virtual std::any visitTrackDecl(TonParser::TrackDeclContext *ctx) override;
+        std::any visitTrackDecl(TonParser::TrackDeclContext *ctx) override;
 
-    // logic operations
-    virtual std::any visitBoolValExpr(TonParser::BoolValExprContext *ctx) override;
-    virtual std::any visitNotExpr(TonParser::NotExprContext *ctx) override;
-    virtual std::any visitAndExpr(TonParser::AndExprContext *ctx) override;
-    virtual std::any visitOrExpr(TonParser::OrExprContext *ctx) override;
+        // logic operations
+        std::any visitBoolValExpr(TonParser::BoolValExprContext *ctx) override;
+        std::any visitNotExpr(TonParser::NotExprContext *ctx) override;
+        std::any visitAndExpr(TonParser::AndExprContext *ctx) override;
+        std::any visitOrExpr(TonParser::OrExprContext *ctx) override;
 
-    virtual std::any visitRelationalExpr(TonParser::RelationalExprContext *ctx) override;
+        std::any visitRelationalExpr(TonParser::RelationalExprContext *ctx) override;
 
-    // bracketing (is that a word in english xD?)
-    virtual std::any visitParensExpr(TonParser::ParensExprContext *ctx) override;
+        // bracketing (is that a word in english xD?)
+        std::any visitParensExpr(TonParser::ParensExprContext *ctx) override;
 };

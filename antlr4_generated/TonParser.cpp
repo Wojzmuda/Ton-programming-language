@@ -2,6 +2,7 @@
 // Generated from Ton.g4 by ANTLR 4.13.2
 
 
+#include "TonListener.h"
 #include "TonVisitor.h"
 
 #include "TonParser.h"
@@ -288,6 +289,18 @@ size_t TonParser::ProgramContext::getRuleIndex() const {
   return TonParser::RuleProgram;
 }
 
+void TonParser::ProgramContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TonListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterProgram(this);
+}
+
+void TonParser::ProgramContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TonListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitProgram(this);
+}
+
 
 std::any TonParser::ProgramContext::accept(tree::ParseTreeVisitor *visitor) {
   if (auto parserVisitor = dynamic_cast<TonVisitor*>(visitor))
@@ -367,6 +380,18 @@ size_t TonParser::HeaderContext::getRuleIndex() const {
   return TonParser::RuleHeader;
 }
 
+void TonParser::HeaderContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TonListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterHeader(this);
+}
+
+void TonParser::HeaderContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TonListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitHeader(this);
+}
+
 
 std::any TonParser::HeaderContext::accept(tree::ParseTreeVisitor *visitor) {
   if (auto parserVisitor = dynamic_cast<TonVisitor*>(visitor))
@@ -430,6 +455,18 @@ TonParser::StatementContext* TonParser::BlockContext::statement(size_t i) {
 
 size_t TonParser::BlockContext::getRuleIndex() const {
   return TonParser::RuleBlock;
+}
+
+void TonParser::BlockContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TonListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterBlock(this);
+}
+
+void TonParser::BlockContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TonListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitBlock(this);
 }
 
 
@@ -537,6 +574,18 @@ TonParser::ReturnStatContext* TonParser::StatementContext::returnStat() {
 
 size_t TonParser::StatementContext::getRuleIndex() const {
   return TonParser::RuleStatement;
+}
+
+void TonParser::StatementContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TonListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterStatement(this);
+}
+
+void TonParser::StatementContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TonListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitStatement(this);
 }
 
 
@@ -699,6 +748,18 @@ size_t TonParser::VarDeclContext::getRuleIndex() const {
   return TonParser::RuleVarDecl;
 }
 
+void TonParser::VarDeclContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TonListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterVarDecl(this);
+}
+
+void TonParser::VarDeclContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TonListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitVarDecl(this);
+}
+
 
 std::any TonParser::VarDeclContext::accept(tree::ParseTreeVisitor *visitor) {
   if (auto parserVisitor = dynamic_cast<TonVisitor*>(visitor))
@@ -783,6 +844,18 @@ size_t TonParser::TrackDeclContext::getRuleIndex() const {
   return TonParser::RuleTrackDecl;
 }
 
+void TonParser::TrackDeclContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TonListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterTrackDecl(this);
+}
+
+void TonParser::TrackDeclContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TonListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitTrackDecl(this);
+}
+
 
 std::any TonParser::TrackDeclContext::accept(tree::ParseTreeVisitor *visitor) {
   if (auto parserVisitor = dynamic_cast<TonVisitor*>(visitor))
@@ -854,6 +927,18 @@ tree::TerminalNode* TonParser::TargetContext::STRING_VAL() {
 
 size_t TonParser::TargetContext::getRuleIndex() const {
   return TonParser::RuleTarget;
+}
+
+void TonParser::TargetContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TonListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterTarget(this);
+}
+
+void TonParser::TargetContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TonListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitTarget(this);
 }
 
 
@@ -961,6 +1046,18 @@ tree::TerminalNode* TonParser::AssignmentContext::DIV_ASSIGN() {
 
 size_t TonParser::AssignmentContext::getRuleIndex() const {
   return TonParser::RuleAssignment;
+}
+
+void TonParser::AssignmentContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TonListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterAssignment(this);
+}
+
+void TonParser::AssignmentContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TonListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitAssignment(this);
 }
 
 
@@ -1092,6 +1189,18 @@ size_t TonParser::ReturnStatContext::getRuleIndex() const {
   return TonParser::RuleReturnStat;
 }
 
+void TonParser::ReturnStatContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TonListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterReturnStat(this);
+}
+
+void TonParser::ReturnStatContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TonListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitReturnStat(this);
+}
+
 
 std::any TonParser::ReturnStatContext::accept(tree::ParseTreeVisitor *visitor) {
   if (auto parserVisitor = dynamic_cast<TonVisitor*>(visitor))
@@ -1165,6 +1274,18 @@ tree::TerminalNode* TonParser::ShoutStatContext::SEMI() {
 
 size_t TonParser::ShoutStatContext::getRuleIndex() const {
   return TonParser::RuleShoutStat;
+}
+
+void TonParser::ShoutStatContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TonListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterShoutStat(this);
+}
+
+void TonParser::ShoutStatContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TonListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitShoutStat(this);
 }
 
 
@@ -1272,6 +1393,18 @@ tree::TerminalNode* TonParser::IfStatContext::OTHERWISE(size_t i) {
 
 size_t TonParser::IfStatContext::getRuleIndex() const {
   return TonParser::RuleIfStat;
+}
+
+void TonParser::IfStatContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TonListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterIfStat(this);
+}
+
+void TonParser::IfStatContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TonListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitIfStat(this);
 }
 
 
@@ -1423,6 +1556,18 @@ size_t TonParser::LoopStatContext::getRuleIndex() const {
   return TonParser::RuleLoopStat;
 }
 
+void TonParser::LoopStatContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TonListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterLoopStat(this);
+}
+
+void TonParser::LoopStatContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TonListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitLoopStat(this);
+}
+
 
 std::any TonParser::LoopStatContext::accept(tree::ParseTreeVisitor *visitor) {
   if (auto parserVisitor = dynamic_cast<TonVisitor*>(visitor))
@@ -1564,6 +1709,18 @@ size_t TonParser::UntilStatContext::getRuleIndex() const {
   return TonParser::RuleUntilStat;
 }
 
+void TonParser::UntilStatContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TonListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterUntilStat(this);
+}
+
+void TonParser::UntilStatContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TonListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitUntilStat(this);
+}
+
 
 std::any TonParser::UntilStatContext::accept(tree::ParseTreeVisitor *visitor) {
   if (auto parserVisitor = dynamic_cast<TonVisitor*>(visitor))
@@ -1661,6 +1818,18 @@ tree::TerminalNode* TonParser::FuncDefContext::COMMA(size_t i) {
 
 size_t TonParser::FuncDefContext::getRuleIndex() const {
   return TonParser::RuleFuncDef;
+}
+
+void TonParser::FuncDefContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TonListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterFuncDef(this);
+}
+
+void TonParser::FuncDefContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TonListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitFuncDef(this);
 }
 
 
@@ -1792,6 +1961,18 @@ tree::TerminalNode* TonParser::AudioOpStatContext::TRASH() {
 
 size_t TonParser::AudioOpStatContext::getRuleIndex() const {
   return TonParser::RuleAudioOpStat;
+}
+
+void TonParser::AudioOpStatContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TonListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterAudioOpStat(this);
+}
+
+void TonParser::AudioOpStatContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TonListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitAudioOpStat(this);
 }
 
 
@@ -1952,6 +2133,18 @@ size_t TonParser::SaveStatContext::getRuleIndex() const {
   return TonParser::RuleSaveStat;
 }
 
+void TonParser::SaveStatContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TonListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterSaveStat(this);
+}
+
+void TonParser::SaveStatContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TonListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitSaveStat(this);
+}
+
 
 std::any TonParser::SaveStatContext::accept(tree::ParseTreeVisitor *visitor) {
   if (auto parserVisitor = dynamic_cast<TonVisitor*>(visitor))
@@ -2015,6 +2208,18 @@ tree::TerminalNode* TonParser::PlayStatContext::SEMI() {
 
 size_t TonParser::PlayStatContext::getRuleIndex() const {
   return TonParser::RulePlayStat;
+}
+
+void TonParser::PlayStatContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TonListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterPlayStat(this);
+}
+
+void TonParser::PlayStatContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TonListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitPlayStat(this);
 }
 
 
@@ -2110,6 +2315,18 @@ size_t TonParser::TypeContext::getRuleIndex() const {
   return TonParser::RuleType;
 }
 
+void TonParser::TypeContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TonListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterType(this);
+}
+
+void TonParser::TypeContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TonListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitType(this);
+}
+
 
 std::any TonParser::TypeContext::accept(tree::ParseTreeVisitor *visitor) {
   if (auto parserVisitor = dynamic_cast<TonVisitor*>(visitor))
@@ -2184,6 +2401,16 @@ tree::TerminalNode* TonParser::AndExprContext::AND_OP() {
 
 TonParser::AndExprContext::AndExprContext(ExprContext *ctx) { copyFrom(ctx); }
 
+void TonParser::AndExprContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TonListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterAndExpr(this);
+}
+void TonParser::AndExprContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TonListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitAndExpr(this);
+}
 
 std::any TonParser::AndExprContext::accept(tree::ParseTreeVisitor *visitor) {
   if (auto parserVisitor = dynamic_cast<TonVisitor*>(visitor))
@@ -2211,6 +2438,16 @@ tree::TerminalNode* TonParser::AddSubMixExprContext::MINUS() {
 
 TonParser::AddSubMixExprContext::AddSubMixExprContext(ExprContext *ctx) { copyFrom(ctx); }
 
+void TonParser::AddSubMixExprContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TonListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterAddSubMixExpr(this);
+}
+void TonParser::AddSubMixExprContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TonListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitAddSubMixExpr(this);
+}
 
 std::any TonParser::AddSubMixExprContext::accept(tree::ParseTreeVisitor *visitor) {
   if (auto parserVisitor = dynamic_cast<TonVisitor*>(visitor))
@@ -2226,6 +2463,16 @@ tree::TerminalNode* TonParser::BoolValExprContext::BOOL_VAL() {
 
 TonParser::BoolValExprContext::BoolValExprContext(ExprContext *ctx) { copyFrom(ctx); }
 
+void TonParser::BoolValExprContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TonListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterBoolValExpr(this);
+}
+void TonParser::BoolValExprContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TonListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitBoolValExpr(this);
+}
 
 std::any TonParser::BoolValExprContext::accept(tree::ParseTreeVisitor *visitor) {
   if (auto parserVisitor = dynamic_cast<TonVisitor*>(visitor))
@@ -2249,6 +2496,16 @@ TonParser::ExprContext* TonParser::CreateSoundExprContext::expr(size_t i) {
 
 TonParser::CreateSoundExprContext::CreateSoundExprContext(ExprContext *ctx) { copyFrom(ctx); }
 
+void TonParser::CreateSoundExprContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TonListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterCreateSoundExpr(this);
+}
+void TonParser::CreateSoundExprContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TonListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitCreateSoundExpr(this);
+}
 
 std::any TonParser::CreateSoundExprContext::accept(tree::ParseTreeVisitor *visitor) {
   if (auto parserVisitor = dynamic_cast<TonVisitor*>(visitor))
@@ -2264,6 +2521,16 @@ tree::TerminalNode* TonParser::StringValExprContext::STRING_VAL() {
 
 TonParser::StringValExprContext::StringValExprContext(ExprContext *ctx) { copyFrom(ctx); }
 
+void TonParser::StringValExprContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TonListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterStringValExpr(this);
+}
+void TonParser::StringValExprContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TonListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitStringValExpr(this);
+}
 
 std::any TonParser::StringValExprContext::accept(tree::ParseTreeVisitor *visitor) {
   if (auto parserVisitor = dynamic_cast<TonVisitor*>(visitor))
@@ -2279,6 +2546,16 @@ tree::TerminalNode* TonParser::NumValExprContext::NUM_VAL() {
 
 TonParser::NumValExprContext::NumValExprContext(ExprContext *ctx) { copyFrom(ctx); }
 
+void TonParser::NumValExprContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TonListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterNumValExpr(this);
+}
+void TonParser::NumValExprContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TonListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitNumValExpr(this);
+}
 
 std::any TonParser::NumValExprContext::accept(tree::ParseTreeVisitor *visitor) {
   if (auto parserVisitor = dynamic_cast<TonVisitor*>(visitor))
@@ -2294,6 +2571,16 @@ TonParser::TargetContext* TonParser::TargetExprContext::target() {
 
 TonParser::TargetExprContext::TargetExprContext(ExprContext *ctx) { copyFrom(ctx); }
 
+void TonParser::TargetExprContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TonListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterTargetExpr(this);
+}
+void TonParser::TargetExprContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TonListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitTargetExpr(this);
+}
 
 std::any TonParser::TargetExprContext::accept(tree::ParseTreeVisitor *visitor) {
   if (auto parserVisitor = dynamic_cast<TonVisitor*>(visitor))
@@ -2337,6 +2624,16 @@ tree::TerminalNode* TonParser::RelationalExprContext::R_ANGLE_EQ() {
 
 TonParser::RelationalExprContext::RelationalExprContext(ExprContext *ctx) { copyFrom(ctx); }
 
+void TonParser::RelationalExprContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TonListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterRelationalExpr(this);
+}
+void TonParser::RelationalExprContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TonListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitRelationalExpr(this);
+}
 
 std::any TonParser::RelationalExprContext::accept(tree::ParseTreeVisitor *visitor) {
   if (auto parserVisitor = dynamic_cast<TonVisitor*>(visitor))
@@ -2360,6 +2657,16 @@ tree::TerminalNode* TonParser::UnaryExprContext::MINUS() {
 
 TonParser::UnaryExprContext::UnaryExprContext(ExprContext *ctx) { copyFrom(ctx); }
 
+void TonParser::UnaryExprContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TonListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterUnaryExpr(this);
+}
+void TonParser::UnaryExprContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TonListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitUnaryExpr(this);
+}
 
 std::any TonParser::UnaryExprContext::accept(tree::ParseTreeVisitor *visitor) {
   if (auto parserVisitor = dynamic_cast<TonVisitor*>(visitor))
@@ -2383,6 +2690,16 @@ tree::TerminalNode* TonParser::OrExprContext::OR_OP() {
 
 TonParser::OrExprContext::OrExprContext(ExprContext *ctx) { copyFrom(ctx); }
 
+void TonParser::OrExprContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TonListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterOrExpr(this);
+}
+void TonParser::OrExprContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TonListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitOrExpr(this);
+}
 
 std::any TonParser::OrExprContext::accept(tree::ParseTreeVisitor *visitor) {
   if (auto parserVisitor = dynamic_cast<TonVisitor*>(visitor))
@@ -2410,6 +2727,16 @@ tree::TerminalNode* TonParser::IndexExprContext::R_BRACKET() {
 
 TonParser::IndexExprContext::IndexExprContext(ExprContext *ctx) { copyFrom(ctx); }
 
+void TonParser::IndexExprContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TonListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterIndexExpr(this);
+}
+void TonParser::IndexExprContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TonListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitIndexExpr(this);
+}
 
 std::any TonParser::IndexExprContext::accept(tree::ParseTreeVisitor *visitor) {
   if (auto parserVisitor = dynamic_cast<TonVisitor*>(visitor))
@@ -2433,6 +2760,16 @@ tree::TerminalNode* TonParser::ConcatExprContext::AMPERSAND() {
 
 TonParser::ConcatExprContext::ConcatExprContext(ExprContext *ctx) { copyFrom(ctx); }
 
+void TonParser::ConcatExprContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TonListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterConcatExpr(this);
+}
+void TonParser::ConcatExprContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TonListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitConcatExpr(this);
+}
 
 std::any TonParser::ConcatExprContext::accept(tree::ParseTreeVisitor *visitor) {
   if (auto parserVisitor = dynamic_cast<TonVisitor*>(visitor))
@@ -2468,6 +2805,16 @@ tree::TerminalNode* TonParser::ArrayExprContext::COMMA(size_t i) {
 
 TonParser::ArrayExprContext::ArrayExprContext(ExprContext *ctx) { copyFrom(ctx); }
 
+void TonParser::ArrayExprContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TonListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterArrayExpr(this);
+}
+void TonParser::ArrayExprContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TonListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitArrayExpr(this);
+}
 
 std::any TonParser::ArrayExprContext::accept(tree::ParseTreeVisitor *visitor) {
   if (auto parserVisitor = dynamic_cast<TonVisitor*>(visitor))
@@ -2507,6 +2854,16 @@ tree::TerminalNode* TonParser::FunctionCallExprContext::COMMA(size_t i) {
 
 TonParser::FunctionCallExprContext::FunctionCallExprContext(ExprContext *ctx) { copyFrom(ctx); }
 
+void TonParser::FunctionCallExprContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TonListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterFunctionCallExpr(this);
+}
+void TonParser::FunctionCallExprContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TonListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitFunctionCallExpr(this);
+}
 
 std::any TonParser::FunctionCallExprContext::accept(tree::ParseTreeVisitor *visitor) {
   if (auto parserVisitor = dynamic_cast<TonVisitor*>(visitor))
@@ -2538,6 +2895,16 @@ tree::TerminalNode* TonParser::MulDivExprContext::COLON() {
 
 TonParser::MulDivExprContext::MulDivExprContext(ExprContext *ctx) { copyFrom(ctx); }
 
+void TonParser::MulDivExprContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TonListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterMulDivExpr(this);
+}
+void TonParser::MulDivExprContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TonListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitMulDivExpr(this);
+}
 
 std::any TonParser::MulDivExprContext::accept(tree::ParseTreeVisitor *visitor) {
   if (auto parserVisitor = dynamic_cast<TonVisitor*>(visitor))
@@ -2553,6 +2920,16 @@ tree::TerminalNode* TonParser::NoteValExprContext::NOTE_VAL() {
 
 TonParser::NoteValExprContext::NoteValExprContext(ExprContext *ctx) { copyFrom(ctx); }
 
+void TonParser::NoteValExprContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TonListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterNoteValExpr(this);
+}
+void TonParser::NoteValExprContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TonListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitNoteValExpr(this);
+}
 
 std::any TonParser::NoteValExprContext::accept(tree::ParseTreeVisitor *visitor) {
   if (auto parserVisitor = dynamic_cast<TonVisitor*>(visitor))
@@ -2568,6 +2945,16 @@ tree::TerminalNode* TonParser::EmptySoundExprContext::EMPTYSOUND() {
 
 TonParser::EmptySoundExprContext::EmptySoundExprContext(ExprContext *ctx) { copyFrom(ctx); }
 
+void TonParser::EmptySoundExprContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TonListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterEmptySoundExpr(this);
+}
+void TonParser::EmptySoundExprContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TonListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitEmptySoundExpr(this);
+}
 
 std::any TonParser::EmptySoundExprContext::accept(tree::ParseTreeVisitor *visitor) {
   if (auto parserVisitor = dynamic_cast<TonVisitor*>(visitor))
@@ -2583,6 +2970,16 @@ tree::TerminalNode* TonParser::IntValExprContext::INT_VAL() {
 
 TonParser::IntValExprContext::IntValExprContext(ExprContext *ctx) { copyFrom(ctx); }
 
+void TonParser::IntValExprContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TonListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterIntValExpr(this);
+}
+void TonParser::IntValExprContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TonListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitIntValExpr(this);
+}
 
 std::any TonParser::IntValExprContext::accept(tree::ParseTreeVisitor *visitor) {
   if (auto parserVisitor = dynamic_cast<TonVisitor*>(visitor))
@@ -2598,6 +2995,16 @@ tree::TerminalNode* TonParser::CharValExprContext::CHAR_VAL() {
 
 TonParser::CharValExprContext::CharValExprContext(ExprContext *ctx) { copyFrom(ctx); }
 
+void TonParser::CharValExprContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TonListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterCharValExpr(this);
+}
+void TonParser::CharValExprContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TonListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitCharValExpr(this);
+}
 
 std::any TonParser::CharValExprContext::accept(tree::ParseTreeVisitor *visitor) {
   if (auto parserVisitor = dynamic_cast<TonVisitor*>(visitor))
@@ -2621,6 +3028,16 @@ tree::TerminalNode* TonParser::ParensExprContext::R_PAREN() {
 
 TonParser::ParensExprContext::ParensExprContext(ExprContext *ctx) { copyFrom(ctx); }
 
+void TonParser::ParensExprContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TonListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterParensExpr(this);
+}
+void TonParser::ParensExprContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TonListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitParensExpr(this);
+}
 
 std::any TonParser::ParensExprContext::accept(tree::ParseTreeVisitor *visitor) {
   if (auto parserVisitor = dynamic_cast<TonVisitor*>(visitor))
@@ -2652,6 +3069,16 @@ tree::TerminalNode* TonParser::TrackEventExprContext::STRING_VAL() {
 
 TonParser::TrackEventExprContext::TrackEventExprContext(ExprContext *ctx) { copyFrom(ctx); }
 
+void TonParser::TrackEventExprContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TonListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterTrackEventExpr(this);
+}
+void TonParser::TrackEventExprContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TonListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitTrackEventExpr(this);
+}
 
 std::any TonParser::TrackEventExprContext::accept(tree::ParseTreeVisitor *visitor) {
   if (auto parserVisitor = dynamic_cast<TonVisitor*>(visitor))
@@ -2683,6 +3110,16 @@ tree::TerminalNode* TonParser::SliceExprContext::R_BRACKET() {
 
 TonParser::SliceExprContext::SliceExprContext(ExprContext *ctx) { copyFrom(ctx); }
 
+void TonParser::SliceExprContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TonListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterSliceExpr(this);
+}
+void TonParser::SliceExprContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TonListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitSliceExpr(this);
+}
 
 std::any TonParser::SliceExprContext::accept(tree::ParseTreeVisitor *visitor) {
   if (auto parserVisitor = dynamic_cast<TonVisitor*>(visitor))
@@ -2702,6 +3139,16 @@ tree::TerminalNode* TonParser::NotExprContext::NOT_KW() {
 
 TonParser::NotExprContext::NotExprContext(ExprContext *ctx) { copyFrom(ctx); }
 
+void TonParser::NotExprContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TonListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterNotExpr(this);
+}
+void TonParser::NotExprContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TonListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitNotExpr(this);
+}
 
 std::any TonParser::NotExprContext::accept(tree::ParseTreeVisitor *visitor) {
   if (auto parserVisitor = dynamic_cast<TonVisitor*>(visitor))
@@ -2721,6 +3168,16 @@ TonParser::TargetContext* TonParser::LengthOfExprContext::target() {
 
 TonParser::LengthOfExprContext::LengthOfExprContext(ExprContext *ctx) { copyFrom(ctx); }
 
+void TonParser::LengthOfExprContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TonListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterLengthOfExpr(this);
+}
+void TonParser::LengthOfExprContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TonListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitLengthOfExpr(this);
+}
 
 std::any TonParser::LengthOfExprContext::accept(tree::ParseTreeVisitor *visitor) {
   if (auto parserVisitor = dynamic_cast<TonVisitor*>(visitor))
