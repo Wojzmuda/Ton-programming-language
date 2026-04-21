@@ -365,6 +365,8 @@ std::any TonInterpreter::visitTrackDecl(TonParser::TrackDeclContext *ctx) {
     return {};
 }
 
+
+
 std::any TonInterpreter::visitAudioOpStat(TonParser::AudioOpStatContext *ctx) {
     auto targetNode = ctx->target();
     std::string timelineName = targetNode->ID(0)->getText();
@@ -423,4 +425,57 @@ std::any TonInterpreter::visitAudioOpStat(TonParser::AudioOpStatContext *ctx) {
     }
 
     return {};
+}
+
+
+std::any TonInterpreter::visitBoolValExpr(TonParser::BoolValExprContext *ctx)
+{
+    std::string text = ctx->BOOL_VAL()->getText();
+    if (text == "true" || text == "TRUE") {
+        return true;
+    }
+    return false;
+}
+
+
+std::any TonInterpreter::visitNotExpr(TonParser::NotExprContext *ctx) {
+    std::any val = visit(ctx->expr());
+
+    if (val.type() == typeid(bool)) {
+        return !std::any_cast<bool>(val);
+    }
+    
+    size_t line = ctx->getStart()->getLine();
+    throw std::runtime_error("Line " + std::to_string(line) + ": NOT operator requires a BOOL expression.");
+}
+
+
+std::any TonInterpreter::visitAndExpr(TonParser::AndExprContext *ctx) {
+    std::any leftVal = visit(ctx->expr(0));
+    std::any rightVal = visit(ctx->expr(1));
+
+    if (leftVal.type() == typeid(bool) && rightVal.type() == typeid(bool)) {
+        return std::any_cast<bool>(leftVal) && std::any_cast<bool>(rightVal);
+    }
+    
+    size_t line = ctx->getStart()->getLine();
+    throw std::runtime_error("Line " + std::to_string(line) + ": AND operator requires both operands to be BOOL.");
+}
+
+
+std::any TonInterpreter::visitOrExpr(TonParser::OrExprContext *ctx) {
+    std::any leftVal = visit(ctx->expr(0));
+    std::any rightVal = visit(ctx->expr(1));
+
+    if (leftVal.type() == typeid(bool) && rightVal.type() == typeid(bool)) {
+        return std::any_cast<bool>(leftVal) || std::any_cast<bool>(rightVal);
+    }
+    
+    size_t line = ctx->getStart()->getLine();
+    throw std::runtime_error("Line " + std::to_string(line) + ": OR operator requires both operands to be BOOL.");
+}
+
+
+std::any TonInterpreter::visitParensExpr(TonParser::ParensExprContext *ctx) {
+    return visit(ctx->expr());
 }
