@@ -495,8 +495,14 @@ std::any TonInterpreter::visitRelationalExpr(TonParser::RelationalExprContext *c
         else if (ctx->L_ANGLE() != nullptr) {
             return l < r;
         }
+        else if (ctx->L_ANGLE_EQ() != nullptr) {
+            return l <= r;
+        }
         else if (ctx->R_ANGLE() != nullptr) { 
             return l > r;
+        }
+        else if (ctx->R_ANGLE_EQ() != nullptr) {
+            return l >= r;
         }
     }
 

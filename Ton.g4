@@ -165,10 +165,10 @@ COLON          : ':' ;
 DOT            : '.' ;
 AMPERSAND      : '&' ;
 
-L_ANGLE        : '<' ;
-R_ANGLE        : '>' ;
 L_ANGLE_EQ     : '<=' ;
 R_ANGLE_EQ     : '>=' ;
+L_ANGLE        : '<' ;
+R_ANGLE        : '>' ;
 L_BRACE        : '{' ;
 R_BRACE        : '}' ;
 L_BRACKET      : '[' ;
