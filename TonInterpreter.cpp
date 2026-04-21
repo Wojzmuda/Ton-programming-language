@@ -97,7 +97,6 @@ std::any TonInterpreter::visitTargetExpr(TonParser::TargetExprContext *ctx) {
 std::any TonInterpreter::visitAssignment(TonParser::AssignmentContext *ctx) {
     auto targetNode = ctx->target();
 
-
     if (targetNode->ID().size() == 1) {
         std::string varName = targetNode->ID(0)->getText();
         if (memory.find(varName) == memory.end()) {
@@ -107,7 +106,6 @@ std::any TonInterpreter::visitAssignment(TonParser::AssignmentContext *ctx) {
         return {};
     }
 
-  
     std::string timelineName = targetNode->ID(0)->getText();
     std::string trackName = targetNode->ID(1)->getText();
 
@@ -118,22 +116,56 @@ std::any TonInterpreter::visitAssignment(TonParser::AssignmentContext *ctx) {
 
     if (timeline.tracks.find(trackName) == timeline.tracks.end()) throw std::runtime_error("Track not found");
 
-
     std::any rightSide = visit(ctx->expr());
-    timeline.tracks[trackName].events.clear(); 
+
+
+    if (targetNode->STRING_VAL()) {
+        std::string rawAlias = targetNode->STRING_VAL()->getText();
+        std::string aliasName = rawAlias.substr(1, rawAlias.length() - 2);
+
+        bool found = false;
+        for (auto& event : timeline.tracks[trackName].events) {
+            if (event.alias == aliasName) {
+                found = true;
+                if (rightSide.type() == typeid(Sound)) {
+                    event.sound = std::any_cast<Sound>(rightSide);
+                } 
+                else if (rightSide.type() == typeid(TrackEvent)) {
+                    TrackEvent newEv = std::any_cast<TrackEvent>(rightSide);
+                    event.sound = newEv.sound;
+                    event.startTimeMs = newEv.startTimeMs;
+                } 
+                else {
+                    throw std::runtime_error("Error: Can only assign a SOUND or TrackEvent to a specific alias.");
+                }
+                break; 
+            }
+        }
+        if (!found) throw std::runtime_error("Error: Event alias '" + aliasName + "' not found.");
+        return {}; 
+    }
+
+    std::vector<TrackEvent> newEventsBuffer; 
 
     if (rightSide.type() == typeid(std::vector<std::any>)) {
         auto elements = std::any_cast<std::vector<std::any>>(rightSide);
         for (auto& el : elements) {
-            if (el.type() == typeid(TrackEvent)) timeline.tracks[trackName].events.push_back(std::any_cast<TrackEvent>(el));
+            if (el.type() == typeid(TrackEvent)) {
+                newEventsBuffer.push_back(std::any_cast<TrackEvent>(el));
+            } else {
+                throw std::runtime_error("Error: Array contains non-event items.");
+            }
         }
     } else if (rightSide.type() == typeid(TrackEvent)) {
-        timeline.tracks[trackName].events.push_back(std::any_cast<TrackEvent>(rightSide));
+        newEventsBuffer.push_back(std::any_cast<TrackEvent>(rightSide));
+    } else {
+        throw std::runtime_error("Error: Right side of assignment must be an event or array of events.");
     }
+
+    timeline.tracks[trackName].events = newEventsBuffer; 
 
     return {};
 }
-
 
 std::any TonInterpreter::visitArrayExpr(TonParser::ArrayExprContext *ctx) {
     std::vector<std::any> elements;
