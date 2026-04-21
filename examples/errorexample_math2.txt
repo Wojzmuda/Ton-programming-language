@@ -11,14 +11,9 @@ $!make INT z <- -4 ;   $ Powinno wypisac błąd wspominający o linii wyżej!
 $ BŁĄD 3: Uzycie niezadeklarowanej zmiennej z samej siebie
 $!make INT x <- x ;
 
-
-
-
-
-
 $ BŁĄD SKŁADNI 1 (Oczekiwano ID, a podano liczbe)
 $!make INT 2 <- b ;
 
 $ BŁĄD SKŁADNI 2 (Przypisanie do wyrazenia matematycznego, co jest nielegalne)
- !make INT b <- 1 ;
- b + 2 <- 3 ;
+$ !make INT b <- 1 ;
+$ b + 2 <- 3 ;

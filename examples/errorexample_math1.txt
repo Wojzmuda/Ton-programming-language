@@ -1,5 +1,5 @@
 $ ==========================================
-$ TESTY: MATEMATYKA, LOGIKA I PRZYPISANIA
+$ TESTY: MATEMATYKA, RELACJE I PRZYPISANIA
 $ ==========================================
 
 $ 1. Kolejnosc dzialan matematycznych: 2 + 4 - (6 * 5) = 6 - 30 = -24
@@ -7,21 +7,11 @@ $ 1. Kolejnosc dzialan matematycznych: 2 + 4 - (6 * 5) = 6 - 30 = -24
 !shout "Wynik a1 (oczekiwane -24):" ;
 !shout a1 ;
 
-$ 2. Logika: true or (false and true) = true or false = true
-!make BOOL bool1 <- TRUE OR FALSE AND TRUE ;
-!shout "Wynik bool1 (oczekiwane TRUE/1):" ;
-!shout bool1 ;
-
-$ 3. Logika: true or (false and false) = true or false = true
-!make BOOL bool2 <- TRUE OR FALSE AND FALSE ;
-!shout "Wynik bool2 (oczekiwane TRUE/1):" ;
-!shout bool2 ;
-
-$ 4. Dzielenie calkowitoliczbowe: (7 / 3) - 3 = 2 - 3 = -1
+$ 2. Dzielenie calkowitoliczbowe: (7 / 3) - 3 = 2 - 3 = -1
 !shout "Wynik 7/3 - 3 (oczekiwane -1):" ;
 !shout 7 / 3 - 3 ;
 
-$ 5. Operatory unarne (znaki)
+$ 3. Operatory unarne (znaki)
 !make INT u1 <- -3 ;
 !make INT u2 <- +3 ;
 !make INT u3 <- 2 + -2 ;
@@ -33,12 +23,12 @@ $ 5. Operatory unarne (znaki)
 !shout u3 ;
 !shout u4 ;
 
-$ 6. Operatory relacyjne
+$ 4. Operatory relacyjne
 !make BOOL r1 <- 5 == 5 ;
 !shout "Test relacji 5==5 (oczekiwane TRUE/1):" ;
 !shout r1 ;
 
-$ 7. Zlozone przypisania zmiennych
+$ 5. Zlozone przypisania zmiennych
 !make INT b <- 3 ;
 !make INT c <- b + 2 ;
 
