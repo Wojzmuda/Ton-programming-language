@@ -18,28 +18,32 @@ std::any TonInterpreter::visitStatement(TonParser::StatementContext *ctx) {
 std::any TonInterpreter::visitVarDecl(TonParser::VarDeclContext *ctx) {
     std::string varName = ctx->ID()->getText();
     std::string typeName = ctx->type()->getText(); 
+    size_t currentLine = ctx->getStart()->getLine(); 
+ 
+    if (declarationLines.find(varName) != declarationLines.end()) {
+        size_t prevLine = declarationLines[varName];
+        throw std::runtime_error("Line " + std::to_string(currentLine) + ": Error. Variable '" + varName + 
+                                 "' is already declared. First declaration was on line " + std::to_string(prevLine) + ".");
+    }
 
     std::any value;
 
-  
     if (ctx->expr()) {
         value = visit(ctx->expr());
-    } 
-    else {
-   
+    } else {
         if (typeName == "TIMELINE") {
-            Timeline tl;
-            tl.name = varName;
-            value = tl;
+            Timeline tl; tl.name = varName; value = tl;
         }
         else if (typeName == "SOUND") value = Sound();
         else if (typeName == "INT") value = 0;
+        else if (typeName == "NUMERICAL") value = 0.0;
         else if (typeName == "NOTE") value = Note();
         else if (typeName == "STRING") value = std::string("");
         else value = {};
     }
 
     memory[varName] = value;
+    declarationLines[varName] = currentLine;
     return value;
 }
 
@@ -550,4 +554,45 @@ std::any TonInterpreter::visitOrExpr(TonParser::OrExprContext *ctx) {
 
 std::any TonInterpreter::visitParensExpr(TonParser::ParensExprContext *ctx) {
     return visit(ctx->expr());
+}
+
+
+std::any TonInterpreter::visitUnaryExpr(TonParser::UnaryExprContext *ctx) {
+    std::any val = visit(ctx->expr());
+    bool isMinus = ctx->MINUS() != nullptr;
+    if (val.type() == typeid(int)){
+        int v = std::any_cast<int>(val);
+        return isMinus ? -v : v;
+    }
+    else if (val.type()==typeid(double)){
+        double v = std::any_cast<double>(val);
+        return isMinus ? -v : v;
+    }
+    throw std::runtime_error("Line " + std::to_string(ctx->getStart()->getLine()) + ": Unary operators (+, -) require INT or NUM.");
+
+}
+
+std::any TonInterpreter::visitNumValExpr(TonParser::NumValExprContext *ctx) {
+    return std::stod(ctx->NUM_VAL()->getText());
+}
+
+std::any TonInterpreter::visitMulDivExpr(TonParser::MulDivExprContext *ctx) {
+    std::any left = visit(ctx -> expr(0));
+    std::any right = visit(ctx -> expr(1));
+    
+    double leftVal =(left.type() == typeid(int)) ? std::any_cast<int>(left) : std::any_cast<double>(left);
+    double rightVal = (right.type() == typeid(int)) ? std::any_cast<int>(right) : std::any_cast<double>(right);
+
+    if (ctx-> MULT()){
+        if(left.type() == typeid(int) && right.type() == typeid(int)) return (int)(leftVal * rightVal);
+        return (leftVal * rightVal);   
+    }
+    else if (ctx->DIV_OP()){
+        if (rightVal==0.0){
+            throw std::runtime_error("Line " + std::to_string(ctx->getStart()->getLine()) + ": ERROR - Division by zero!");
+        }
+        if (left.type() == typeid(int) && right.type() == typeid(int)) return (int)(leftVal / rightVal);
+        return leftVal / rightVal;
+    }
+    return {};
 }

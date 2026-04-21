@@ -84,6 +84,7 @@ struct Timeline {
 class TonInterpreter: public TonBaseVisitor {
     private:
         std::map<std::string, std::any> memory;
+        std::map<std::string, size_t> declarationLines; 
 
     public:
         std::any visitProgram(TonParser::ProgramContext *ctx) override;
@@ -118,5 +119,11 @@ class TonInterpreter: public TonBaseVisitor {
     // bracketing (is that a word in english xD?)
     virtual std::any visitParensExpr(TonParser::ParensExprContext *ctx) override;
 
+    // math & logic
+    virtual std::any visitUnaryExpr(TonParser::UnaryExprContext *ctx) override;
+    virtual std::any visitMulDivExpr(TonParser::MulDivExprContext *ctx) override;
+    virtual std::any visitAddSubMixExpr(TonParser::AddSubMixExprContext *ctx) override;
+    virtual std::any visitRelationalExpr(TonParser::RelationalExprContext *ctx) override;
+    virtual std::any visitNumValExpr(TonParser::NumValExprContext *ctx) override;
     
 };
