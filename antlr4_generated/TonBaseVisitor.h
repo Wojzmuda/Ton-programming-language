@@ -95,15 +95,7 @@ public:
     return visitChildren(ctx);
   }
 
-  virtual std::any visitBoolValExpr(TonParser::BoolValExprContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
   virtual std::any visitCreateSoundExpr(TonParser::CreateSoundExprContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual std::any visitStringValExpr(TonParser::StringValExprContext *ctx) override {
     return visitChildren(ctx);
   }
 
@@ -119,15 +111,39 @@ public:
     return visitChildren(ctx);
   }
 
+  virtual std::any visitIndexExpr(TonParser::IndexExprContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitNoteValExpr(TonParser::NoteValExprContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitTrackEventExpr(TonParser::TrackEventExprContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitNotExpr(TonParser::NotExprContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitIsolateExpr(TonParser::IsolateExprContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitBoolValExpr(TonParser::BoolValExprContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitStringValExpr(TonParser::StringValExprContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
   virtual std::any visitUnaryExpr(TonParser::UnaryExprContext *ctx) override {
     return visitChildren(ctx);
   }
 
   virtual std::any visitOrExpr(TonParser::OrExprContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual std::any visitIndexExpr(TonParser::IndexExprContext *ctx) override {
     return visitChildren(ctx);
   }
 
@@ -147,10 +163,6 @@ public:
     return visitChildren(ctx);
   }
 
-  virtual std::any visitNoteValExpr(TonParser::NoteValExprContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
   virtual std::any visitEmptySoundExpr(TonParser::EmptySoundExprContext *ctx) override {
     return visitChildren(ctx);
   }
@@ -167,15 +179,7 @@ public:
     return visitChildren(ctx);
   }
 
-  virtual std::any visitTrackEventExpr(TonParser::TrackEventExprContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
   virtual std::any visitSliceExpr(TonParser::SliceExprContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual std::any visitNotExpr(TonParser::NotExprContext *ctx) override {
     return visitChildren(ctx);
   }
 

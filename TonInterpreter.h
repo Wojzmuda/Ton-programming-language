@@ -74,7 +74,6 @@ struct Track {
     std::string name;
     std::vector<TrackEvent> events;
     bool isMuted = false;
-    bool isIsolated = false;
 };
 
 struct Timeline {
@@ -105,8 +104,10 @@ class TonInterpreter: public TonBaseVisitor {
     virtual std::any visitNoteValExpr(TonParser::NoteValExprContext *ctx) override;
     virtual std::any visitIntValExpr(TonParser::IntValExprContext *ctx) override;
     virtual std::any visitAudioOpStat(TonParser::AudioOpStatContext *ctx) override;
+    virtual std::any visitIsolateExpr(TonParser::IsolateExprContext *ctx) override;
 
     virtual std::any visitTrackDecl(TonParser::TrackDeclContext *ctx) override;
+
 
     // logic operations
     virtual std::any visitBoolValExpr(TonParser::BoolValExprContext *ctx) override;
@@ -116,4 +117,6 @@ class TonInterpreter: public TonBaseVisitor {
 
     // bracketing (is that a word in english xD?)
     virtual std::any visitParensExpr(TonParser::ParensExprContext *ctx) override;
+
+    
 };

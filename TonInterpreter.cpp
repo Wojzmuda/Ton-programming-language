@@ -410,22 +410,41 @@ std::any TonInterpreter::visitAudioOpStat(TonParser::AudioOpStatContext *ctx) {
         }
         if (!found) throw std::runtime_error("Error: Alias '" + aliasName + "' not found on track.");
     }
-    
-    else if (ctx->ISOLATE()) {
-        if (trackName.empty()) throw std::runtime_error("Error: ISOLATE requires a track.");
-        
-        for (auto& pair : timeline.tracks) {
-            if (pair.first == trackName) {
-                pair.second.isMuted = false;
-                pair.second.isIsolated = true;
-            } else {
-                pair.second.isMuted = true;
-            }
-        }
-    }
 
     return {};
 }
+
+std::any TonInterpreter::visitIsolateExpr(TonParser::IsolateExprContext *ctx) {
+    auto targetNode = ctx -> target();
+    std::string timelineName = targetNode->ID(0)->getText();
+    if (memory.find(timelineName) == memory.end()){
+        throw std::runtime_error("Error: Timeline '" + timelineName + "' not found.");
+    }
+
+    std::any& baseObj = memory[timelineName];
+    if (baseObj.type() != typeid(Timeline)){
+        throw std::runtime_error("Error: Target is not a TIMELINE.");
+    }
+    Timeline& timeline = std::any_cast<Timeline&>(baseObj);
+
+    if (targetNode->ID().size() < 2) {
+        throw std::runtime_error("Error: ISOLATE requires a track...");
+    }
+    std::string trackName = targetNode->ID(1)->getText();
+    
+    if (timeline.tracks.find(trackName) == timeline.tracks.end()) {
+        throw std::runtime_error("Error: Track '" + trackName + "' not found...");
+    }
+
+    Timeline isolatedTimeline;
+    isolatedTimeline.name = timeline.name + "_isolated";
+    isolatedTimeline.tracks[trackName] = timeline.tracks[trackName];
+    isolatedTimeline.tracks[trackName].isMuted = false;
+
+    return isolatedTimeline;
+}
+
+
 
 
 std::any TonInterpreter::visitBoolValExpr(TonParser::BoolValExprContext *ctx)
