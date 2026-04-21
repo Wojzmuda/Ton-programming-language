@@ -70,6 +70,24 @@ std::any TonInterpreter::visitTargetExpr(TonParser::TargetExprContext *ctx) {
     if (timeline.tracks.find(trackName) == timeline.tracks.end()) {
         throw std::runtime_error("Error: Track '" + trackName + "' does not exist in timeline '" + baseName + "'.");
     }
+
+    if (targetNode->STRING_VAL()) {
+        std::string rawAlias = targetNode->STRING_VAL()->getText();
+        std::string aliasName = rawAlias.substr(1, rawAlias.length() - 2); // usuwamy " "
+
+        bool aliasFound = false;
+        for (const auto& event : timeline.tracks[trackName].events) {
+            if (event.alias == aliasName) {
+                aliasFound = true;
+                break;
+            }
+        }
+        
+        if (!aliasFound) {
+            throw std::runtime_error("Error: Event alias '" + aliasName + "' does not exist in track '" + trackName + "'.");
+        }
+    }
+
     return ctx->getText(); 
 }
 
