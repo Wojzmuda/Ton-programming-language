@@ -100,7 +100,6 @@ class TonInterpreter: public TonBaseVisitor {
 
         std::any visitTargetExpr(TonParser::TargetExprContext *ctx) override;
 
-    // 3rd functions batch
     virtual std::any visitCreateSoundExpr(TonParser::CreateSoundExprContext *ctx);
     virtual std::any visitStringValExpr(TonParser::StringValExprContext *ctx) override;
     virtual std::any visitNoteValExpr(TonParser::NoteValExprContext *ctx) override;
@@ -109,4 +108,12 @@ class TonInterpreter: public TonBaseVisitor {
 
     virtual std::any visitTrackDecl(TonParser::TrackDeclContext *ctx) override;
 
+    // logic operations
+    virtual std::any visitBoolValExpr(TonParser::BoolValExprContext *ctx) override;
+    virtual std::any visitNotExpr(TonParser::NotExprContext *ctx) override;
+    virtual std::any visitAndExpr(TonParser::AndExprContext *ctx) override;
+    virtual std::any visitOrExpr(TonParser::OrExprContext *ctx) override;
+
+    // bracketing (is that a word in english xD?)
+    virtual std::any visitParensExpr(TonParser::ParensExprContext *ctx) override;
 };
