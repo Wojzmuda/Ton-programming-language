@@ -75,20 +75,19 @@ std::any TonInterpreter::visitTargetExpr(TonParser::TargetExprContext *ctx) {
         std::string rawAlias = targetNode->STRING_VAL()->getText();
         std::string aliasName = rawAlias.substr(1, rawAlias.length() - 2); // usuwamy " "
 
-        bool aliasFound = false;
+
         for (const auto& event : timeline.tracks[trackName].events) {
             if (event.alias == aliasName) {
-                aliasFound = true;
-                break;
+                return event;
             }
         }
         
-        if (!aliasFound) {
-            throw std::runtime_error("Error: Event alias '" + aliasName + "' does not exist in track '" + trackName + "'.");
-        }
+    
+        throw std::runtime_error("Error: Event alias '" + aliasName + "' does not exist in track '" + trackName + "'.");
+        
     }
 
-    return ctx->getText(); 
+    return timeline.tracks[trackName];
 }
 
 
