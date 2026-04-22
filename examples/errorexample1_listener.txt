@@ -1,0 +1,17 @@
+$______________________________________________
+$ PROGRAM: Test Listener Error
+$______________________________________________
+
+!shout "Starting test..." ;
+
+$ 1. Pierwsza poprawna deklaracja
+!make NOTE note <- C4 ;
+
+$ 2. Kolejna poprawna deklaracja
+!make INT time <- 5000 ;
+
+$ 3. BŁĄD: Próba ponownej deklaracji nazwy 'note' jako SOUND
+$ Listener powinien to wykryć i rzucić wyjątek przed uruchomieniem SIN
+!make SOUND note <- SIN note time ; 
+
+!shout "Ten tekst nigdy się nie wyświetli" ;

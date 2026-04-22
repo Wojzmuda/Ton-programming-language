@@ -60,7 +60,6 @@ audioOpStat
     | MOVE target TO expr SEMI
     | MUTE target SEMI
     | UNMUTE (target | ALL) SEMI
-    | ISOLATE target SEMI
     | TRASH target SEMI
     ;
 
@@ -97,7 +96,8 @@ expr
     | STRING_VAL                                               # StringValExpr
     | target                                                   # TargetExpr       // Zastępuje samo ID, by wspierać np. t1.skrzypeczki
     | LENGTH target                                            # LengthOfExpr 
-    | EMPTYSOUND                                               # EmptySoundExpr                           
+    | EMPTYSOUND                                               # EmptySoundExpr   
+    | ISOLATE target                                           # IsolateExpr                        
     ;
 
 // --- TOKENS ---
