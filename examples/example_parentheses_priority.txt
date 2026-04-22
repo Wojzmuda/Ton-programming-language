@@ -1,0 +1,23 @@
+$ ==========================================
+$ TESTY: NAWIASY I PRIORYTETY (PARENTHESES)
+$ ==========================================
+
+$ 1. Standard: 2 * 3 + 4 = 10
+!make INT bez_nawiasow <- 2 * 3 + 4 ;
+!shout "Bez nawiasow 2 * 3 + 4 (Oczekiwane 10):" ;
+!shout bez_nawiasow ;
+
+$ 2. Z nawiasami: 2 * (3 + 4) = 14
+!make INT z_nawiasami <- 2 * (3 + 4) ;
+!shout "Z nawiasami 2 * (3 + 4) (Oczekiwane 14):" ;
+!shout z_nawiasami ;
+
+$ 3. Zlozone: ((2 + 2) * (3 + 3)) / 4 = (4 * 6) / 4 = 6
+!make INT zlozone <- ((2 + 2) * (3 + 3)) / 4 ;
+!shout "Zlozone ((2+2)*(3+3))/4 (Oczekiwane 6):" ;
+!shout zlozone ;
+
+$ 4. Logika: NOT (TRUE AND FALSE) = NOT FALSE = TRUE
+!make BOOL log_nawias <- NOT (TRUE AND FALSE) ;
+!shout "Logika NOT (TRUE AND FALSE) (Oczekiwane TRUE/1):" ;
+!shout log_nawias ;
