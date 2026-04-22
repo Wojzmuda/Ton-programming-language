@@ -94,6 +94,8 @@ class TonInterpreter: public TonBaseVisitor {
         std::any visitStatement(TonParser::StatementContext *ctx) override;
         std::any visitVarDecl(TonParser::VarDeclContext *ctx) override;
 
+        std::any visitTrackDecl(TonParser::TrackDeclContext *ctx) override;
+
         std::any visitAssignment(TonParser::AssignmentContext *ctx) override;
         std::any visitArrayExpr(TonParser::ArrayExprContext *ctx);
         std::any visitTrackEventExpr(TonParser::TrackEventExprContext *ctx);
@@ -102,33 +104,26 @@ class TonInterpreter: public TonBaseVisitor {
 
         std::any visitTargetExpr(TonParser::TargetExprContext *ctx) override;
 
-    virtual std::any visitCreateSoundExpr(TonParser::CreateSoundExprContext *ctx);
-    virtual std::any visitStringValExpr(TonParser::StringValExprContext *ctx) override;
-    virtual std::any visitNoteValExpr(TonParser::NoteValExprContext *ctx) override;
-    virtual std::any visitIntValExpr(TonParser::IntValExprContext *ctx) override;
-    virtual std::any visitAudioOpStat(TonParser::AudioOpStatContext *ctx) override;
-    virtual std::any visitIsolateExpr(TonParser::IsolateExprContext *ctx) override;
+        std::any visitCreateSoundExpr(TonParser::CreateSoundExprContext *ctx);
+        std::any visitStringValExpr(TonParser::StringValExprContext *ctx) override;
+        std::any visitNoteValExpr(TonParser::NoteValExprContext *ctx) override;
+        std::any visitIntValExpr(TonParser::IntValExprContext *ctx) override;
+        std::any visitAudioOpStat(TonParser::AudioOpStatContext *ctx) override;
+        std::any visitIsolateExpr(TonParser::IsolateExprContext *ctx) override;
 
-        // logic operations
+    // logic operations
         std::any visitBoolValExpr(TonParser::BoolValExprContext *ctx) override;
         std::any visitNotExpr(TonParser::NotExprContext *ctx) override;
         std::any visitAndExpr(TonParser::AndExprContext *ctx) override;
         std::any visitOrExpr(TonParser::OrExprContext *ctx) override;
-
-
-    // logic operations
-    virtual std::any visitBoolValExpr(TonParser::BoolValExprContext *ctx) override;
-    virtual std::any visitNotExpr(TonParser::NotExprContext *ctx) override;
-    virtual std::any visitAndExpr(TonParser::AndExprContext *ctx) override;
-    virtual std::any visitOrExpr(TonParser::OrExprContext *ctx) override;
+        std::any visitRelationalExpr(TonParser::RelationalExprContext *ctx) override;
 
     // bracketing (is that a word in english xD?)
-    virtual std::any visitParensExpr(TonParser::ParensExprContext *ctx) override;
+        std::any visitParensExpr(TonParser::ParensExprContext *ctx) override;
 
-    // math & logic
-    virtual std::any visitUnaryExpr(TonParser::UnaryExprContext *ctx) override;
-    virtual std::any visitMulDivExpr(TonParser::MulDivExprContext *ctx) override;
-    virtual std::any visitAddSubMixExpr(TonParser::AddSubMixExprContext *ctx) override;
-    virtual std::any visitNumValExpr(TonParser::NumValExprContext *ctx) override;
-    
+    // math
+        std::any visitUnaryExpr(TonParser::UnaryExprContext *ctx) override;
+        std::any visitMulDivExpr(TonParser::MulDivExprContext *ctx) override;
+        std::any visitAddSubMixExpr(TonParser::AddSubMixExprContext *ctx) override;
+        std::any visitNumValExpr(TonParser::NumValExprContext *ctx) override;
 };

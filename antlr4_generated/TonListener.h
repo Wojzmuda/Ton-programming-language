@@ -74,14 +74,8 @@ public:
   virtual void enterAddSubMixExpr(TonParser::AddSubMixExprContext *ctx) = 0;
   virtual void exitAddSubMixExpr(TonParser::AddSubMixExprContext *ctx) = 0;
 
-  virtual void enterBoolValExpr(TonParser::BoolValExprContext *ctx) = 0;
-  virtual void exitBoolValExpr(TonParser::BoolValExprContext *ctx) = 0;
-
   virtual void enterCreateSoundExpr(TonParser::CreateSoundExprContext *ctx) = 0;
   virtual void exitCreateSoundExpr(TonParser::CreateSoundExprContext *ctx) = 0;
-
-  virtual void enterStringValExpr(TonParser::StringValExprContext *ctx) = 0;
-  virtual void exitStringValExpr(TonParser::StringValExprContext *ctx) = 0;
 
   virtual void enterNumValExpr(TonParser::NumValExprContext *ctx) = 0;
   virtual void exitNumValExpr(TonParser::NumValExprContext *ctx) = 0;
@@ -92,14 +86,32 @@ public:
   virtual void enterRelationalExpr(TonParser::RelationalExprContext *ctx) = 0;
   virtual void exitRelationalExpr(TonParser::RelationalExprContext *ctx) = 0;
 
+  virtual void enterIndexExpr(TonParser::IndexExprContext *ctx) = 0;
+  virtual void exitIndexExpr(TonParser::IndexExprContext *ctx) = 0;
+
+  virtual void enterNoteValExpr(TonParser::NoteValExprContext *ctx) = 0;
+  virtual void exitNoteValExpr(TonParser::NoteValExprContext *ctx) = 0;
+
+  virtual void enterTrackEventExpr(TonParser::TrackEventExprContext *ctx) = 0;
+  virtual void exitTrackEventExpr(TonParser::TrackEventExprContext *ctx) = 0;
+
+  virtual void enterNotExpr(TonParser::NotExprContext *ctx) = 0;
+  virtual void exitNotExpr(TonParser::NotExprContext *ctx) = 0;
+
+  virtual void enterIsolateExpr(TonParser::IsolateExprContext *ctx) = 0;
+  virtual void exitIsolateExpr(TonParser::IsolateExprContext *ctx) = 0;
+
+  virtual void enterBoolValExpr(TonParser::BoolValExprContext *ctx) = 0;
+  virtual void exitBoolValExpr(TonParser::BoolValExprContext *ctx) = 0;
+
+  virtual void enterStringValExpr(TonParser::StringValExprContext *ctx) = 0;
+  virtual void exitStringValExpr(TonParser::StringValExprContext *ctx) = 0;
+
   virtual void enterUnaryExpr(TonParser::UnaryExprContext *ctx) = 0;
   virtual void exitUnaryExpr(TonParser::UnaryExprContext *ctx) = 0;
 
   virtual void enterOrExpr(TonParser::OrExprContext *ctx) = 0;
   virtual void exitOrExpr(TonParser::OrExprContext *ctx) = 0;
-
-  virtual void enterIndexExpr(TonParser::IndexExprContext *ctx) = 0;
-  virtual void exitIndexExpr(TonParser::IndexExprContext *ctx) = 0;
 
   virtual void enterConcatExpr(TonParser::ConcatExprContext *ctx) = 0;
   virtual void exitConcatExpr(TonParser::ConcatExprContext *ctx) = 0;
@@ -113,9 +125,6 @@ public:
   virtual void enterMulDivExpr(TonParser::MulDivExprContext *ctx) = 0;
   virtual void exitMulDivExpr(TonParser::MulDivExprContext *ctx) = 0;
 
-  virtual void enterNoteValExpr(TonParser::NoteValExprContext *ctx) = 0;
-  virtual void exitNoteValExpr(TonParser::NoteValExprContext *ctx) = 0;
-
   virtual void enterEmptySoundExpr(TonParser::EmptySoundExprContext *ctx) = 0;
   virtual void exitEmptySoundExpr(TonParser::EmptySoundExprContext *ctx) = 0;
 
@@ -128,14 +137,8 @@ public:
   virtual void enterParensExpr(TonParser::ParensExprContext *ctx) = 0;
   virtual void exitParensExpr(TonParser::ParensExprContext *ctx) = 0;
 
-  virtual void enterTrackEventExpr(TonParser::TrackEventExprContext *ctx) = 0;
-  virtual void exitTrackEventExpr(TonParser::TrackEventExprContext *ctx) = 0;
-
   virtual void enterSliceExpr(TonParser::SliceExprContext *ctx) = 0;
   virtual void exitSliceExpr(TonParser::SliceExprContext *ctx) = 0;
-
-  virtual void enterNotExpr(TonParser::NotExprContext *ctx) = 0;
-  virtual void exitNotExpr(TonParser::NotExprContext *ctx) = 0;
 
   virtual void enterLengthOfExpr(TonParser::LengthOfExprContext *ctx) = 0;
   virtual void exitLengthOfExpr(TonParser::LengthOfExprContext *ctx) = 0;

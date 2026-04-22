@@ -76,14 +76,8 @@ public:
   virtual void enterAddSubMixExpr(TonParser::AddSubMixExprContext * /*ctx*/) override { }
   virtual void exitAddSubMixExpr(TonParser::AddSubMixExprContext * /*ctx*/) override { }
 
-  virtual void enterBoolValExpr(TonParser::BoolValExprContext * /*ctx*/) override { }
-  virtual void exitBoolValExpr(TonParser::BoolValExprContext * /*ctx*/) override { }
-
   virtual void enterCreateSoundExpr(TonParser::CreateSoundExprContext * /*ctx*/) override { }
   virtual void exitCreateSoundExpr(TonParser::CreateSoundExprContext * /*ctx*/) override { }
-
-  virtual void enterStringValExpr(TonParser::StringValExprContext * /*ctx*/) override { }
-  virtual void exitStringValExpr(TonParser::StringValExprContext * /*ctx*/) override { }
 
   virtual void enterNumValExpr(TonParser::NumValExprContext * /*ctx*/) override { }
   virtual void exitNumValExpr(TonParser::NumValExprContext * /*ctx*/) override { }
@@ -94,14 +88,32 @@ public:
   virtual void enterRelationalExpr(TonParser::RelationalExprContext * /*ctx*/) override { }
   virtual void exitRelationalExpr(TonParser::RelationalExprContext * /*ctx*/) override { }
 
+  virtual void enterIndexExpr(TonParser::IndexExprContext * /*ctx*/) override { }
+  virtual void exitIndexExpr(TonParser::IndexExprContext * /*ctx*/) override { }
+
+  virtual void enterNoteValExpr(TonParser::NoteValExprContext * /*ctx*/) override { }
+  virtual void exitNoteValExpr(TonParser::NoteValExprContext * /*ctx*/) override { }
+
+  virtual void enterTrackEventExpr(TonParser::TrackEventExprContext * /*ctx*/) override { }
+  virtual void exitTrackEventExpr(TonParser::TrackEventExprContext * /*ctx*/) override { }
+
+  virtual void enterNotExpr(TonParser::NotExprContext * /*ctx*/) override { }
+  virtual void exitNotExpr(TonParser::NotExprContext * /*ctx*/) override { }
+
+  virtual void enterIsolateExpr(TonParser::IsolateExprContext * /*ctx*/) override { }
+  virtual void exitIsolateExpr(TonParser::IsolateExprContext * /*ctx*/) override { }
+
+  virtual void enterBoolValExpr(TonParser::BoolValExprContext * /*ctx*/) override { }
+  virtual void exitBoolValExpr(TonParser::BoolValExprContext * /*ctx*/) override { }
+
+  virtual void enterStringValExpr(TonParser::StringValExprContext * /*ctx*/) override { }
+  virtual void exitStringValExpr(TonParser::StringValExprContext * /*ctx*/) override { }
+
   virtual void enterUnaryExpr(TonParser::UnaryExprContext * /*ctx*/) override { }
   virtual void exitUnaryExpr(TonParser::UnaryExprContext * /*ctx*/) override { }
 
   virtual void enterOrExpr(TonParser::OrExprContext * /*ctx*/) override { }
   virtual void exitOrExpr(TonParser::OrExprContext * /*ctx*/) override { }
-
-  virtual void enterIndexExpr(TonParser::IndexExprContext * /*ctx*/) override { }
-  virtual void exitIndexExpr(TonParser::IndexExprContext * /*ctx*/) override { }
 
   virtual void enterConcatExpr(TonParser::ConcatExprContext * /*ctx*/) override { }
   virtual void exitConcatExpr(TonParser::ConcatExprContext * /*ctx*/) override { }
@@ -115,9 +127,6 @@ public:
   virtual void enterMulDivExpr(TonParser::MulDivExprContext * /*ctx*/) override { }
   virtual void exitMulDivExpr(TonParser::MulDivExprContext * /*ctx*/) override { }
 
-  virtual void enterNoteValExpr(TonParser::NoteValExprContext * /*ctx*/) override { }
-  virtual void exitNoteValExpr(TonParser::NoteValExprContext * /*ctx*/) override { }
-
   virtual void enterEmptySoundExpr(TonParser::EmptySoundExprContext * /*ctx*/) override { }
   virtual void exitEmptySoundExpr(TonParser::EmptySoundExprContext * /*ctx*/) override { }
 
@@ -130,14 +139,8 @@ public:
   virtual void enterParensExpr(TonParser::ParensExprContext * /*ctx*/) override { }
   virtual void exitParensExpr(TonParser::ParensExprContext * /*ctx*/) override { }
 
-  virtual void enterTrackEventExpr(TonParser::TrackEventExprContext * /*ctx*/) override { }
-  virtual void exitTrackEventExpr(TonParser::TrackEventExprContext * /*ctx*/) override { }
-
   virtual void enterSliceExpr(TonParser::SliceExprContext * /*ctx*/) override { }
   virtual void exitSliceExpr(TonParser::SliceExprContext * /*ctx*/) override { }
-
-  virtual void enterNotExpr(TonParser::NotExprContext * /*ctx*/) override { }
-  virtual void exitNotExpr(TonParser::NotExprContext * /*ctx*/) override { }
 
   virtual void enterLengthOfExpr(TonParser::LengthOfExprContext * /*ctx*/) override { }
   virtual void exitLengthOfExpr(TonParser::LengthOfExprContext * /*ctx*/) override { }
