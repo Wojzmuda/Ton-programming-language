@@ -66,7 +66,7 @@ std::any TonInterpreter::visitTargetExpr(TonParser::TargetExprContext *ctx) {
     }
 
     Timeline timeline = std::any_cast<Timeline>(baseObj);
-
+   
     if (timeline.tracks.find(trackName) == timeline.tracks.end()) {
         throw std::runtime_error("Error: Track '" + trackName + "' does not exist in timeline '" + baseName + "'.");
     }
@@ -547,6 +547,40 @@ std::any TonInterpreter::visitOrExpr(TonParser::OrExprContext *ctx) {
     throw std::runtime_error("Line " + std::to_string(line) + ": OR operator requires both operands to be BOOL.");
 }
 
+std::any TonInterpreter::visitRelationalExpr(TonParser::RelationalExprContext *ctx)
+{
+    std::any leftVal = visit(ctx->expr(0));
+    std::any rightVal = visit(ctx->expr(1));
+
+    // FIXME for now only INT validation
+    if (leftVal.type() == typeid(int) && rightVal.type() == typeid(int)) {
+        
+        int l = std::any_cast<int>(leftVal);
+        int r = std::any_cast<int>(rightVal);
+
+        if (ctx->EQ() != nullptr) {
+            return l == r;
+        }
+        else if (ctx->NEQ() != nullptr) {
+            return l != r;
+        }
+        else if (ctx->L_ANGLE() != nullptr) {
+            return l < r;
+        }
+        else if (ctx->L_ANGLE_EQ() != nullptr) {
+            return l <= r;
+        }
+        else if (ctx->R_ANGLE() != nullptr) { 
+            return l > r;
+        }
+        else if (ctx->R_ANGLE_EQ() != nullptr) {
+            return l >= r;
+        }
+    }
+
+    size_t line = ctx->getStart()->getLine();
+    throw std::runtime_error("Line " + std::to_string(line) + ": Relational operators (==, !=, <, >) currently only support INT values.");
+}
 
 std::any TonInterpreter::visitParensExpr(TonParser::ParensExprContext *ctx) {
     return visit(ctx->expr());

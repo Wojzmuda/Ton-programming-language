@@ -57,6 +57,8 @@ null
 ':'
 '.'
 '&'
+'<='
+'>='
 '<'
 '>'
 '{'
@@ -137,6 +139,8 @@ DIV_OP
 COLON
 DOT
 AMPERSAND
+L_ANGLE_EQ
+R_ANGLE_EQ
 L_ANGLE
 R_ANGLE
 L_BRACE
