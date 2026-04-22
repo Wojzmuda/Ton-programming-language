@@ -484,30 +484,27 @@ std::any TonInterpreter::visitRelationalExpr(TonParser::RelationalExprContext *c
     std::any leftVal = visit(ctx->expr(0));
     std::any rightVal = visit(ctx->expr(1));
 
-    // FIXME for now only INT validation
-    if (leftVal.type() == typeid(int) && rightVal.type() == typeid(int)) {
-        
-        int l = std::any_cast<int>(leftVal);
-        int r = std::any_cast<int>(rightVal);
+    // FIXME for now only works for INT and DOUBLE. No type validation !
+    double l = (leftVal.type() == typeid(int)) ? std::any_cast<int>(leftVal) : std::any_cast<double>(leftVal);
+    double r = (rightVal.type() == typeid(int)) ? std::any_cast<int>(rightVal) : std::any_cast<double>(rightVal);
 
-        if (ctx->EQ() != nullptr) {
-            return l == r;
-        }
-        else if (ctx->NEQ() != nullptr) {
-            return l != r;
-        }
-        else if (ctx->L_ANGLE() != nullptr) {
-            return l < r;
-        }
-        else if (ctx->L_ANGLE_EQ() != nullptr) {
-            return l <= r;
-        }
-        else if (ctx->R_ANGLE() != nullptr) { 
-            return l > r;
-        }
-        else if (ctx->R_ANGLE_EQ() != nullptr) {
-            return l >= r;
-        }
+    if (ctx->EQ() != nullptr) {
+        return l == r;
+    }
+    else if (ctx->NEQ() != nullptr) {
+        return l != r;
+    }
+    else if (ctx->L_ANGLE() != nullptr) {
+        return l < r;
+    }
+    else if (ctx->L_ANGLE_EQ() != nullptr) {
+        return l <= r;
+    }
+    else if (ctx->R_ANGLE() != nullptr) { 
+        return l > r;
+    }
+    else if (ctx->R_ANGLE_EQ() != nullptr) {
+        return l >= r;
     }
 
     size_t line = ctx->getStart()->getLine();
@@ -516,8 +513,6 @@ std::any TonInterpreter::visitRelationalExpr(TonParser::RelationalExprContext *c
 
 std::any TonInterpreter::visitParensExpr(TonParser::ParensExprContext *ctx) {
     return visit(ctx->expr());
-<<<<<<< HEAD
-=======
 }
 
 
@@ -559,10 +554,6 @@ std::any TonInterpreter::visitMulDivExpr(TonParser::MulDivExprContext *ctx) {
         return leftVal / rightVal;
     }
     return {};
-<<<<<<< HEAD
->>>>>>> 6fd8828 (added first part of math & logic -visitUnaryExpr, visitNumValExpr, visitMulDicExpr    +header)
-}
-=======
 }
 
 
@@ -583,21 +574,3 @@ std::any TonInterpreter::visitAddSubMixExpr(TonParser::AddSubMixExprContext *ctx
     }
     return {};
 }
-
-std::any TonInterpreter::visitRelationalExpr(TonParser::RelationalExprContext *ctx) {
-    std::any left = visit(ctx->expr(0));
-    std::any right = visit(ctx->expr(1));
-
-    double leftVal = (left.type() == typeid(int)) ? std::any_cast<int>(left) : std::any_cast<double>(left);
-    double rightVal = (right.type() == typeid(int)) ? std::any_cast<int>(right) : std::any_cast<double>(right);
-
-    if (ctx->EQ()) return leftVal == rightVal;
-    if (ctx->NEQ()) return leftVal != rightVal;
-    if (ctx->L_ANGLE_EQ()) return leftVal <= rightVal; 
-    if (ctx->R_ANGLE_EQ()) return leftVal >= rightVal; 
-    if (ctx->L_ANGLE()) return leftVal < rightVal;
-    if (ctx->R_ANGLE()) return leftVal > rightVal;
-
-    return false;
-}
->>>>>>> 81193b2 (Added new math error examples, Fixed/added operators >= and <=)
