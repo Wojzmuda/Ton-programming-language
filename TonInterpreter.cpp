@@ -70,7 +70,24 @@ std::any TonInterpreter::visitTargetExpr(TonParser::TargetExprContext *ctx) {
     if (timeline.tracks.find(trackName) == timeline.tracks.end()) {
         throw std::runtime_error("Error: Track '" + trackName + "' does not exist in timeline '" + baseName + "'.");
     }
-    return ctx->getText(); 
+
+    if (targetNode->STRING_VAL()) {
+        std::string rawAlias = targetNode->STRING_VAL()->getText();
+        std::string aliasName = rawAlias.substr(1, rawAlias.length() - 2); // usuwamy " "
+
+
+        for (const auto& event : timeline.tracks[trackName].events) {
+            if (event.alias == aliasName) {
+                return event;
+            }
+        }
+        
+    
+        throw std::runtime_error("Error: Event alias '" + aliasName + "' does not exist in track '" + trackName + "'.");
+        
+    }
+
+    return timeline.tracks[trackName];
 }
 
 
@@ -79,7 +96,6 @@ std::any TonInterpreter::visitTargetExpr(TonParser::TargetExprContext *ctx) {
 
 std::any TonInterpreter::visitAssignment(TonParser::AssignmentContext *ctx) {
     auto targetNode = ctx->target();
-
 
     if (targetNode->ID().size() == 1) {
         std::string varName = targetNode->ID(0)->getText();
@@ -90,7 +106,6 @@ std::any TonInterpreter::visitAssignment(TonParser::AssignmentContext *ctx) {
         return {};
     }
 
-  
     std::string timelineName = targetNode->ID(0)->getText();
     std::string trackName = targetNode->ID(1)->getText();
 
@@ -101,22 +116,56 @@ std::any TonInterpreter::visitAssignment(TonParser::AssignmentContext *ctx) {
 
     if (timeline.tracks.find(trackName) == timeline.tracks.end()) throw std::runtime_error("Track not found");
 
-
     std::any rightSide = visit(ctx->expr());
-    timeline.tracks[trackName].events.clear(); 
+
+
+    if (targetNode->STRING_VAL()) {
+        std::string rawAlias = targetNode->STRING_VAL()->getText();
+        std::string aliasName = rawAlias.substr(1, rawAlias.length() - 2);
+
+        bool found = false;
+        for (auto& event : timeline.tracks[trackName].events) {
+            if (event.alias == aliasName) {
+                found = true;
+                if (rightSide.type() == typeid(Sound)) {
+                    event.sound = std::any_cast<Sound>(rightSide);
+                } 
+                else if (rightSide.type() == typeid(TrackEvent)) {
+                    TrackEvent newEv = std::any_cast<TrackEvent>(rightSide);
+                    event.sound = newEv.sound;
+                    event.startTimeMs = newEv.startTimeMs;
+                } 
+                else {
+                    throw std::runtime_error("Error: Can only assign a SOUND or TrackEvent to a specific alias.");
+                }
+                break; 
+            }
+        }
+        if (!found) throw std::runtime_error("Error: Event alias '" + aliasName + "' not found.");
+        return {}; 
+    }
+
+    std::vector<TrackEvent> newEventsBuffer; 
 
     if (rightSide.type() == typeid(std::vector<std::any>)) {
         auto elements = std::any_cast<std::vector<std::any>>(rightSide);
         for (auto& el : elements) {
-            if (el.type() == typeid(TrackEvent)) timeline.tracks[trackName].events.push_back(std::any_cast<TrackEvent>(el));
+            if (el.type() == typeid(TrackEvent)) {
+                newEventsBuffer.push_back(std::any_cast<TrackEvent>(el));
+            } else {
+                throw std::runtime_error("Error: Array contains non-event items.");
+            }
         }
     } else if (rightSide.type() == typeid(TrackEvent)) {
-        timeline.tracks[trackName].events.push_back(std::any_cast<TrackEvent>(rightSide));
+        newEventsBuffer.push_back(std::any_cast<TrackEvent>(rightSide));
+    } else {
+        throw std::runtime_error("Error: Right side of assignment must be an event or array of events.");
     }
+
+    timeline.tracks[trackName].events = newEventsBuffer; 
 
     return {};
 }
-
 
 std::any TonInterpreter::visitArrayExpr(TonParser::ArrayExprContext *ctx) {
     std::vector<std::any> elements;
@@ -358,6 +407,10 @@ std::any TonInterpreter::visitTrackDecl(TonParser::TrackDeclContext *ctx) {
 
     Timeline& timeline = std::any_cast<Timeline&>(baseObj);
 
+    if (timeline.tracks.find(trackName) != timeline.tracks.end()) {
+        throw std::runtime_error("Error: Track '" + trackName + "' already exists in timeline '" + timelineName + "'.");
+    }
+
     Track newTrack;
     newTrack.name = trackName;
     timeline.tracks[trackName] = newTrack;
@@ -410,22 +463,41 @@ std::any TonInterpreter::visitAudioOpStat(TonParser::AudioOpStatContext *ctx) {
         }
         if (!found) throw std::runtime_error("Error: Alias '" + aliasName + "' not found on track.");
     }
-    
-    else if (ctx->ISOLATE()) {
-        if (trackName.empty()) throw std::runtime_error("Error: ISOLATE requires a track.");
-        
-        for (auto& pair : timeline.tracks) {
-            if (pair.first == trackName) {
-                pair.second.isMuted = false;
-                pair.second.isIsolated = true;
-            } else {
-                pair.second.isMuted = true;
-            }
-        }
-    }
 
     return {};
 }
+
+std::any TonInterpreter::visitIsolateExpr(TonParser::IsolateExprContext *ctx) {
+    auto targetNode = ctx -> target();
+    std::string timelineName = targetNode->ID(0)->getText();
+    if (memory.find(timelineName) == memory.end()){
+        throw std::runtime_error("Error: Timeline '" + timelineName + "' not found.");
+    }
+
+    std::any& baseObj = memory[timelineName];
+    if (baseObj.type() != typeid(Timeline)){
+        throw std::runtime_error("Error: Target is not a TIMELINE.");
+    }
+    Timeline& timeline = std::any_cast<Timeline&>(baseObj);
+
+    if (targetNode->ID().size() < 2) {
+        throw std::runtime_error("Error: ISOLATE requires a track...");
+    }
+    std::string trackName = targetNode->ID(1)->getText();
+    
+    if (timeline.tracks.find(trackName) == timeline.tracks.end()) {
+        throw std::runtime_error("Error: Track '" + trackName + "' not found...");
+    }
+
+    Timeline isolatedTimeline;
+    isolatedTimeline.name = timeline.name + "_isolated";
+    isolatedTimeline.tracks[trackName] = timeline.tracks[trackName];
+    isolatedTimeline.tracks[trackName].isMuted = false;
+
+    return isolatedTimeline;
+}
+
+
 
 
 std::any TonInterpreter::visitBoolValExpr(TonParser::BoolValExprContext *ctx)
