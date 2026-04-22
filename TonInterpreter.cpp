@@ -18,13 +18,6 @@ std::any TonInterpreter::visitStatement(TonParser::StatementContext *ctx) {
 std::any TonInterpreter::visitVarDecl(TonParser::VarDeclContext *ctx) {
     std::string varName = ctx->ID()->getText();
     std::string typeName = ctx->type()->getText(); 
-    size_t currentLine = ctx->getStart()->getLine(); 
- 
-    if (declarationLines.find(varName) != declarationLines.end()) {
-        size_t prevLine = declarationLines[varName];
-        throw std::runtime_error("Line " + std::to_string(currentLine) + ": Error. Variable '" + varName + 
-                                 "' is already declared. First declaration was on line " + std::to_string(prevLine) + ".");
-    }
 
     std::any value;
 
@@ -43,10 +36,8 @@ std::any TonInterpreter::visitVarDecl(TonParser::VarDeclContext *ctx) {
     }
 
     memory[varName] = value;
-    declarationLines[varName] = currentLine;
     return value;
 }
-
 
 
 std::any TonInterpreter::visitTargetExpr(TonParser::TargetExprContext *ctx) {

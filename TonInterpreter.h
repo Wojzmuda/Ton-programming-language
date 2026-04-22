@@ -85,7 +85,6 @@ struct Timeline {
 class TonInterpreter: public TonBaseVisitor {
     private:
         std::map<std::string, std::any> memory;
-        std::map<std::string, size_t> declarationLines; 
 
     public:
         std::any visitProgram(TonParser::ProgramContext *ctx) override;
