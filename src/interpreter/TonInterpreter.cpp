@@ -233,7 +233,7 @@ std::any TonInterpreter::visitShoutStat(TonParser::ShoutStatContext *ctx) {
         auto arrayElements = std::any_cast<std::vector<std::any>>(value);
         std::cout << "[ ";
 
-        for (size_t j = 0; i < arrayElements.size(); j++) {
+        for (size_t j = 0; j < arrayElements.size(); j++) {
             if (arrayElements[j].type() == typeid(int)) {
                 std::cout << std::any_cast<int>(arrayElements[j]);
             }
