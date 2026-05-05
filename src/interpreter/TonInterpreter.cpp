@@ -675,6 +675,8 @@ std::any TonInterpreter::executeFunctionLogic(const std:: string& funcName, cons
     std::any func = currentScope->get(funcName);
     auto funcdefctx = std::any_cast<TonParser::FuncDefContext*>(func);
 
+    std::string expectedReturnType = funcdefctx->type(0)->getText();
+
     size_t expectedargs = funcdefctx->ID().size()-1;
     size_t providedargs = argsCtx.size();
 
@@ -693,15 +695,65 @@ std::any TonInterpreter::executeFunctionLogic(const std:: string& funcName, cons
         std::string paramType = funcdefctx->type(i+1)->getText();
         std::string paramName = funcdefctx->ID(i+1)->getText();
         std::any argval = evaluatedArgs[i];
-        //maybe type checking here in the future, for now idk yet where we will check those types
+
+        bool typeMatch = false;
+        if (paramType == "INT" && argval.type() == typeid(int)) typeMatch = true;
+        else if (paramType == "NUMERICAL" && argval.type() == typeid(double)) typeMatch = true;
+        else if (paramType == "BOOL" && argval.type() == typeid(bool)) typeMatch = true;
+        else if (paramType == "CHAR" && argval.type() == typeid(char)) typeMatch = true;
+        else if (paramType == "STRING" && argval.type() == typeid(std::string)) typeMatch = true;
+        else if (paramType == "ARRAY" && argval.type() == typeid(std::vector<std::any>)) typeMatch = true;
+        else if (paramType == "NOTE" && argval.type() == typeid(Note)) typeMatch = true;
+        else if (paramType == "SOUND" && argval.type() == typeid(Sound)) typeMatch = true;
+        else if (paramType == "INSTRUMENT" && argval.type() == typeid(Instrument)) typeMatch = true;
+        else if (paramType == "TIMELINE" && argval.type() == typeid(Timeline)) typeMatch = true;
+        else if (paramType == "TRACK" && argval.type() == typeid(Track)) typeMatch = true;
+
+        if (!typeMatch) {
+            currentScope = previousScope; 
+            throw std::runtime_error("[Error] Argument '" + paramName + "' in function '" + funcName + "' must be of type " + paramType + ".");
+        }
         currentScope->define(paramName, paramType, argval);
     }
     std::any result = {};
 
     try{
         visit(funcdefctx->block());
+        if (expectedReturnType != "VOID") {
+            throw std::runtime_error("[Error] Function '" + funcName + "' missing return statement (!out).");
+        }
     } catch( const ReturnException& ret){
-        result = ret.returnValue;
+      result = ret.returnValue;
+
+        if (expectedReturnType == "VOID") {
+            
+            if (result.has_value()) {
+                throw std::runtime_error("[Error] Function '" + funcName + "' is of type VOID and cannot return a value.");
+            }
+        } 
+        else {
+
+            if (!result.has_value()) {
+                throw std::runtime_error("[Error] Function '" + funcName + "' must return a value of type " + expectedReturnType + ".");
+            }
+
+            bool typeMatch = false;
+            if (expectedReturnType == "INT" && result.type() == typeid(int)) typeMatch = true;
+            else if (expectedReturnType == "NUMERICAL" && result.type() == typeid(double)) typeMatch = true;
+            else if (expectedReturnType == "BOOL" && result.type() == typeid(bool)) typeMatch = true;
+            else if (expectedReturnType == "CHAR" && result.type() == typeid(char)) typeMatch = true;
+            else if (expectedReturnType == "STRING" && result.type() == typeid(std::string)) typeMatch = true;
+            else if (expectedReturnType == "ARRAY" && result.type() == typeid(std::vector<std::any>)) typeMatch = true;
+            else if (expectedReturnType == "NOTE" && result.type() == typeid(Note)) typeMatch = true;
+            else if (expectedReturnType == "SOUND" && result.type() == typeid(Sound)) typeMatch = true;
+            else if (expectedReturnType == "INSTRUMENT" && result.type() == typeid(Instrument)) typeMatch = true;
+            else if (expectedReturnType == "TIMELINE" && result.type() == typeid(Timeline)) typeMatch = true;
+            else if (expectedReturnType == "TRACK" && result.type() == typeid(Track)) typeMatch = true;
+
+            if (!typeMatch) {
+                throw std::runtime_error("[Error] Function '" + funcName + "' returned wrong type. Expected " + expectedReturnType + ".");
+            }
+        }
     }catch(...){
         currentScope = previousScope;
         throw;
