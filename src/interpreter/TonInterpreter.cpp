@@ -8,7 +8,11 @@ std::any TonInterpreter::visitProgram(TonParser::ProgramContext *ctx) {
 }
 
 std::any TonInterpreter::visitBlock(TonParser::BlockContext *ctx) {
-    return visitChildren(ctx);
+    auto previousScope = currentScope;
+    currentScope = std::make_shared<Scope<std::any>>(previousScope);
+    std::any result = visitChildren(ctx);
+    currentScope = previousScope;
+    return result;
 }
 
 std::any TonInterpreter::visitStatement(TonParser::StatementContext *ctx) {
