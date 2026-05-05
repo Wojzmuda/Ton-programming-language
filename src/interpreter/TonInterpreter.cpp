@@ -1,5 +1,5 @@
 #define _USE_MATH_DEFINES
-#include "TonInterpreter.h"
+#include "interpreter/TonInterpreter.h"
 #include <cmath>
 
 

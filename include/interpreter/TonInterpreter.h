@@ -1,6 +1,6 @@
 #pragma once
 
-#include "antlr4_generated/TonBaseVisitor.h"
+#include "TonBaseVisitor.h"
 #include "core/Timeline.h"
 #include "core/Scope.h"
 #include <map>

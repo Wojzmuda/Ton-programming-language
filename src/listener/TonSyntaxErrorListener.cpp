@@ -1,4 +1,4 @@
-#include "TonSyntaxErrorListener.h"
+#include "listener/TonSyntaxErrorListener.h"
 #include <iostream>
 
 void TonSyntaxErrorListener::syntaxError(antlr4::Recognizer *recognizer, 

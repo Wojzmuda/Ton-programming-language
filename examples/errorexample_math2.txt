@@ -1,7 +1,7 @@
 $ Odkomentuj tylko JEDNA linijke z błędem na raz, zeby sprawdzic kompilator!
 
 $ BŁĄD 1: Dzielenie przez zero
-$!shout 7 / (3 - 3) ;
+!shout 7 / (3 - 3) ;
 
 $ BŁĄD 2: Redeklaracja zmiennej (Test sprawdzania numeru linii)
 $!make INT z <- -3 ;

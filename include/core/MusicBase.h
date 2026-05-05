@@ -1,7 +1,7 @@
 #pragma once
 #include<string>
 #include <vector>
-#include "external/AudioFile.h"
+#include "AudioFile.h"
 #include <map>
 
 struct Instrument {

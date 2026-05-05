@@ -1,9 +1,9 @@
 #include "antlr4-runtime.h"
-#include "antlr4_generated/TonLexer.h"
-#include "antlr4_generated/TonParser.h"
-#include "TonInterpreter.h"
-#include "TonSyntaxErrorListener.h"
-#include "TonDeclarationListener.h"
+#include "TonLexer.h"
+#include "TonParser.h"
+#include "interpreter/TonInterpreter.h"
+#include "listener/TonSyntaxErrorListener.h"
+#include "listener/TonDeclarationListener.h"
 
 #include <iostream>
 #include <fstream>

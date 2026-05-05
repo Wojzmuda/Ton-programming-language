@@ -1,4 +1,4 @@
-#include "TonDeclarationListener.h"
+#include "listener/TonDeclarationListener.h"
 #include <string>
 #include <stdexcept>
 

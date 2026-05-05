@@ -1,5 +1,5 @@
 #pragma once
-#include "antlr4_generated/TonBaseListener.h"
+#include "TonBaseListener.h"
 #include"core/Scope.h"
 #include <memory>
 #include <string>

@@ -14,7 +14,6 @@ set(SOURCES
     src/interpreter/TonInterpreter.cpp
     src/listener/TonDeclarationListener.cpp
     src/listener/TonSyntaxErrorListener.cpp
-    # Pliki wygenerowane przez ANTLR pozostają w swoim folderze
     antlr4_generated/TonLexer.cpp
     antlr4_generated/TonParser.cpp
     antlr4_generated/TonBaseVisitor.cpp
