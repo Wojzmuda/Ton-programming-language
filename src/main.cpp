@@ -49,7 +49,7 @@ if (totalErrors > 0) {
     std::cerr <<std::endl << "Found " << totalErrors << " syntax errors, fix your code." << std::endl;
     return 1;
 }
-    TonDeclarationListener listener(declaredTypes, declarationLines);
+    TonDeclarationListener listener;
     TonInterpreter interpreter(declaredTypes, memory);
 
     try {
