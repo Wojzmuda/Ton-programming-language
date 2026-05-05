@@ -48,7 +48,36 @@ Prints text to the console.
 ```
 !shout "Generating track...";
 ```
+### Operators
+Tøn supports standard programming operators for logic and math, as well as unique operators designed specifically for audio manipulation.
 
+**Assignment Operators**
+* `<-` : Standard assignment (e.g., `!make INT x <- 5;`).
+* `+<-`, `-<-`, `*<-`, `/<-` : Compound assignment (modifies the existing variable, e.g., `x +<- 2;`).
+
+**Arithmetic Operators**
+* `+` : Addition.
+* `-` : Subtraction.
+* `*` : Multiplication.
+* `/` : Division.
+
+**Relational Operators**
+* `==` : Equal to.
+* `!=` : Not equal to.
+* `<` : Less than.
+* `>` : Greater than.
+* `<=` : Less than or equal to.
+* `>=` : Greater than or equal to.
+
+**Logical Operators**
+* `AND` : Logical AND (e.g., `TRUE AND FALSE`).
+* `OR` : Logical OR.
+* `NOT` : Logical NOT (e.g., `NOT TRUE`).
+
+**Audio-Specific Operators**
+* `+` (Mix) : When applied to `SOUND` or `TRACK` objects, it overlays their audio waves, playing them simultaneously.
+* `&` (Concat) : Glues two audio objects sequentially, making the second sound play immediately after the first one finishes.
+  
 ## 3. Audio Construction & Timelines
 
 ### Generating Sounds
@@ -144,20 +173,83 @@ $ Loop until a condition is true
     x -<- 1;
 }
 ```
-## 6. Functions
-Functions are created using the `!define` keyword, followed by the return type, the name, and arguments inside `< >`.
+## 6. Functions & Scoping
+
+Tøn allows you to encapsulate logic into functions and manage memory dynamically using block scopes. 
+
+### Defining Functions
+Functions are created using the `!define` keyword, followed by the return type, the function name, and its arguments inside angle brackets `< >`. Use the `!out` keyword to return a value.
 
 ```text
 !define STRING introduce <INT arg1, INT arg2> {
     !if <arg1 > arg2> {
-        !out "TON";
+        !out "High";
     }
     !otherwise {
-        !out "TON TON";
+        !out "Low";
     }
 }
 ```
 
+### Calling Functions
+How you call a function depends strictly on its return type:
+1. **Value-Returning Functions** (`INT`, `SOUND`, `STRING`, etc.): Must be used as part of an expression (e.g., assigned to a variable or used in a mathematical equation).
+2. **`VOID` Functions**: Do not return a value. They are executed as standalone statements and do not use the `!out` keyword.
+
+```text
+$ 1. Calling a function that returns a value
+!make STRING result <- introduce(15, 10);
+
+$ 2. Calling a VOID function
+!define VOID play_intro <> {
+    !shout "Starting the track...";
+}
+
+play_intro(); $ Standalone execution
+```
+
+### Anonymous Blocks
+In Tøn, curly braces `{ }` are not restricted just to functions or loops. You can place an anonymous block anywhere in your code to create a temporary, isolated environment. Variables created inside an anonymous block are destroyed as soon as the block ends, which is excellent for memory management during heavy audio synthesis.
+
+```text
+!make INT global_counter <- 1;
+
+{
+    $ This variable only exists inside these braces
+    !make SOUND temporary_noise <- synth C4 100;
+    
+    $ We can modify variables from the outside
+    global_counter <- 2; 
+}
+
+$ !shout temporary_noise; <-- THIS WOULD CAUSE AN ERROR
+!shout global_counter;    $ Outputs: 2
+```
+
+### Scoping Rules (Dynamic Scoping)
+Tøn utilizes **Dynamic Scoping**, which is a highly powerful and unique feature for a music scripting language. 
+
+Unlike traditional languages (where a function only sees its own parameters), in Tøn, a function has access to the variables of **the environment from which it was called**. This means functions can act as intelligent, context-aware "macros".
+
+**Example of Dynamic Scoping:**
+```text
+!define VOID play_contextual_bass <> {
+    $ The function uses 'track_tempo' even though it was never passed as an argument!
+    !make SOUND bass_hit <- synth C2 track_tempo;
+    mySong.bassline <- [bass_hit AT 0];
+}
+
+{
+    $ We set the context here
+    !make INT track_tempo <- 500;
+    !make TIMELINE mySong;
+    mySong NEW TRACK bassline;
+    
+    $ When called, the function looks into THIS block for 'track_tempo' and 'mySong'
+    play_contextual_bass(); 
+}
+```
+*Note: While Dynamic Scoping offers great flexibility for musical scripting, be careful with variable naming to avoid unintentionally overwriting variables in the calling environment.*
 ## 7. Exporting
 To compile and save your final composition as a `.wav` file (with a polyphonic mix of all tracks), use the `!save` command.
 
