@@ -420,7 +420,7 @@ std::any TonInterpreter::visitAudioOpStat(TonParser::AudioOpStatContext *ctx) {
     std::string timelineName = targetNode->ID(0)->getText();
 
 
-    if (currentScope->exists(timelineName)) {
+    if (!currentScope->exists(timelineName)) {
         throw std::runtime_error("Error: Timeline '" + timelineName + "' not found.");
     }
     std::any& baseObj = currentScope->get(timelineName);
@@ -465,7 +465,7 @@ std::any TonInterpreter::visitAudioOpStat(TonParser::AudioOpStatContext *ctx) {
 std::any TonInterpreter::visitIsolateExpr(TonParser::IsolateExprContext *ctx) {
     auto targetNode = ctx -> target();
     std::string timelineName = targetNode->ID(0)->getText();
-    if (currentScope->exists(timelineName)){
+    if (!currentScope->exists(timelineName)){
         throw std::runtime_error("Error: Timeline '" + timelineName + "' not found.");
     }
 
