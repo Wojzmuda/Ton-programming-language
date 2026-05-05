@@ -640,4 +640,73 @@ std::any TonInterpreter::visitAddSubMixExpr(TonParser::AddSubMixExprContext *ctx
         return leftVal - rightVal;
     }
     return {};
+
+   
+}
+ std::any TonInterpreter::visitFuncDef(TonParser::FuncDefContext *ctx){
+        std::string funcName = ctx->ID(0)->getText();
+        currentScope->define(funcName, "FUNCTION", ctx);
+        return {};
+    }
+
+std::any TonInterpreter::visitFunctionCallExpr(TonParser::FunctionCallExprContext *ctx){
+        std::string funcName = ctx->ID()->getText();
+        return executeFunctionLogic(funcName, ctx->expr());
+}
+
+std::any TonInterpreter::visitCallStat(TonParser::CallStatContext *ctx){
+    std::string funcName = ctx-> ID()->getText();
+    executeFunctionLogic(funcName, ctx->expr());
+    return {};
+}
+std::any TonInterpreter::visitReturnStat(TonParser::ReturnStatContext *ctx){
+    std::any valueToReturn = {};
+
+    if(ctx->expr()){
+        valueToReturn = visit(ctx->expr());
+    }
+    throw ReturnException(valueToReturn);
+}
+
+std::any TonInterpreter::executeFunctionLogic(const std:: string& funcName, const std::vector<TonParser::ExprContext*>& argsCtx){
+    if(!currentScope-> exists(funcName)){
+        throw std::runtime_error("[Error] Function doesn't exist.");
+    }
+    std::any func = currentScope->get(funcName);
+    auto funcdefctx = std::any_cast<TonParser::FuncDefContext*>(func);
+
+    size_t expectedargs = funcdefctx->ID().size()-1;
+    size_t providedargs = argsCtx.size();
+
+    if(expectedargs != providedargs){
+        throw std::runtime_error("[Error] Function '"+ funcName + "' expects " + std::to_string(expectedargs) + " recieved only " + std::to_string(providedargs) + "arguments.");
+    }
+    std::vector<std::any> evaluatedArgs;
+    for(auto exprctx : argsCtx){
+        evaluatedArgs.push_back(visit(exprctx));
+    }
+
+    auto previousScope = currentScope;
+    currentScope = std::make_shared<Scope<std::any>>(previousScope);
+
+    for(size_t i = 0; i < expectedargs; i++){
+        std::string paramType = funcdefctx->type(i+1)->getText();
+        std::string paramName = funcdefctx->ID(i+1)->getText();
+        std::any argval = evaluatedArgs[i];
+        //maybe type checking here in the future, for now idk yet where we will check those types
+        currentScope->define(paramName, paramType, argval);
+    }
+    std::any result = {};
+
+    try{
+        visit(funcdefctx->block());
+    } catch( const ReturnException& ret){
+        result = ret.returnValue;
+    }catch(...){
+        currentScope = previousScope;
+        throw;
+    }
+    currentScope = previousScope;
+    return result;
+
 }
