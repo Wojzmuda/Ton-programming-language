@@ -19,6 +19,7 @@ statement
     | saveStat          // !save t1;
     | playStat          // PLAY t1;
     | returnStat        // !out 5;
+    | block             // nameless scope
     ;
 
 varDecl : EXCLAM_MARK MAKE type ID (ASSIGN expr)? SEMI ;

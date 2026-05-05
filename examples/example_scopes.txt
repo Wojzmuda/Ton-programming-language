@@ -1,0 +1,64 @@
+$ ==========================================
+$ TESTY: ZAKRESY (SCOPES) I BLOKI
+$ ==========================================
+
+$ 1. TEST: Podstawowy zakres globalny
+!make INT global_x <- 10 ;
+!shout "Global_x na start (Oczekiwane 10):" ;
+!shout global_x ;
+
+
+$ 2. TEST: Widocznosc zmiennych rodzica wewnatrz bloku
+!make INT parent_var <- 42 ;
+{
+    !shout "Wewnatrz bloku widac parent_var (Oczekiwane 42):" ;
+    !shout parent_var ;
+    
+    !make INT child_var <- 100 ;
+    !shout "Wewnatrz bloku widac child_var (Oczekiwane 100):" ;
+    !shout child_var ;
+}
+
+
+$ 3. TEST: Przeslanianie zmiennych (Shadowing - uzycie !make w srodku)
+!make INT shadow_var <- 1 ;
+{
+    !make INT shadow_var <- 99 ; $ Tworzymy nową, lokalną zmienną o tej samej nazwie
+    !shout "Shadow_var w srodku bloku (Oczekiwane 99):" ;
+    !shout shadow_var ;
+}
+!shout "Shadow_var na zewnatrz bloku powraca do oryginalu (Oczekiwane 1):" ;
+!shout shadow_var ;
+
+
+$ 4. TEST: Modyfikacja zmiennej rodzica (uzycie <- bez !make)
+!make INT counter <- 5 ;
+{
+    counter <- 10 ; $ Przypisanie do istniejacej zmiennej (znajdzie ja u rodzica)
+    !shout "Counter w srodku po modyfikacji (Oczekiwane 10):" ;
+    !shout counter ;
+}
+!shout "Counter na zewnatrz po wyjsciu z bloku TRWALE ZMIENIONY (Oczekiwane 10):" ;
+!shout counter ;
+
+
+$ ==========================================
+$ TESTY BŁĘDÓW: ODKOMENTUJ TYLKO JEDNA LINIJKE Z BLEDEM NA RAZ!
+$ ==========================================
+
+$ BŁĄD 1: Wyciek pamieci (zmienna z bloku nie moze byc uzyta na zewnatrz)
+$ {
+$     !make INT tajna_zmienna <- 777 ;
+$ }
+$ !shout tajna_zmienna ;  $ Powinno wyrzucic blad o braku zmiennej 'tajna_zmienna'
+
+
+$ BŁĄD 2: Przypisanie (<-) do zmiennej, ktora nie istnieje (zapomnienie !make)
+$ {
+$     zupelnie_nowa <- 5 ; $ Powinno wyrzucic blad: Cannot assign to undefined variable
+$ }
+
+
+$ BŁĄD 3: Konflikt !make z shadow_var (Redeklaracja w tym samym scope)
+$ !make INT z <- 1 ;
+$ !make INT z <- 2 ; $ Zalezy jak to obslugujesz w Listenerze, powinno rzucic błąd
