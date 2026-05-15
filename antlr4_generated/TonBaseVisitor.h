@@ -43,6 +43,10 @@ public:
     return visitChildren(ctx);
   }
 
+  virtual std::any visitCallStat(TonParser::CallStatContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
   virtual std::any visitAssignment(TonParser::AssignmentContext *ctx) override {
     return visitChildren(ctx);
   }

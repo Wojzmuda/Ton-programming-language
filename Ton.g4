@@ -19,6 +19,7 @@ statement
     | saveStat          // !save t1;
     | playStat          // PLAY t1;
     | returnStat        // !out 5;
+    | callStat          // zagraj(120, "szybko")
     | block             // nameless scope
     ;
 
@@ -28,6 +29,9 @@ trackDecl : ID NEW TRACK ID SEMI ;
 
 // Target żeby się dało: adresowanie wielopoziomowe: ID, ID.ID, lub ID.ID."alias"
 target : ID (DOT ID (DOT STRING_VAL)?)? ;
+
+// Zeby sie dalo wywolac funkcje void
+callStat : ID L_PAREN (expr (COMMA expr)*)? R_PAREN SEMI ;
 
 assignment 
     : target ASSIGN expr SEMI 

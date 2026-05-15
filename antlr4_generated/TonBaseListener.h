@@ -37,6 +37,9 @@ public:
   virtual void enterTarget(TonParser::TargetContext * /*ctx*/) override { }
   virtual void exitTarget(TonParser::TargetContext * /*ctx*/) override { }
 
+  virtual void enterCallStat(TonParser::CallStatContext * /*ctx*/) override { }
+  virtual void exitCallStat(TonParser::CallStatContext * /*ctx*/) override { }
+
   virtual void enterAssignment(TonParser::AssignmentContext * /*ctx*/) override { }
   virtual void exitAssignment(TonParser::AssignmentContext * /*ctx*/) override { }
 

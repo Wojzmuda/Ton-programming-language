@@ -30,10 +30,10 @@ public:
 
   enum {
     RuleProgram = 0, RuleHeader = 1, RuleBlock = 2, RuleStatement = 3, RuleVarDecl = 4, 
-    RuleTrackDecl = 5, RuleTarget = 6, RuleAssignment = 7, RuleReturnStat = 8, 
-    RuleShoutStat = 9, RuleIfStat = 10, RuleLoopStat = 11, RuleUntilStat = 12, 
-    RuleFuncDef = 13, RuleAudioOpStat = 14, RuleSaveStat = 15, RulePlayStat = 16, 
-    RuleType = 17, RuleExpr = 18
+    RuleTrackDecl = 5, RuleTarget = 6, RuleCallStat = 7, RuleAssignment = 8, 
+    RuleReturnStat = 9, RuleShoutStat = 10, RuleIfStat = 11, RuleLoopStat = 12, 
+    RuleUntilStat = 13, RuleFuncDef = 14, RuleAudioOpStat = 15, RuleSaveStat = 16, 
+    RulePlayStat = 17, RuleType = 18, RuleExpr = 19
   };
 
   explicit TonParser(antlr4::TokenStream *input);
@@ -60,6 +60,7 @@ public:
   class VarDeclContext;
   class TrackDeclContext;
   class TargetContext;
+  class CallStatContext;
   class AssignmentContext;
   class ReturnStatContext;
   class ShoutStatContext;
@@ -143,6 +144,7 @@ public:
     SaveStatContext *saveStat();
     PlayStatContext *playStat();
     ReturnStatContext *returnStat();
+    CallStatContext *callStat();
     BlockContext *block();
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -212,6 +214,28 @@ public:
   };
 
   TargetContext* target();
+
+  class  CallStatContext : public antlr4::ParserRuleContext {
+  public:
+    CallStatContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    antlr4::tree::TerminalNode *ID();
+    antlr4::tree::TerminalNode *L_PAREN();
+    antlr4::tree::TerminalNode *R_PAREN();
+    antlr4::tree::TerminalNode *SEMI();
+    std::vector<ExprContext *> expr();
+    ExprContext* expr(size_t i);
+    std::vector<antlr4::tree::TerminalNode *> COMMA();
+    antlr4::tree::TerminalNode* COMMA(size_t i);
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  CallStatContext* callStat();
 
   class  AssignmentContext : public antlr4::ParserRuleContext {
   public:
