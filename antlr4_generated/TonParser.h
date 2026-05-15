@@ -283,8 +283,11 @@ public:
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *EXCLAM_MARK();
     antlr4::tree::TerminalNode *SHOUT();
-    ExprContext *expr();
+    std::vector<ExprContext *> expr();
+    ExprContext* expr(size_t i);
     antlr4::tree::TerminalNode *SEMI();
+    std::vector<antlr4::tree::TerminalNode *> COMMA();
+    antlr4::tree::TerminalNode* COMMA(size_t i);
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;

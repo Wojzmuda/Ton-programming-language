@@ -201,64 +201,73 @@ std::any TonInterpreter::visitTrackEventExpr(TonParser::TrackEventExprContext *c
 
 std::any TonInterpreter::visitShoutStat(TonParser::ShoutStatContext *ctx) {
 
-    std::any value = visit(ctx->expr());
+    auto expressions = ctx->expr();
+    for (size_t i = 0; i <  expressions.size(); ++i){
+        std::any value = visit(expressions[i]);
+    
 
     if (value.type() == typeid(std::string)) {
-        std::cout << std::any_cast<std::string>(value) << std::endl;
+        std::cout << std::any_cast<std::string>(value);
     }
     else if (value.type() == typeid(int)) {
-        std::cout << std::any_cast<int>(value) << std::endl;
+        std::cout << std::any_cast<int>(value);
     }
     else if (value.type() == typeid(double)) {
-        std::cout << std::any_cast<double>(value) << std::endl;
+        std::cout << std::any_cast<double>(value);
     }
     else if (value.type() == typeid(char)) {
-        std::cout << "'" << std::any_cast<char>(value) << "'" << std::endl;
+        std::cout << "'" << std::any_cast<char>(value) << "'";
     }
     else if (value.type() == typeid(bool)) {
-        std::cout << (std::any_cast<bool>(value) ? "TRUE" : "FALSE") << std::endl;
+        std::cout << (std::any_cast<bool>(value) ? "TRUE" : "FALSE");
     }
     else if (value.type() == typeid(Note)) {
         Note currentNote = std::any_cast<Note>(value);
-        std::cout << "NOTE(" << currentNote.pitchClass << currentNote.octave << ")" << std::endl;
+        std::cout << "NOTE(" << currentNote.pitchClass << currentNote.octave << ")";
     }
     else if (value.type() == typeid(Instrument)) {
         Instrument currentInstrument = std::any_cast<Instrument>(value);
-        std::cout << "INSTRUMENT(" << currentInstrument.name << ")" << std::endl;
+        std::cout << "INSTRUMENT(" << currentInstrument.name << ")";
     }
     else if (value.type() == typeid(std::vector<std::any>)) {
         auto arrayElements = std::any_cast<std::vector<std::any>>(value);
         std::cout << "[ ";
 
-        for (size_t i = 0; i < arrayElements.size(); i++) {
-            if (arrayElements[i].type() == typeid(int)) {
-                std::cout << std::any_cast<int>(arrayElements[i]);
+        for (size_t j = 0; j < arrayElements.size(); j++) {
+            if (arrayElements[j].type() == typeid(int)) {
+                std::cout << std::any_cast<int>(arrayElements[j]);
             }
-            else if (arrayElements[i].type() == typeid(double)) {
-                std::cout << std::any_cast<double>(arrayElements[i]);
+            else if (arrayElements[j].type() == typeid(double)) {
+                std::cout << std::any_cast<double>(arrayElements[j]);
             }
-            else if (arrayElements[i].type() == typeid(std::string)) {
-                std::cout << "\"" << std::any_cast<std::string>(arrayElements[i]) << "\"";
+            else if (arrayElements[j].type() == typeid(std::string)) {
+                std::cout << "\"" << std::any_cast<std::string>(arrayElements[j]) << "\"";
             }
-            else if (arrayElements[i].type() == typeid(char)) {
-                std::cout << "'" << std::any_cast<char>(arrayElements[i]) << "'";
+            else if (arrayElements[j].type() == typeid(char)) {
+                std::cout << "'" << std::any_cast<char>(arrayElements[j]) << "'";
             }
-            else if (arrayElements[i].type() == typeid(Note)) {
-                Note n = std::any_cast<Note>(arrayElements[i]);
+            else if (arrayElements[j].type() == typeid(Note)) {
+                Note n = std::any_cast<Note>(arrayElements[j]);
                 std::cout << n.pitchClass << n.octave;
             }
             else {
                 std::cout << "?";
             }
 
-            if (i < arrayElements.size() - 1) std::cout << ", ";
+            if (j < arrayElements.size() - 1) std::cout << ", ";
         }
-        std::cout << " ]" << std::endl;
-    }
+        std::cout << " ]";
+    }else if (!value.has_value()) {
+            std::cout << "[VOID / EMPTY]";
+        }
     else {
         std::cout << "[Complex Object: SOUND]" << std::endl;
     }
-
+    if (i < expressions.size() - 1) {
+            std::cout << " ";
+        }
+    }
+    std::cout << std::endl;
     return {};
 }
 

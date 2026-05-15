@@ -43,7 +43,7 @@ assignment
 
 returnStat : EXCLAM_MARK OUT expr? SEMI ;
 
-shoutStat : EXCLAM_MARK SHOUT expr SEMI ;
+shoutStat : EXCLAM_MARK SHOUT expr (COMMA expr)* SEMI ;
 
 ifStat 
     : EXCLAM_MARK IF L_ANGLE expr R_ANGLE block 

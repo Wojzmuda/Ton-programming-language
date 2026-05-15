@@ -1,0 +1,18 @@
+!make INT tempo <- 120;
+!make ARRAY nuty <- [C4, E4, G4];
+!make SOUND testowyDzwiek <- synth C4 500;
+
+!shout "=== TEST KOMENDY SHOUT Z WIELOMA ARGUMENTAMI ===" ;
+
+$ Test mieszania tekstu ze zmiennymi
+!shout "Ustawiono tempo utworu na:", tempo, "BPM." ;
+
+$ Test tablic w środku tekstu
+!shout "Zagramy nastepujace nuty:", nuty, "i powtorzymy." ;
+
+$ Test pustego wywołania funkcji VOID w środku
+!define VOID pusta_funkcja <> {}
+!shout "Zaraz wywolam funkcje VOID:", pusta_funkcja(), "- tak to wyglada." ;
+
+$ Test obiektow dzwiekowych w linii
+!shout "Wygenerowany dzwiek to:", testowyDzwiek, "- i trwa on ułamek sekundy." ;
