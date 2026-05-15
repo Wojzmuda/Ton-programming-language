@@ -777,3 +777,32 @@ std::any TonInterpreter::executeFunctionLogic(const std:: string& funcName, cons
     return result;
 
 }
+
+
+
+std::any TonInterpreter::visitIfStat(TonParser::IfStatContext *ctx) {
+
+    size_t conditionsCount = ctx->expr().size();
+
+    for (size_t i = 0; i < conditionsCount; ++i) {
+        std::any conditionAny = visit(ctx->expr(i));
+
+        if (conditionAny.type() != typeid(bool)) {
+            size_t line = ctx->getStart()->getLine();
+            throw std::runtime_error("Line " + std::to_string(line) + ": Error - IF condition must be a BOOL.");
+        }
+
+        bool condition = std::any_cast<bool>(conditionAny);
+
+        if (condition) {
+            return visit(ctx->block(i));
+        }
+    }
+
+
+    if (ctx->block().size() > conditionsCount) {
+        return visit(ctx->block(conditionsCount));
+    }
+
+    return {};
+}
