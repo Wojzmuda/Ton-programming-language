@@ -8,9 +8,17 @@
 #include <any>
 #include <vector>
 
+class ReturnException : public std::exception{
+    public:
+        std::any returnValue;
+        ReturnException(std::any val) : returnValue(std::move(val)){}
+};
 class TonInterpreter: public TonBaseVisitor {
     private:
         std::shared_ptr<Scope<std::any>> currentScope;
+
+        std::any executeFunctionLogic(const std:: string& funcName, const std::vector<TonParser::ExprContext*>& argsCtx);
+
     public:
         TonInterpreter(){
             currentScope = std::make_shared<Scope<std::any>>();
@@ -53,4 +61,10 @@ class TonInterpreter: public TonBaseVisitor {
         std::any visitMulDivExpr(TonParser::MulDivExprContext *ctx) override;
         std::any visitAddSubMixExpr(TonParser::AddSubMixExprContext *ctx) override;
         std::any visitNumValExpr(TonParser::NumValExprContext *ctx) override;
+
+        //functions
+        std::any visitFuncDef(TonParser::FuncDefContext *ctx) override;
+        std::any visitFunctionCallExpr(TonParser::FunctionCallExprContext *ctx) override;
+        std::any visitCallStat(TonParser::CallStatContext *ctx) override;
+        std::any visitReturnStat(TonParser::ReturnStatContext *ctx) override;
 };
