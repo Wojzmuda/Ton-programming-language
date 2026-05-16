@@ -1,0 +1,9 @@
+!make INT tempo <- 120;
+!make STRING tytul <- "Wielki Hit";
+!make BOOL czyGras <- true;
+!make CHAR klawisz <- 'K';
+!make NUMERICAL glosnosc <- 0.8;
+
+tempo <- 140;
+klawisz <- 'x';
+glosnosc <- 20.0;
