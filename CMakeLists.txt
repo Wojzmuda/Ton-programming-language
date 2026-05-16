@@ -12,6 +12,7 @@ add_subdirectory(runtime)
 set(SOURCES
     src/main.cpp
     src/interpreter/TonInterpreter.cpp
+    src/typechecker/TonTypeChecker.cpp
     src/listener/TonDeclarationListener.cpp
     src/listener/TonSyntaxErrorListener.cpp
     antlr4_generated/TonLexer.cpp
@@ -22,6 +23,7 @@ set(SOURCES
 
 set(HEADERS
     include/interpreter/TonInterpreter.h
+    include/typechecker/TonTypeChecker.h
     include/listener/TonDeclarationListener.h
     include/listener/TonSyntaxErrorListener.h
     include/core/MusicBase.h

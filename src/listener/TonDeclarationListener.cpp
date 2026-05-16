@@ -1,4 +1,5 @@
 #include "listener/TonDeclarationListener.h"
+#include "typechecker/TonTypeChecker.h"
 #include <string>
 #include <stdexcept>
 
@@ -6,7 +7,7 @@ void TonDeclarationListener::enterVarDecl(TonParser::VarDeclContext *ctx){
     std::string varName = ctx->ID()->getText();
     std::string typeName = ctx->type()->getText();
 
-    int currentLine = ctx-> getStart()->getLine();
+    int currentLine = ctx->getStart()->getLine();
 
     if(currentScope->existsLocally(varName)){
         int prevLine = currentScope->get(varName);
