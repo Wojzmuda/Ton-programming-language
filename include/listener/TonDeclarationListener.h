@@ -22,4 +22,5 @@ class TonDeclarationListener : public TonBaseListener {
         void exitTargetExpr(TonParser::TargetExprContext *ctx) override;
         void enterFuncDef(TonParser::FuncDefContext *ctx) override;
         void exitFuncDef(TonParser::FuncDefContext *ctx) override;
+        void exitReturnStat(TonParser::ReturnStatContext *ctx) override;
 };

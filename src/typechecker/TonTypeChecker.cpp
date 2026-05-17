@@ -42,7 +42,9 @@ std::any TonTypeChecker::visitRelationalExpr(TonParser::RelationalExprContext *c
 std::any TonTypeChecker::visitUnaryExpr(TonParser::UnaryExprContext *ctx) {
     std::string type = std::any_cast<std::string>(visit(ctx->expr()));
     if (type != "INT" && type != "NUMERICAL") {
-        throw std::runtime_error("Type Error: Unary signs (+, -) require INT or NUMERICAL. Given: " + type);
+        size_t line = ctx->getStart()->getLine();
+        throw std::runtime_error("Type Error in line " + std::to_string(line) + 
+        ": Unary signs (+, -) require INT or NUMERICAL. Given: " + type);
     }
     return type;
 }
@@ -54,8 +56,9 @@ std::any TonTypeChecker::visitMulDivExpr(TonParser::MulDivExprContext *ctx) {
     if ((left == "INT" || left == "NUMERICAL") && (right == "INT" || right == "NUMERICAL")) {
         return (left == "NUMERICAL" || right == "NUMERICAL") ? std::string("NUMERICAL") : std::string("INT");
     }
-
-    throw std::runtime_error("Type Error: Multiplication/Division requires INT or NUMERICAL.");
+    size_t line = ctx->getStart()->getLine();
+    throw std::runtime_error("Type Error in line " + std::to_string(line) + 
+        ": Multiplication/Division requires INT or NUMERICAL.");
 }
 
 std::any TonTypeChecker::visitAddSubMixExpr(TonParser::AddSubMixExprContext *ctx) {
@@ -71,8 +74,9 @@ std::any TonTypeChecker::visitAddSubMixExpr(TonParser::AddSubMixExprContext *ctx
     if (left == "STRING" && right == "STRING") {
         return std::string("STRING");
     }
-
-    throw std::runtime_error("Type Error: Cannot apply +/- to " + left + " and " + right);
+    size_t line = ctx->getStart()->getLine();
+    throw std::runtime_error("Type Error in line " + std::to_string(line) + 
+        ": Cannot apply +/- to " + left + " and " + right);
 }
 
 std::any TonTypeChecker::visitConcatExpr(TonParser::ConcatExprContext *ctx) {
@@ -82,10 +86,18 @@ std::any TonTypeChecker::visitConcatExpr(TonParser::ConcatExprContext *ctx) {
     if (left == "SOUND" && right == "SOUND") { return std::string("SOUND"); }
     if (left == "STRING" && right == "STRING") { return std::string("STRING"); }
 
-    throw std::runtime_error("Type Error: Concat operator (&) requires SOUND or STRING on both sides.");
+    size_t line = ctx->getStart()->getLine();
+    throw std::runtime_error("Type Error in line " + std::to_string(line) + 
+    ": Concat operator (&) requires SOUND or STRING on both sides.");
 }
 
-std::any TonTypeChecker::visitArrayExpr(TonParser::ArrayExprContext *ctx) { return std::string("ARRAY"); }
+std::any TonTypeChecker::visitArrayExpr(TonParser::ArrayExprContext *ctx) { 
+    for (auto exprCtx : ctx->expr()) {
+        visit(exprCtx);
+    }
+    return std::string("ARRAY"); 
+}
+
 std::any TonTypeChecker::visitLengthOfExpr(TonParser::LengthOfExprContext *ctx) { return std::string("INT"); }
 std::any TonTypeChecker::visitIsolateExpr(TonParser::IsolateExprContext *ctx) { return std::string("SOUND"); }
 
@@ -99,7 +111,6 @@ std::any TonTypeChecker::visitFunctionCallExpr(TonParser::FunctionCallExprContex
     return returnType;
 }
 
-// TODO to be implemented
 std::any TonTypeChecker::visitCreateSoundExpr(TonParser::CreateSoundExprContext *ctx) {
     std::string arg1Type = std::any_cast<std::string>(visit(ctx->expr(0)));
     std::string arg2Type = std::any_cast<std::string>(visit(ctx->expr(1)));
@@ -133,11 +144,52 @@ std::any TonTypeChecker::visitTrackEventExpr(TonParser::TrackEventExprContext *c
         throw std::runtime_error("Type Error in line " + std::to_string(line) + 
                                  ": Track event AT clause requires an INT (time). Given: " + timeType);
     }
-
-    // Zwracamy typ "TRACK_EVENT" (wcześniej miałeś "SOUND", ale Interpreter używa struktury TrackEvent, 
-    // więc bezpieczniej jest rozróżnić typ EVENT od czystego SOUND).
     return std::string("TRACK_EVENT"); 
 }
 
-std::any TonTypeChecker::visitIndexExpr(TonParser::IndexExprContext *ctx) { return std::string("UNKNOWN"); }
-std::any TonTypeChecker::visitSliceExpr(TonParser::SliceExprContext *ctx) { return std::string("UNKNOWN"); }
+std::any TonTypeChecker::visitIndexExpr(TonParser::IndexExprContext *ctx) {
+    std::string baseType = std::any_cast<std::string>(visit(ctx->expr(0)));
+    std::string indexType = std::any_cast<std::string>(visit(ctx->expr(1)));
+
+    if (indexType != "INT") {
+        size_t line = ctx->getStart()->getLine();
+        throw std::runtime_error("Type Error in line " + std::to_string(line) + 
+                                 ": Index must be an INT. Given: " + indexType);
+    }
+
+    if (baseType != "ARRAY" && baseType != "STRING") {
+        size_t line = ctx->getStart()->getLine();
+        throw std::runtime_error("Type Error in line " + std::to_string(line) + 
+                                 ": Cannot index type " + baseType + ".");
+    }
+
+    if (baseType == "STRING") {
+        return std::string("CHAR"); 
+    }
+
+    // 4. Jeśli to ARRAY, zwracamy UNKNOWN.
+    // Dlaczego? Ponieważ w Ton tablice mogą trzymać mieszane typy [1, "tekst", note].
+    // Statycznie (przed uruchomieniem) nie zgadniemy, jaki typ kryje się pod indeksem [2].
+    return std::string("UNKNOWN"); 
+}
+
+
+std::any TonTypeChecker::visitSliceExpr(TonParser::SliceExprContext *ctx) {
+    std::string baseType = std::any_cast<std::string>(visit(ctx->expr(0)));
+    std::string startType = std::any_cast<std::string>(visit(ctx->expr(1)));
+    std::string endType = std::any_cast<std::string>(visit(ctx->expr(2)));
+
+    if (startType != "INT" || endType != "INT") {
+        size_t line = ctx->getStart()->getLine();
+        throw std::runtime_error("Type Error in line " + std::to_string(line) + 
+                                 ": Slice indices must be INT.");
+    }
+
+    if (baseType != "ARRAY" && baseType != "STRING") {
+        size_t line = ctx->getStart()->getLine();
+        throw std::runtime_error("Type Error in line " + std::to_string(line) + 
+                                 ": Cannot slice type " + baseType + ".");
+    }
+
+    return baseType; 
+}
