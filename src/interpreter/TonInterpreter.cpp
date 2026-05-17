@@ -633,22 +633,93 @@ std::any TonInterpreter::visitAddSubMixExpr(TonParser::AddSubMixExprContext *ctx
     std::any left = visit(ctx->expr(0));
     std::any right = visit(ctx->expr(1));
 
-    double leftVal = (left.type() == typeid(int)) ? std::any_cast<int>(left) : std::any_cast<double>(left);
-    double rightVal = (right.type() == typeid(int)) ? std::any_cast<int>(right) : std::any_cast<double>(right);
+    if (ctx->PLUS()) {
+        if (left.type() == typeid(Sound) && right.type() == typeid(Sound)) {
+            Sound s1 = std::any_cast<Sound>(left);
+            Sound s2 = std::any_cast<Sound>(right);
+            
+            Sound mixedSound;
+            mixedSound.sampleRate = s1.sampleRate; 
+            
+            size_t maxSize = std::max(s1.samples.size(), s2.samples.size());
+            mixedSound.samples.reserve(maxSize);
+            
+            for (size_t i = 0; i < maxSize; ++i) {
+                double val1 = (i < s1.samples.size()) ? s1.samples[i] : 0.0;
+                double val2 = (i < s2.samples.size()) ? s2.samples[i] : 0.0;
+                // TODO for now tanh, normalizing later on!
+                mixedSound.samples.push_back(std::tanh(val1 + val2));
+                //mixedSound.samples.push_back(val1 + val2);
+            }
+            return mixedSound;
+        }
+        
+        // --- DODAWANIE STRINGÓW ---
+        if (left.type() == typeid(std::string) && right.type() == typeid(std::string)) {
+            return std::any_cast<std::string>(left) + std::any_cast<std::string>(right);
+        }
 
-    if (ctx->PLUS()){
+        // --- ZWYKŁE DODAWANIE MATEMATYCZNE ---
+        double leftVal = (left.type() == typeid(int)) ? std::any_cast<int>(left) : std::any_cast<double>(left);
+        double rightVal = (right.type() == typeid(int)) ? std::any_cast<int>(right) : std::any_cast<double>(right);
+
         if (left.type() == typeid(int) && right.type() == typeid(int)) return (int)(leftVal + rightVal);
         return leftVal + rightVal;
     }
-    else if (ctx->MINUS()){
+    else if (ctx->MINUS()) {
+        double leftVal = (left.type() == typeid(int)) ? std::any_cast<int>(left) : std::any_cast<double>(left);
+        double rightVal = (right.type() == typeid(int)) ? std::any_cast<int>(right) : std::any_cast<double>(right);
+
         if (left.type() == typeid(int) && right.type() == typeid(int)) return (int)(leftVal - rightVal);
         return leftVal - rightVal;
     }
+    
     return {};
-
-   
 }
- std::any TonInterpreter::visitFuncDef(TonParser::FuncDefContext *ctx){
+
+
+//     double leftVal = (left.type() == typeid(int)) ? std::any_cast<int>(left) : std::any_cast<double>(left);
+//     double rightVal = (right.type() == typeid(int)) ? std::any_cast<int>(right) : std::any_cast<double>(right);
+
+//     if (ctx->PLUS()){
+//         if (left.type() == typeid(int) && right.type() == typeid(int)) return (int)(leftVal + rightVal);
+//         return leftVal + rightVal;
+//     }
+//     else if (ctx->MINUS()){
+//         if (left.type() == typeid(int) && right.type() == typeid(int)) return (int)(leftVal - rightVal);
+//         return leftVal - rightVal;
+//     }
+//     return {};
+// }
+
+
+std::any TonInterpreter::visitConcatExpr(TonParser::ConcatExprContext *ctx)
+{
+    std::any left = visit(ctx->expr(0));
+    std::any right = visit(ctx->expr(1));
+    if (left.type() == typeid(Sound) && right.type() == typeid(Sound)) {
+        Sound s1 = std::any_cast<Sound>(left);
+        Sound s2 = std::any_cast<Sound>(right);
+        
+        Sound concatSound;
+        concatSound.sampleRate = s1.sampleRate;
+        
+        concatSound.samples.reserve(s1.samples.size() + s2.samples.size());
+        
+        concatSound.samples.insert(concatSound.samples.end(), s1.samples.begin(), s1.samples.end());
+        concatSound.samples.insert(concatSound.samples.end(), s2.samples.begin(), s2.samples.end());
+        
+        return concatSound;
+    }
+    if (left.type() == typeid(std::string) && right.type() == typeid(std::string)) {
+        return std::any_cast<std::string>(left) + std::any_cast<std::string>(right);
+    }
+
+    return {};
+}
+
+
+std::any TonInterpreter::visitFuncDef(TonParser::FuncDefContext *ctx){
         std::string funcName = ctx->ID(0)->getText();
         currentScope->define(funcName, "FUNCTION", ctx);
         return {};

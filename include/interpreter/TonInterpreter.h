@@ -60,6 +60,7 @@ class TonInterpreter: public TonBaseVisitor {
         std::any visitUnaryExpr(TonParser::UnaryExprContext *ctx) override;
         std::any visitMulDivExpr(TonParser::MulDivExprContext *ctx) override;
         std::any visitAddSubMixExpr(TonParser::AddSubMixExprContext *ctx) override;
+        std::any visitConcatExpr(TonParser::ConcatExprContext *ctx) override;
         std::any visitNumValExpr(TonParser::NumValExprContext *ctx) override;
 
         //functions

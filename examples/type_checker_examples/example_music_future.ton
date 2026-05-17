@@ -7,7 +7,7 @@ $ 1. Test funkcji zwracających dźwięk z argumentami
     !make SOUND n3 <- synth G4 czas_trwania;
     
     $ Operator '+' miksuje fale, tworząc akord 
-    !out ((n1) + n2 + n3); 
+    !out ((n1) + n2 + n3);
 }
 
 !define SOUND stworz_arpeggio <INT czas_trwania> {
@@ -16,7 +16,7 @@ $ 1. Test funkcji zwracających dźwięk z argumentami
     !make SOUND n3 <- synth G4 czas_trwania;
     
     $ Operator '&' skleja dźwięki po kolei 
-    !out n1 & n2 & n3; 
+    !out n1 & n2 & n3;  
 }
 
 $ 2. Inicjalizacja głównej osi czasu i ścieżek 
@@ -36,4 +36,4 @@ $ 5. Manipulacja czasem na konkretnym aliasie
 SHIFT cyber_track.melodia."intro" BY 100;
 
 $ 6. Zapisanie gotowego utworu 
-!save cyber_track "cyber_track.wav";
+!save cyber_track "cyber_track_tanh.wav";
