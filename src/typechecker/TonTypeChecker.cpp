@@ -2,10 +2,6 @@
 
 std::any TonTypeChecker::visitTargetExpr(TonParser::TargetExprContext *ctx) {
     std::string baseVarName = ctx->target()->ID(0)->getText();
-    if (!currentScope->existsLocally(baseVarName)) {
-        size_t line = ctx->getStart()->getLine();
-        throw std::runtime_error("Type Error in line " + std::to_string(line) + ": Variable '" + baseVarName + "' is not defined.");
-    }
     std::string type = currentScope->resolveType(baseVarName);
     if (ctx->target()->ID().size() > 1) {
         return std::string("SOUND");
@@ -93,9 +89,55 @@ std::any TonTypeChecker::visitArrayExpr(TonParser::ArrayExprContext *ctx) { retu
 std::any TonTypeChecker::visitLengthOfExpr(TonParser::LengthOfExprContext *ctx) { return std::string("INT"); }
 std::any TonTypeChecker::visitIsolateExpr(TonParser::IsolateExprContext *ctx) { return std::string("SOUND"); }
 
+
+std::any TonTypeChecker::visitFunctionCallExpr(TonParser::FunctionCallExprContext *ctx) { 
+    for (auto exprCtx : ctx->expr()) {
+        visit(exprCtx);
+    }
+    std::string funcName = ctx->ID()->getText();
+    std::string returnType = currentScope->resolveType(funcName);
+    return returnType;
+}
+
 // TODO to be implemented
-std::any TonTypeChecker::visitFunctionCallExpr(TonParser::FunctionCallExprContext *ctx) { return std::string("UNKNOWN"); }
-std::any TonTypeChecker::visitCreateSoundExpr(TonParser::CreateSoundExprContext *ctx) { return std::string("SOUND"); }
-std::any TonTypeChecker::visitTrackEventExpr(TonParser::TrackEventExprContext *ctx) { return std::string("SOUND"); }
+std::any TonTypeChecker::visitCreateSoundExpr(TonParser::CreateSoundExprContext *ctx) {
+    std::string arg1Type = std::any_cast<std::string>(visit(ctx->expr(0)));
+    std::string arg2Type = std::any_cast<std::string>(visit(ctx->expr(1)));
+
+    if (arg1Type != "NOTE") {
+        size_t line = ctx->getStart()->getLine();
+        throw std::runtime_error("Type Error in line " + std::to_string(line) + 
+                                 ": First argument of CreateSound must be a NOTE. Given: " + arg1Type);
+    }
+    
+    if (arg2Type != "INT") {
+        size_t line = ctx->getStart()->getLine();
+        throw std::runtime_error("Type Error in line " + std::to_string(line) + 
+                                 ": Second argument (duration) of CreateSound must be an INT. Given: " + arg2Type);
+    }
+    return std::string("SOUND");
+}
+
+std::any TonTypeChecker::visitTrackEventExpr(TonParser::TrackEventExprContext *ctx) {
+    std::string soundType = std::any_cast<std::string>(visit(ctx->expr(0)));
+    std::string timeType = std::any_cast<std::string>(visit(ctx->expr(1)));
+
+    if (soundType != "SOUND") {
+        size_t line = ctx->getStart()->getLine();
+        throw std::runtime_error("Type Error in line " + std::to_string(line) + 
+                                 ": Track event requires a SOUND. Given: " + soundType);
+    }
+    
+    if (timeType != "INT") {
+        size_t line = ctx->getStart()->getLine();
+        throw std::runtime_error("Type Error in line " + std::to_string(line) + 
+                                 ": Track event AT clause requires an INT (time). Given: " + timeType);
+    }
+
+    // Zwracamy typ "TRACK_EVENT" (wcześniej miałeś "SOUND", ale Interpreter używa struktury TrackEvent, 
+    // więc bezpieczniej jest rozróżnić typ EVENT od czystego SOUND).
+    return std::string("TRACK_EVENT"); 
+}
+
 std::any TonTypeChecker::visitIndexExpr(TonParser::IndexExprContext *ctx) { return std::string("UNKNOWN"); }
 std::any TonTypeChecker::visitSliceExpr(TonParser::SliceExprContext *ctx) { return std::string("UNKNOWN"); }
