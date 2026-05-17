@@ -9,7 +9,6 @@ $______________________________________________
 !make SOUND z <- piano E#4 1000;
 !make TIMELINE t1;
 t1 NEW TRACK pianos;
-!make INT a <- "aa";
 t1.pianos <- [x AT 0, y AT 1000, z AT 2000];
 
 !save t1 "a.wav";
