@@ -47,6 +47,10 @@ public:
 
     virtual std::any visitUntilStat(TonParser::UntilStatContext *context) = 0;
 
+    virtual std::any visitBreakStat(TonParser::BreakStatContext *context) = 0;
+
+    virtual std::any visitContinueStat(TonParser::ContinueStatContext *context) = 0;
+
     virtual std::any visitFuncDef(TonParser::FuncDefContext *context) = 0;
 
     virtual std::any visitAudioOpStat(TonParser::AudioOpStatContext *context) = 0;

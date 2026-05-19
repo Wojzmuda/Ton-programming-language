@@ -58,6 +58,12 @@ public:
   virtual void enterUntilStat(TonParser::UntilStatContext * /*ctx*/) override { }
   virtual void exitUntilStat(TonParser::UntilStatContext * /*ctx*/) override { }
 
+  virtual void enterBreakStat(TonParser::BreakStatContext * /*ctx*/) override { }
+  virtual void exitBreakStat(TonParser::BreakStatContext * /*ctx*/) override { }
+
+  virtual void enterContinueStat(TonParser::ContinueStatContext * /*ctx*/) override { }
+  virtual void exitContinueStat(TonParser::ContinueStatContext * /*ctx*/) override { }
+
   virtual void enterFuncDef(TonParser::FuncDefContext * /*ctx*/) override { }
   virtual void exitFuncDef(TonParser::FuncDefContext * /*ctx*/) override { }
 

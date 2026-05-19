@@ -71,6 +71,14 @@ public:
     return visitChildren(ctx);
   }
 
+  virtual std::any visitBreakStat(TonParser::BreakStatContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitContinueStat(TonParser::ContinueStatContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
   virtual std::any visitFuncDef(TonParser::FuncDefContext *ctx) override {
     return visitChildren(ctx);
   }

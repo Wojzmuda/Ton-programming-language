@@ -56,6 +56,12 @@ public:
   virtual void enterUntilStat(TonParser::UntilStatContext *ctx) = 0;
   virtual void exitUntilStat(TonParser::UntilStatContext *ctx) = 0;
 
+  virtual void enterBreakStat(TonParser::BreakStatContext *ctx) = 0;
+  virtual void exitBreakStat(TonParser::BreakStatContext *ctx) = 0;
+
+  virtual void enterContinueStat(TonParser::ContinueStatContext *ctx) = 0;
+  virtual void exitContinueStat(TonParser::ContinueStatContext *ctx) = 0;
+
   virtual void enterFuncDef(TonParser::FuncDefContext *ctx) = 0;
   virtual void exitFuncDef(TonParser::FuncDefContext *ctx) = 0;
 

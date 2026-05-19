@@ -15,25 +15,27 @@ public:
     TYPE_BOOL = 1, TYPE_INT = 2, TYPE_NUM = 3, TYPE_CHAR = 4, TYPE_STRING = 5, 
     TYPE_NOTE = 6, TYPE_SOUND = 7, TYPE_VOID = 8, TYPE_ARRAY = 9, TYPE_INSTR = 10, 
     TYPE_TIMELINE = 11, MAKE = 12, IF = 13, OTHERWISE = 14, UNTIL = 15, 
-    LOOP = 16, DEFINE = 17, OUT = 18, SHOUT = 19, SAVE = 20, NEW = 21, TRACK = 22, 
-    AS = 23, AT = 24, SHIFT = 25, BY = 26, MOVE = 27, ALL = 28, ISOLATE = 29, 
-    LENGTH = 30, PLAY = 31, FROM = 32, TO = 33, TIMES = 34, USE = 35, TRASH = 36, 
-    MUTE = 37, UNMUTE = 38, DIVIDE = 39, EMPTYSOUND = 40, ASSIGN = 41, ADD_ASSIGN = 42, 
-    SUB_ASSIGN = 43, MULT_ASSIGN = 44, DIV_ASSIGN = 45, AND_OP = 46, OR_OP = 47, 
-    NOT_KW = 48, EQ = 49, NEQ = 50, PLUS = 51, MINUS = 52, MULT = 53, DIV_OP = 54, 
-    COLON = 55, DOT = 56, AMPERSAND = 57, L_ANGLE_EQ = 58, R_ANGLE_EQ = 59, 
-    L_ANGLE = 60, R_ANGLE = 61, L_BRACE = 62, R_BRACE = 63, L_BRACKET = 64, 
-    R_BRACKET = 65, L_PAREN = 66, R_PAREN = 67, SEMI = 68, COMMA = 69, EXCLAM_MARK = 70, 
-    NOTE_VAL = 71, INT_VAL = 72, NUM_VAL = 73, BOOL_VAL = 74, CHAR_VAL = 75, 
-    STRING_VAL = 76, ID = 77, WS = 78, COMMENT = 79
+    LOOP = 16, DEFINE = 17, OUT = 18, SHOUT = 19, SAVE = 20, BREAK = 21, 
+    CONTINUE = 22, NEW = 23, TRACK = 24, AS = 25, AT = 26, SHIFT = 27, BY = 28, 
+    MOVE = 29, ALL = 30, ISOLATE = 31, LENGTH = 32, PLAY = 33, FROM = 34, 
+    TO = 35, TIMES = 36, USE = 37, TRASH = 38, MUTE = 39, UNMUTE = 40, DIVIDE = 41, 
+    EMPTYSOUND = 42, ASSIGN = 43, ADD_ASSIGN = 44, SUB_ASSIGN = 45, MULT_ASSIGN = 46, 
+    DIV_ASSIGN = 47, AND_OP = 48, OR_OP = 49, NOT_KW = 50, EQ = 51, NEQ = 52, 
+    PLUS = 53, MINUS = 54, MULT = 55, DIV_OP = 56, COLON = 57, DOT = 58, 
+    AMPERSAND = 59, L_ANGLE_EQ = 60, R_ANGLE_EQ = 61, L_ANGLE = 62, R_ANGLE = 63, 
+    L_BRACE = 64, R_BRACE = 65, L_BRACKET = 66, R_BRACKET = 67, L_PAREN = 68, 
+    R_PAREN = 69, SEMI = 70, COMMA = 71, EXCLAM_MARK = 72, NOTE_VAL = 73, 
+    INT_VAL = 74, NUM_VAL = 75, BOOL_VAL = 76, CHAR_VAL = 77, STRING_VAL = 78, 
+    ID = 79, WS = 80, COMMENT = 81
   };
 
   enum {
     RuleProgram = 0, RuleHeader = 1, RuleBlock = 2, RuleStatement = 3, RuleVarDecl = 4, 
     RuleTrackDecl = 5, RuleTarget = 6, RuleCallStat = 7, RuleAssignment = 8, 
     RuleReturnStat = 9, RuleShoutStat = 10, RuleIfStat = 11, RuleLoopStat = 12, 
-    RuleUntilStat = 13, RuleFuncDef = 14, RuleAudioOpStat = 15, RuleSaveStat = 16, 
-    RulePlayStat = 17, RuleType = 18, RuleExpr = 19
+    RuleUntilStat = 13, RuleBreakStat = 14, RuleContinueStat = 15, RuleFuncDef = 16, 
+    RuleAudioOpStat = 17, RuleSaveStat = 18, RulePlayStat = 19, RuleType = 20, 
+    RuleExpr = 21
   };
 
   explicit TonParser(antlr4::TokenStream *input);
@@ -67,6 +69,8 @@ public:
   class IfStatContext;
   class LoopStatContext;
   class UntilStatContext;
+  class BreakStatContext;
+  class ContinueStatContext;
   class FuncDefContext;
   class AudioOpStatContext;
   class SaveStatContext;
@@ -144,6 +148,8 @@ public:
     SaveStatContext *saveStat();
     PlayStatContext *playStat();
     ReturnStatContext *returnStat();
+    BreakStatContext *breakStat();
+    ContinueStatContext *continueStat();
     CallStatContext *callStat();
     BlockContext *block();
 
@@ -342,6 +348,7 @@ public:
     antlr4::tree::TerminalNode *ID();
     antlr4::tree::TerminalNode *FROM();
     antlr4::tree::TerminalNode *TO();
+    antlr4::tree::TerminalNode *BY();
     antlr4::tree::TerminalNode *ASSIGN();
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -372,6 +379,40 @@ public:
   };
 
   UntilStatContext* untilStat();
+
+  class  BreakStatContext : public antlr4::ParserRuleContext {
+  public:
+    BreakStatContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    antlr4::tree::TerminalNode *EXCLAM_MARK();
+    antlr4::tree::TerminalNode *BREAK();
+    antlr4::tree::TerminalNode *SEMI();
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  BreakStatContext* breakStat();
+
+  class  ContinueStatContext : public antlr4::ParserRuleContext {
+  public:
+    ContinueStatContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    antlr4::tree::TerminalNode *EXCLAM_MARK();
+    antlr4::tree::TerminalNode *CONTINUE();
+    antlr4::tree::TerminalNode *SEMI();
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  ContinueStatContext* continueStat();
 
   class  FuncDefContext : public antlr4::ParserRuleContext {
   public:
