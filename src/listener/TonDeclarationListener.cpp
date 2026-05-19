@@ -146,3 +146,27 @@ void TonDeclarationListener::exitBlock(TonParser::BlockContext *ctx){
         currentScope = currentScope->parent;
     }
 }
+
+void TonDeclarationListener::enterLoopStat(TonParser::LoopStatContext *ctx) {
+    currentScope = std::make_shared<Scope<int>>(currentScope);
+
+    int currentLine = ctx->getStart()->getLine();
+    if (ctx->FROM()) {
+        std::string varName = ctx->ID()->getText();
+        std::string typeName = ctx->type()->getText();
+        
+        currentScope->define(varName, typeName, currentLine);
+    }
+    else if (ctx->ASSIGN()) {
+        std::string varName = ctx->ID()->getText();
+        std::string typeName = ctx->type()->getText();
+        
+        currentScope->define(varName, typeName, currentLine);
+    }
+}
+
+void TonDeclarationListener::exitLoopStat(TonParser::LoopStatContext *ctx) {
+    if (currentScope->parent) {
+        currentScope = currentScope->parent;
+    }
+}
