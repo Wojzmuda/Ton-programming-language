@@ -8,6 +8,8 @@ CMakeLists.txt.user
 
 # antlr
 .antlr
+# also antlr generated files - you gotta run antlr4 on your own from now on !
+antlr4_generated/
 
 *.exe
 *.o
