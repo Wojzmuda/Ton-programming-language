@@ -653,9 +653,9 @@ std::any TonInterpreter::visitContinueStat(TonParser::ContinueStatContext *ctx) 
 std::any TonInterpreter::visitUntilStat(TonParser::UntilStatContext *ctx) {
     while (true){
         std::any conditionAny = visit(ctx->expr());
-
         if (conditionAny.type() != typeid(bool)) {
-            throw std::runtime_error("Error: UNTIL condition must be a BOOL.");
+            size_t line = ctx->getStart()->getLine();
+            throw std::runtime_error("Line " + std::to_string(line) + ": Error - UNTIL condition must be a BOOL.");
         }
 
         bool condition = std::any_cast<bool>(conditionAny);
@@ -687,7 +687,8 @@ std::any TonInterpreter::visitLoopStat(TonParser::LoopStatContext *ctx) {
         } else if (timesAny.type() == typeid(double)) {
             times = static_cast<int>(std::any_cast<double>(timesAny));
         } else {
-            throw std::runtime_error("Error: TIMES loop requires an integer count.");
+            size_t line = ctx->getStart()->getLine();
+            throw std::runtime_error("Line " + std::to_string(line) + ": Error - TIMES loop requires an integer count.");
         }
 
         for (int i=0; i<times; i++) {
@@ -711,7 +712,8 @@ std::any TonInterpreter::visitLoopStat(TonParser::LoopStatContext *ctx) {
             step = std::any_cast<int>(visit(ctx->expr(2)));
 
             if (step == 0) {
-                throw std::runtime_error("Error: Loop step cannot be zero.");
+                size_t line = ctx->getStart()->getLine();
+                throw std::runtime_error("Line " + std::to_string(line) + ": Error - Loop step cannot be zero.");
             }
         }
 
@@ -735,7 +737,8 @@ std::any TonInterpreter::visitLoopStat(TonParser::LoopStatContext *ctx) {
         
         std::any arrayAny = visit(ctx->expr(0));
         if (arrayAny.type() != typeid(std::vector<std::any>)) {
-            throw std::runtime_error("Error: Foreach loop requires an ARRAY on the right side of <-.");
+            size_t line = ctx->getStart()->getLine();
+            throw std::runtime_error("Line " + std::to_string(line) + ": Error - Foreach loop requires an ARRAY on the right side of <");
         }
         auto arrayVec = std::any_cast<std::vector<std::any>>(arrayAny);
 
