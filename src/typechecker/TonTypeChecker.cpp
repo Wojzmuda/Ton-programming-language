@@ -68,15 +68,18 @@ std::any TonTypeChecker::visitAddSubMixExpr(TonParser::AddSubMixExprContext *ctx
     if ((left == "INT" || left == "NUMERICAL") && (right == "INT" || right == "NUMERICAL")) {
         return (left == "NUMERICAL" || right == "NUMERICAL") ? std::string("NUMERICAL") : std::string("INT");
     }
-    if (left == "SOUND" && right == "SOUND") {
-        return std::string("SOUND");
-    }
-    if (left == "STRING" && right == "STRING") {
-        return std::string("STRING");
+    if (ctx->PLUS()) {
+        if (left == "SOUND" && right == "SOUND") {
+            return std::string("SOUND");
+        }
+        if (left == "STRING" && right == "STRING") {
+            return std::string("STRING");
+        }
     }
     size_t line = ctx->getStart()->getLine();
+    std::string op = ctx->PLUS() ? "+" : "-";
     throw std::runtime_error("Type Error in line " + std::to_string(line) + 
-        ": Cannot apply +/- to " + left + " and " + right);
+        ": Cannot apply operator" + op + " to " + left + " and " + right);
 }
 
 std::any TonTypeChecker::visitConcatExpr(TonParser::ConcatExprContext *ctx) {

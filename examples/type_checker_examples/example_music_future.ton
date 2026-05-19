@@ -1,0 +1,39 @@
+!shout "Generowanie zaawansowanego utworu...";
+
+$ 1. Test funkcji zwracających dźwięk z argumentami
+!define SOUND stworz_akord <INT czas_trwania> {
+    !make SOUND n1 <- synth C4 czas_trwania;
+    !make SOUND n2 <- synth E4 czas_trwania;
+    !make SOUND n3 <- synth G4 czas_trwania;
+    
+    $ Operator '+' miksuje fale, tworząc akord 
+    !out ((n1) + n2 + n3);
+}
+
+!define SOUND stworz_arpeggio <INT czas_trwania> {
+    !make SOUND n1 <- synth C4 czas_trwania;
+    !make SOUND n2 <- synth E4 czas_trwania;
+    !make SOUND n3 <- synth G4 czas_trwania;
+    
+    $ Operator '&' skleja dźwięki po kolei 
+    !out n1 & n2 & n3;  
+}
+
+$ 2. Inicjalizacja głównej osi czasu i ścieżek 
+!make TIMELINE cyber_track;
+cyber_track NEW TRACK akordy;
+cyber_track NEW TRACK melodia;
+
+$ 3. Wywołanie funkcji (Type Checker weryfikuje argumenty INT i zwracany SOUND)
+!make SOUND glowny_akord <- stworz_akord(1000);
+!make SOUND szybki_arp <- stworz_arpeggio(250);
+
+$ 4. Operacje na tablicach zdarzeń (Event Lists) i przypisanie do osi czasu 
+cyber_track.akordy <- [glowny_akord AT 0, glowny_akord AT 2000];
+cyber_track.melodia <- [szybki_arp AS "intro" AT 500, szybki_arp AT 2500];
+
+$ 5. Manipulacja czasem na konkretnym aliasie 
+SHIFT cyber_track.melodia."intro" BY 100;
+
+$ 6. Zapisanie gotowego utworu 
+!save cyber_track "cyber_track_tanh.wav";

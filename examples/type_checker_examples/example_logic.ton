@@ -1,0 +1,12 @@
+!make BOOL czyWieksze <- 10 > 5;
+!shout czyWieksze;
+czyWieksze <- (10 > 5);
+!shout czyWieksze;
+
+!make INT tempo <- 120;
+!make BOOL czyRowne <- tempo == 140;
+!shout czyRowne;
+
+$ NOT odwraca typ BOOL, a AND łączy dwa BOOL-e
+!make BOOL skomplikowane <- NOT czyWieksze AND (5 == 5);
+!shout skomplikowane;

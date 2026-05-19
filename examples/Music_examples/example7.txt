@@ -1,0 +1,62 @@
+!shout "--- Rozpoczynamy Ultimate Audio Test ---";
+
+$ ==========================================
+$ 1. TYPY DOMENOWE I GENEROWANIE DŹWIĘKU
+$ ==========================================
+$ USE PIANO; 
+
+!make NOTE nuta_bazowa <- C4;
+!make SOUND dzwiek_a <- synth nuta_bazowa 1000;
+!make SOUND dzwiek_b <- synth E4 1000;
+!make SOUND szybki_hit <- synth G4 250;
+
+$ ==========================================
+$ 2. OPERATORY AUDIO (+ oraz &)
+$ ==========================================
+$ Miksowanie (nakładanie fal) - tworzy akord C-dur
+!make SOUND akord <- (dzwiek_a + dzwiek_b);
+
+$ Konkatenacja (sklejanie) - dźwięki zagrają po kolei
+!make SOUND arpeggio <- (dzwiek_a & dzwiek_b);
+
+$ ==========================================
+$ 3. INICJALIZACJA OSI CZASU I ŚCIEŻEK
+$ ==========================================
+!make TIMELINE projekt_muzyczny;
+projekt_muzyczny NEW TRACK sekcja_rytmiczna;
+projekt_muzyczny NEW TRACK sekcja_syntezatorow;
+
+$ ==========================================
+$ 4. LISTY ZDARZEŃ (AT) ORAZ TAGOWANIE (AS)
+$ ==========================================
+projekt_muzyczny.sekcja_rytmiczna <- [szybki_hit AT 0, szybki_hit AT 1000, szybki_hit AT 2000];
+projekt_muzyczny.sekcja_syntezatorow <- [akord AS "intro" AT 0, arpeggio AS "solo" AT 3000];
+
+$ ==========================================
+$ 5. OPERATORY MANIPULACJI (EDYCJA)
+$ ==========================================
+$ Przesuń solo o 500ms do przodu (łamie rytm)
+SHIFT projekt_muzyczny.sekcja_syntezatorow."solo" BY 500;
+
+$ Przenieś całą ścieżkę rytmiczną dokładnie na 50 milisekundę
+MOVE projekt_muzyczny.sekcja_rytmiczna TO 50;
+
+$ Podziel szybki hit na pół i usuń (jeśli zaimplementowane w drzewie AST)
+$ DIVIDE szybki_hit;
+TRASH projekt_muzyczny.sekcja_rytmiczna."nieistniejacy_alias"; $ Do weryfikacji błędów
+
+$ Mikser: wyciszanie i solowanie
+MUTE projekt_muzyczny.sekcja_rytmiczna;
+$ ISOLATE projekt_muzyczny.sekcja_syntezatorow;
+UNMUTE ALL;
+
+$ Sprawdzanie długości obiektu
+!make INT dlugosc_akordu <- LENGTH akord;
+!shout "Dlugosc akordu w milisekundach to: ";
+!shout dlugosc_akordu;
+
+$ ==========================================
+$ 6. ODSŁUCH I EKSPORT
+$ ==========================================
+PLAY projekt_muzyczny;
+!save projekt_muzyczny "ultimate_test.wav";

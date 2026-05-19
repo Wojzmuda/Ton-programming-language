@@ -1,0 +1,13 @@
+!make INT x <- 5;
+!make INT y <- 10;
+!make INT wynik <- x + y * 2;
+!shout wynik;
+
+$ Mieszanie INT z NUMERICAL powinno dać NUMERICAL
+!make NUMERICAL mnoznik <- 1.5;
+!make NUMERICAL nowyWynik <- wynik * mnoznik; 
+!shout nowyWynik;
+
+$ Nawiasy nie psują typu
+!make INT zNawiasami <- (x + 5) / 2;
+!shout zNawiasami;
