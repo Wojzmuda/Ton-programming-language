@@ -1,0 +1,13 @@
+$ 2. FUNKCJA VOID (WYWOŁYWANA JAKO OSOBNA INSTRUKCJA)
+
+!make STRING x <- "HEEEJ";
+
+!define VOID przywitaj_sie <> {
+    !shout x;
+    !shout ">> Odpalam system dzwiekowy... (Witaj w jezyku Ton!)" ;
+    $ Brak !out, ponieważ to VOID
+}
+
+$ Wywołanie dzięki nowej regule callStat!
+przywitaj_sie() ;
+!shout " " ;

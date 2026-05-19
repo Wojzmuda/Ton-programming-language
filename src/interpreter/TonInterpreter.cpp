@@ -348,21 +348,11 @@ std::any TonInterpreter::visitCreateSoundExpr(TonParser::CreateSoundExprContext 
 
     Note note;
     int durationMs;
-    if (arg1.type() == typeid(Note)) {
-        note = std::any_cast<Note>(arg1);
-    }
-    else {
-        // ? How are we handling this ?
-        throw std::runtime_error{"Error: got wrong argument - not Note type"};
-    }
-    if (arg2.type() == typeid(int)) {
-        durationMs = std::any_cast<int>(arg2);
-    }
-    else {
-        // ? How are we handling this ?
-        throw std::runtime_error{"Error: got wrong argument - not int type"};
-    }
 
+    note = std::any_cast<Note>(arg1);
+    durationMs = std::any_cast<int>(arg2);
+
+    
     // TODO choose right sample instead of using temp lambda
     // -----
     auto createTemporarySinWave = [](Note note, int dur) {

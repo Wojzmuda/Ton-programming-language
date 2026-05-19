@@ -1,0 +1,17 @@
+$$$ -- uncomment 1 error at the time to check whether type checker works well -- $$$
+
+$ initialization type error
+!make INT liczba <- "Sto";
+
+$ $ assign type error
+$ !make BOOL flaga <- true;
+$ flaga <- 55;
+
+
+$ $ logic ops 
+$ !make INT x <- 10;
+$ !make BOOL zepsute <- NOT x;
+
+$ $ "porównywanie gruszek do jablek" XDDD I love LLMs <33
+$ !make INT x <- 5 + "tekst";
+$ !make BOOL sprawdzam <- 'a' == 97;
