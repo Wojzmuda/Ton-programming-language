@@ -1,0 +1,33 @@
+!shout "--- TEST 1: TIMES LOOP ---";
+!loop < 3 TIMES > {
+    !shout "Knock knock!";
+}
+
+!shout "--- TEST 2: REVERSE LOOP WITH NEGATIVE BY ---";
+!loop < INT i FROM 10 TO 1 BY -3 > {
+    !shout i;
+}
+
+!shout "--- TEST 3: CONTINUE STATEMENT (Without IF) ---";
+!loop < 3 TIMES > {
+    !shout "Start of iteration...";
+    !continue;
+    !shout "ERROR: This should NEVER print!";
+}
+
+!shout "--- TEST 4: BREAK STATEMENT (Without IF) ---";
+!loop < INT k FROM 1 TO 5 > {
+    !shout "Entering loop and breaking immediately!";
+    !break;
+    !shout "ERROR: This should NEVER print either!";
+}
+
+!shout "--- TEST 5: NESTED LOOPS & SCOPE ---";
+!loop < INT x FROM 1 TO 2 > {
+    !loop < INT y FROM 1 TO 2 > {
+        !shout "X is:";
+        !shout x;
+        !shout "Y is:";
+        !shout y;
+    }
+}
