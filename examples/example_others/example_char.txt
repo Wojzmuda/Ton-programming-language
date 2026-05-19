@@ -1,0 +1,47 @@
+$ ==========================================
+$ TØN LANGUAGE: TEST WSZYSTKICH TYPÓW 
+$ ==========================================
+
+!shout "--- START TESTU ---";
+
+$ 1. Test typu CHAR
+!make CHAR literaA <- 'A';
+!shout "Litera A:";
+!shout literaA;
+
+$ 2. Test typu STRING
+!make STRING powitanie <- "Witaj w Ton!";
+!shout powitanie;
+
+$ 3. Test typu INT i NUMERICAL
+!make INT wiek <- 25;
+!make NUMERICAL pi <- 3.1415;
+!shout "Wiek:";
+!shout wiek;
+!shout "Liczba PI:";
+!shout pi;
+
+$ 4. Test typu BOOL
+!make BOOL czyGrasz <- TRUE;
+!shout "Czy grasz?";
+!shout czyGrasz;
+
+$ 5. Test typu ARRAY
+!make ARRAY kolekcja <- ['X', 100, "Muzyka"];
+!shout "Tablica:";
+!shout kolekcja;
+
+$ 6. Test typu NOTE
+!make NOTE dzwiek <- C4;
+!shout "Nuta:";
+!shout dzwiek;
+
+$ 7. Test funkcji
+!define INT dodaj <INT a, INT b> {
+    !out a + b;
+}
+
+!shout "Wynik dodawania 10 + 20:";
+!shout dodaj(10, 20);
+
+!shout "--- TEST ZAKONCZONY ---";

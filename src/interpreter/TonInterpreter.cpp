@@ -36,6 +36,7 @@ std::any TonInterpreter::visitVarDecl(TonParser::VarDeclContext *ctx) {
         else if (typeName == "NUMERICAL") value = 0.0;
         else if (typeName == "NOTE") value = Note();
         else if (typeName == "STRING") value = std::string("");
+        else if (typeName == "CHAR") value = '\0'; 
         else value = {};
     }
 
@@ -166,6 +167,11 @@ std::any TonInterpreter::visitAssignment(TonParser::AssignmentContext *ctx) {
     return {};
 }
 
+std::any TonInterpreter::visitCharValExpr(TonParser::CharValExprContext *ctx){
+    std::string rawChar = ctx->CHAR_VAL()->getText();
+    return rawChar[1];
+}
+
 std::any TonInterpreter::visitArrayExpr(TonParser::ArrayExprContext *ctx) {
     std::vector<std::any> elements;
     for (auto exprCtx : ctx->expr()) {
@@ -201,64 +207,73 @@ std::any TonInterpreter::visitTrackEventExpr(TonParser::TrackEventExprContext *c
 
 std::any TonInterpreter::visitShoutStat(TonParser::ShoutStatContext *ctx) {
 
-    std::any value = visit(ctx->expr());
+    auto expressions = ctx->expr();
+    for (size_t i = 0; i <  expressions.size(); ++i){
+        std::any value = visit(expressions[i]);
+    
 
     if (value.type() == typeid(std::string)) {
-        std::cout << std::any_cast<std::string>(value) << std::endl;
+        std::cout << std::any_cast<std::string>(value);
     }
     else if (value.type() == typeid(int)) {
-        std::cout << std::any_cast<int>(value) << std::endl;
+        std::cout << std::any_cast<int>(value);
     }
     else if (value.type() == typeid(double)) {
-        std::cout << std::any_cast<double>(value) << std::endl;
+        std::cout << std::any_cast<double>(value);
     }
     else if (value.type() == typeid(char)) {
-        std::cout << "'" << std::any_cast<char>(value) << "'" << std::endl;
+        std::cout << "'" << std::any_cast<char>(value) << "'";
     }
     else if (value.type() == typeid(bool)) {
-        std::cout << (std::any_cast<bool>(value) ? "TRUE" : "FALSE") << std::endl;
+        std::cout << (std::any_cast<bool>(value) ? "TRUE" : "FALSE");
     }
     else if (value.type() == typeid(Note)) {
         Note currentNote = std::any_cast<Note>(value);
-        std::cout << "NOTE(" << currentNote.pitchClass << currentNote.octave << ")" << std::endl;
+        std::cout << "NOTE(" << currentNote.pitchClass << currentNote.octave << ")";
     }
     else if (value.type() == typeid(Instrument)) {
         Instrument currentInstrument = std::any_cast<Instrument>(value);
-        std::cout << "INSTRUMENT(" << currentInstrument.name << ")" << std::endl;
+        std::cout << "INSTRUMENT(" << currentInstrument.name << ")";
     }
     else if (value.type() == typeid(std::vector<std::any>)) {
         auto arrayElements = std::any_cast<std::vector<std::any>>(value);
         std::cout << "[ ";
 
-        for (size_t i = 0; i < arrayElements.size(); i++) {
-            if (arrayElements[i].type() == typeid(int)) {
-                std::cout << std::any_cast<int>(arrayElements[i]);
+        for (size_t j = 0; j < arrayElements.size(); j++) {
+            if (arrayElements[j].type() == typeid(int)) {
+                std::cout << std::any_cast<int>(arrayElements[j]);
             }
-            else if (arrayElements[i].type() == typeid(double)) {
-                std::cout << std::any_cast<double>(arrayElements[i]);
+            else if (arrayElements[j].type() == typeid(double)) {
+                std::cout << std::any_cast<double>(arrayElements[j]);
             }
-            else if (arrayElements[i].type() == typeid(std::string)) {
-                std::cout << "\"" << std::any_cast<std::string>(arrayElements[i]) << "\"";
+            else if (arrayElements[j].type() == typeid(std::string)) {
+                std::cout << "\"" << std::any_cast<std::string>(arrayElements[j]) << "\"";
             }
-            else if (arrayElements[i].type() == typeid(char)) {
-                std::cout << "'" << std::any_cast<char>(arrayElements[i]) << "'";
+            else if (arrayElements[j].type() == typeid(char)) {
+                std::cout << "'" << std::any_cast<char>(arrayElements[j]) << "'";
             }
-            else if (arrayElements[i].type() == typeid(Note)) {
-                Note n = std::any_cast<Note>(arrayElements[i]);
+            else if (arrayElements[j].type() == typeid(Note)) {
+                Note n = std::any_cast<Note>(arrayElements[j]);
                 std::cout << n.pitchClass << n.octave;
             }
             else {
                 std::cout << "?";
             }
 
-            if (i < arrayElements.size() - 1) std::cout << ", ";
+            if (j < arrayElements.size() - 1) std::cout << ", ";
         }
-        std::cout << " ]" << std::endl;
-    }
+        std::cout << " ]";
+    }else if (!value.has_value()) {
+            std::cout << "[VOID / EMPTY]";
+        }
     else {
         std::cout << "[Complex Object: SOUND]" << std::endl;
     }
-
+    if (i < expressions.size() - 1) {
+            std::cout << " ";
+        }
+    }
+    std::cout << std::endl;
     return {};
 }
 
@@ -640,6 +655,8 @@ std::any TonInterpreter::visitAddSubMixExpr(TonParser::AddSubMixExprContext *ctx
         return leftVal - rightVal;
     }
     return {};
+
+   
 }
 
 std::any TonInterpreter::visitBreakStat(TonParser::BreakStatContext *ctx){
@@ -761,3 +778,151 @@ std::any TonInterpreter::visitLoopStat(TonParser::LoopStatContext *ctx) {
     return {};
 }
 
+ std::any TonInterpreter::visitFuncDef(TonParser::FuncDefContext *ctx){
+        std::string funcName = ctx->ID(0)->getText();
+        currentScope->define(funcName, "FUNCTION", ctx);
+        return {};
+    }
+
+std::any TonInterpreter::visitFunctionCallExpr(TonParser::FunctionCallExprContext *ctx){
+        std::string funcName = ctx->ID()->getText();
+        return executeFunctionLogic(funcName, ctx->expr());
+}
+
+std::any TonInterpreter::visitCallStat(TonParser::CallStatContext *ctx){
+    std::string funcName = ctx-> ID()->getText();
+    executeFunctionLogic(funcName, ctx->expr());
+    return {};
+}
+std::any TonInterpreter::visitReturnStat(TonParser::ReturnStatContext *ctx){
+    std::any valueToReturn = {};
+
+    if(ctx->expr()){
+        valueToReturn = visit(ctx->expr());
+    }
+    throw ReturnException(valueToReturn);
+}
+
+std::any TonInterpreter::executeFunctionLogic(const std:: string& funcName, const std::vector<TonParser::ExprContext*>& argsCtx){
+    if(!currentScope-> exists(funcName)){
+        throw std::runtime_error("[Error] Function doesn't exist.");
+    }
+    std::any func = currentScope->get(funcName);
+    auto funcdefctx = std::any_cast<TonParser::FuncDefContext*>(func);
+
+    std::string expectedReturnType = funcdefctx->type(0)->getText();
+
+    size_t expectedargs = funcdefctx->ID().size()-1;
+    size_t providedargs = argsCtx.size();
+
+    if(expectedargs != providedargs){
+        throw std::runtime_error("[Error] Function '"+ funcName + "' expects " + std::to_string(expectedargs) + " recieved only " + std::to_string(providedargs) + "arguments.");
+    }
+    std::vector<std::any> evaluatedArgs;
+    for(auto exprctx : argsCtx){
+        evaluatedArgs.push_back(visit(exprctx));
+    }
+
+    auto previousScope = currentScope;
+    currentScope = std::make_shared<Scope<std::any>>(previousScope);
+
+    for(size_t i = 0; i < expectedargs; i++){
+        std::string paramType = funcdefctx->type(i+1)->getText();
+        std::string paramName = funcdefctx->ID(i+1)->getText();
+        std::any argval = evaluatedArgs[i];
+
+        bool typeMatch = false;
+        if (paramType == "INT" && argval.type() == typeid(int)) typeMatch = true;
+        else if (paramType == "NUMERICAL" && argval.type() == typeid(double)) typeMatch = true;
+        else if (paramType == "BOOL" && argval.type() == typeid(bool)) typeMatch = true;
+        else if (paramType == "CHAR" && argval.type() == typeid(char)) typeMatch = true;
+        else if (paramType == "STRING" && argval.type() == typeid(std::string)) typeMatch = true;
+        else if (paramType == "ARRAY" && argval.type() == typeid(std::vector<std::any>)) typeMatch = true;
+        else if (paramType == "NOTE" && argval.type() == typeid(Note)) typeMatch = true;
+        else if (paramType == "SOUND" && argval.type() == typeid(Sound)) typeMatch = true;
+        else if (paramType == "INSTRUMENT" && argval.type() == typeid(Instrument)) typeMatch = true;
+        else if (paramType == "TIMELINE" && argval.type() == typeid(Timeline)) typeMatch = true;
+        else if (paramType == "TRACK" && argval.type() == typeid(Track)) typeMatch = true;
+
+        if (!typeMatch) {
+            currentScope = previousScope; 
+            throw std::runtime_error("[Error] Argument '" + paramName + "' in function '" + funcName + "' must be of type " + paramType + ".");
+        }
+        currentScope->define(paramName, paramType, argval);
+    }
+    std::any result = {};
+
+    try{
+        visit(funcdefctx->block());
+        if (expectedReturnType != "VOID") {
+            throw std::runtime_error("[Error] Function '" + funcName + "' missing return statement (!out).");
+        }
+    } catch( const ReturnException& ret){
+      result = ret.returnValue;
+
+        if (expectedReturnType == "VOID") {
+            
+            if (result.has_value()) {
+                throw std::runtime_error("[Error] Function '" + funcName + "' is of type VOID and cannot return a value.");
+            }
+        } 
+        else {
+
+            if (!result.has_value()) {
+                throw std::runtime_error("[Error] Function '" + funcName + "' must return a value of type " + expectedReturnType + ".");
+            }
+
+            bool typeMatch = false;
+            if (expectedReturnType == "INT" && result.type() == typeid(int)) typeMatch = true;
+            else if (expectedReturnType == "NUMERICAL" && result.type() == typeid(double)) typeMatch = true;
+            else if (expectedReturnType == "BOOL" && result.type() == typeid(bool)) typeMatch = true;
+            else if (expectedReturnType == "CHAR" && result.type() == typeid(char)) typeMatch = true;
+            else if (expectedReturnType == "STRING" && result.type() == typeid(std::string)) typeMatch = true;
+            else if (expectedReturnType == "ARRAY" && result.type() == typeid(std::vector<std::any>)) typeMatch = true;
+            else if (expectedReturnType == "NOTE" && result.type() == typeid(Note)) typeMatch = true;
+            else if (expectedReturnType == "SOUND" && result.type() == typeid(Sound)) typeMatch = true;
+            else if (expectedReturnType == "INSTRUMENT" && result.type() == typeid(Instrument)) typeMatch = true;
+            else if (expectedReturnType == "TIMELINE" && result.type() == typeid(Timeline)) typeMatch = true;
+            else if (expectedReturnType == "TRACK" && result.type() == typeid(Track)) typeMatch = true;
+
+            if (!typeMatch) {
+                throw std::runtime_error("[Error] Function '" + funcName + "' returned wrong type. Expected " + expectedReturnType + ".");
+            }
+        }
+    }catch(...){
+        currentScope = previousScope;
+        throw;
+    }
+    currentScope = previousScope;
+    return result;
+
+}
+
+
+
+std::any TonInterpreter::visitIfStat(TonParser::IfStatContext *ctx) {
+
+    size_t conditionsCount = ctx->expr().size();
+
+    for (size_t i = 0; i < conditionsCount; ++i) {
+        std::any conditionAny = visit(ctx->expr(i));
+
+        if (conditionAny.type() != typeid(bool)) {
+            size_t line = ctx->getStart()->getLine();
+            throw std::runtime_error("Line " + std::to_string(line) + ": Error - IF condition must be a BOOL.");
+        }
+
+        bool condition = std::any_cast<bool>(conditionAny);
+
+        if (condition) {
+            return visit(ctx->block(i));
+        }
+    }
+
+
+    if (ctx->block().size() > conditionsCount) {
+        return visit(ctx->block(conditionsCount));
+    }
+
+    return {};
+}

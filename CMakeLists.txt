@@ -20,7 +20,16 @@ set(SOURCES
     antlr4_generated/TonVisitor.cpp
 )
 
-add_executable(ton_app ${SOURCES})
+set(HEADERS
+    include/interpreter/TonInterpreter.h
+    include/listener/TonDeclarationListener.h
+    include/listener/TonSyntaxErrorListener.h
+    include/core/MusicBase.h
+    include/core/Scope.h
+    include/core/Timeline.h
+)
+
+add_executable(ton_app ${SOURCES} ${HEADERS})
 
 target_include_directories( ton_app PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/include            

@@ -35,6 +35,9 @@ public:
   virtual void enterTarget(TonParser::TargetContext *ctx) = 0;
   virtual void exitTarget(TonParser::TargetContext *ctx) = 0;
 
+  virtual void enterCallStat(TonParser::CallStatContext *ctx) = 0;
+  virtual void exitCallStat(TonParser::CallStatContext *ctx) = 0;
+
   virtual void enterAssignment(TonParser::AssignmentContext *ctx) = 0;
   virtual void exitAssignment(TonParser::AssignmentContext *ctx) = 0;
 

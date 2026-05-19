@@ -21,6 +21,7 @@ statement
     | returnStat        // !out 5;
     | breakStat         // !break;
     | continueStat      // !continue;
+    | callStat          // zagraj(120, "szybko")
     | block             // nameless scope
     ;
 
@@ -30,6 +31,9 @@ trackDecl : ID NEW TRACK ID SEMI ;
 
 // Target żeby się dało: adresowanie wielopoziomowe: ID, ID.ID, lub ID.ID."alias"
 target : ID (DOT ID (DOT STRING_VAL)?)? ;
+
+// Zeby sie dalo wywolac funkcje void
+callStat : ID L_PAREN (expr (COMMA expr)*)? R_PAREN SEMI ;
 
 assignment 
     : target ASSIGN expr SEMI 
@@ -41,7 +45,7 @@ assignment
 
 returnStat : EXCLAM_MARK OUT expr? SEMI ;
 
-shoutStat : EXCLAM_MARK SHOUT expr SEMI ;
+shoutStat : EXCLAM_MARK SHOUT expr (COMMA expr)* SEMI ;
 
 ifStat 
     : EXCLAM_MARK IF L_ANGLE expr R_ANGLE block 

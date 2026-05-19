@@ -4,6 +4,10 @@ bin/
 
 .idea/
 cmake-build-*/
+CMakeLists.txt.user
+
+# antlr
+.antlr
 
 *.exe
 *.o

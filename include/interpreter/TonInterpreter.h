@@ -9,11 +9,19 @@
 #include <vector>
 #include <exception>
 
+class ReturnException : public std::exception{
+    public:
+        std::any returnValue;
+        ReturnException(std::any val) : returnValue(std::move(val)){}
+};
 class TonInterpreter: public TonBaseVisitor {
     private:
         std::shared_ptr<Scope<std::any>> currentScope;
         struct BreakException : public std::exception {};
         struct ContinueException : public std::exception {};
+
+        std::any executeFunctionLogic(const std:: string& funcName, const std::vector<TonParser::ExprContext*>& argsCtx);
+
     public:
         TonInterpreter(){
             currentScope = std::make_shared<Scope<std::any>>();
@@ -31,7 +39,7 @@ class TonInterpreter: public TonBaseVisitor {
         std::any visitTrackEventExpr(TonParser::TrackEventExprContext *ctx);
         std::any visitShoutStat(TonParser::ShoutStatContext *ctx) override;
         std::any visitSaveStat(TonParser::SaveStatContext *ctx) override;
-
+        std::any visitCharValExpr(TonParser::CharValExprContext *ctx) override;
         std::any visitTargetExpr(TonParser::TargetExprContext *ctx) override;
 
         std::any visitCreateSoundExpr(TonParser::CreateSoundExprContext *ctx);
@@ -61,4 +69,11 @@ class TonInterpreter: public TonBaseVisitor {
         std::any visitUntilStat(TonParser::UntilStatContext *ctx) override;
         std::any visitBreakStat(TonParser::BreakStatContext *ctx) override;
         std::any visitContinueStat(TonParser::ContinueStatContext *ctx) override;
+        //functions
+        std::any visitFuncDef(TonParser::FuncDefContext *ctx) override;
+        std::any visitFunctionCallExpr(TonParser::FunctionCallExprContext *ctx) override;
+        std::any visitCallStat(TonParser::CallStatContext *ctx) override;
+        std::any visitReturnStat(TonParser::ReturnStatContext *ctx) override;
+
+        std::any visitIfStat(TonParser::IfStatContext *ctx) override;
 };

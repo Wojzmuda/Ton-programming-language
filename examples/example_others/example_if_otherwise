@@ -1,0 +1,35 @@
+!shout "--- TEST 1: Zwykly IF ---";
+!make INT x <- 10;
+!if < x == 10 > {
+    !shout "To dziala! X rowna sie 10.";
+}
+
+!shout "--- TEST 2: IF oraz OTHERWISE ---";
+!make BOOL isLoud <- false;
+!if < isLoud > {
+    !shout "BARDZO GLOSNO!";
+} !otherwise {
+    !shout "Cisza i spokoj.";
+}
+
+!shout "--- TEST 3: Lancuch OTHERWISE IF ---";
+!make INT points <- 75;
+!if < points >= 90 > {
+    !shout "Ocena: A";
+} !otherwise if < points >= 75 > {
+    !shout "Ocena: B";
+} !otherwise if < points >= 50 > {
+    !shout "Ocena: C";
+} !otherwise {
+    !shout "Ocena: F (Oblane)";
+}
+
+!shout "--- TEST 4: Zagniezdzone IFy i Scope ---";
+!if < true > {
+    !make INT tajna_zmienna <- 999;
+    !if < tajna_zmienna == 999 > {
+        !shout "Zagniezdzenie dziala!";
+    }
+}
+$ Ostatnie odkomentuj, żeby sprawdzić czy rzuci błąd, bo "tajna_zmienna" nie powinna istnieć poza klamerkami!
+$ !shout tajna_zmienna;

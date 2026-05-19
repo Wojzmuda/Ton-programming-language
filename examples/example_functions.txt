@@ -1,0 +1,66 @@
+$ ==========================================
+$ TESTY: FUNKCJE (DEFINICJE, WYWOŁANIA, ZAKRESY)
+$ ==========================================
+
+$ 1. PROSTA FUNKCJA MATEMATYCZNA Z PARAMETRAMI
+!define INT dodaj_liczby <INT a, INT b> {
+    !make INT suma <- a + b ;
+    !out suma ;  $ Zwracamy wynik
+}
+
+!make INT wynik <- dodaj_liczby(10, 15) ;
+!shout "Wynik dodawania 10 + 15 (Oczekiwane 25):" ;
+!shout wynik ;
+!shout " " ;
+
+
+$ 2. FUNKCJA VOID (WYWOŁYWANA JAKO OSOBNA INSTRUKCJA)
+!define VOID przywitaj_sie <> {
+    !shout ">> Odpalam system dzwiekowy... (Witaj w jezyku Ton!)" ;
+    $ Brak !out, ponieważ to VOID
+}
+
+$ Wywołanie dzięki nowej regule callStat!
+przywitaj_sie() ;
+!shout " " ;
+
+
+$ 3. FUNKCJE DO MANIPULACJI PARAMETRAMI DŹWIĘKU/MUZYKI
+!define INT zrob_szybciej <INT aktualne_tempo> {
+    !out aktualne_tempo * 2 ;
+}
+
+!make INT tempo_utworu <- 120 ;
+!shout "Poczatkowe tempo:" ;
+!shout tempo_utworu ;
+
+tempo_utworu <- zrob_szybciej(tempo_utworu) ;
+!shout "Tempo po przepuszczeniu przez funkcje (Oczekiwane 240):" ;
+!shout tempo_utworu ;
+!shout " " ;
+
+
+$ 4. TEST DYNAMIC SCOPING (ZASIĘG DYNAMICZNY)
+
+!define VOID sprawdz_tajna_zmienna <> {
+    !shout "Tajna zmienna zdefiniowana na zewnatrz to:" ;
+    !shout tajna_zmienna ;  $ Używamy zmiennej, której tu nie zadeklarowano!
+}
+
+{
+    !shout "--- Test zasiegu dynamicznego ---" ;
+    !make INT tajna_zmienna <- 777 ;
+    
+    $ Funkcja z powodzeniem odczyta wartość 777 z tego bloku
+    sprawdz_tajna_zmienna() ; 
+}
+
+$ ==========================================
+$ BŁĘDY DO ODKOMENTOWANIA I TESTOWANIA
+$ ==========================================
+
+$ BŁĄD 1: Zła liczba argumentów
+$ !make INT zly_wynik <- dodaj_liczby(5) ;
+
+$ BŁĄD 2: Wywołanie nieistniejącej funkcji
+$ kosmiczna_funkcja() ;
