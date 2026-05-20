@@ -19,7 +19,6 @@ $ 2. TEST: Widocznosc zmiennych rodzica wewnatrz bloku
     !shout child_var ;
 }
 
-
 $ 3. TEST: Przeslanianie zmiennych (Shadowing - uzycie !make w srodku)
 !make INT shadow_var <- 1 ;
 {

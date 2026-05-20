@@ -51,7 +51,8 @@ std::any TonInterpreter::visitTargetExpr(TonParser::TargetExprContext *ctx) {
     std::string baseName = targetNode->ID(0)->getText();
 
     if (!currentScope->exists(baseName)) {
-        throw std::runtime_error("Error: Undefined variable or timeline '" + baseName + "'.");
+        size_t line = ctx->getStart()->getLine();
+        throw std::runtime_error("Error in line " + std::to_string(line) + ": Undefined variable or timeline '" + baseName + "'.");
     }
 
     if (targetNode->ID().size() == 1) {
@@ -556,36 +557,51 @@ std::any TonInterpreter::visitOrExpr(TonParser::OrExprContext *ctx) {
     throw std::runtime_error("Line " + std::to_string(line) + ": OR operator requires both operands to be BOOL.");
 }
 
+
 std::any TonInterpreter::visitRelationalExpr(TonParser::RelationalExprContext *ctx)
 {
     std::any leftVal = visit(ctx->expr(0));
     std::any rightVal = visit(ctx->expr(1));
 
-    // FIXME for now only works for INT and DOUBLE. No type validation !
-    double l = (leftVal.type() == typeid(int)) ? std::any_cast<int>(leftVal) : std::any_cast<double>(leftVal);
-    double r = (rightVal.type() == typeid(int)) ? std::any_cast<int>(rightVal) : std::any_cast<double>(rightVal);
+    if (leftVal.type() == typeid(std::string) && rightVal.type() == typeid(std::string)) {
+        std::string l = std::any_cast<std::string>(leftVal);
+        std::string r = std::any_cast<std::string>(rightVal);
+        
+        if (ctx->EQ() != nullptr) return l == r;
+        if (ctx->NEQ() != nullptr) return l != r;
+        if (ctx->L_ANGLE() != nullptr) return l < r;
+        if (ctx->L_ANGLE_EQ() != nullptr) return l <= r;
+        if (ctx->R_ANGLE() != nullptr) return l > r;
+        if (ctx->R_ANGLE_EQ() != nullptr) return l >= r;
+    }
 
-    if (ctx->EQ() != nullptr) {
-        return l == r;
+    if (leftVal.type() == typeid(bool) && rightVal.type() == typeid(bool)) {
+        bool l = std::any_cast<bool>(leftVal);
+        bool r = std::any_cast<bool>(rightVal);
+        
+        if (ctx->EQ() != nullptr) return l == r;
+        if (ctx->NEQ() != nullptr) return l != r;
+        
+        size_t line = ctx->getStart()->getLine();
+        throw std::runtime_error("Runtime Error in line " + std::to_string(line) + ": Invalid relational operator for BOOL.");
     }
-    else if (ctx->NEQ() != nullptr) {
-        return l != r;
-    }
-    else if (ctx->L_ANGLE() != nullptr) {
-        return l < r;
-    }
-    else if (ctx->L_ANGLE_EQ() != nullptr) {
-        return l <= r;
-    }
-    else if (ctx->R_ANGLE() != nullptr) { 
-        return l > r;
-    }
-    else if (ctx->R_ANGLE_EQ() != nullptr) {
-        return l >= r;
+
+    if ((leftVal.type() == typeid(int) || leftVal.type() == typeid(double)) &&
+        (rightVal.type() == typeid(int) || rightVal.type() == typeid(double))) {
+        
+        double l = (leftVal.type() == typeid(int)) ? std::any_cast<int>(leftVal) : std::any_cast<double>(leftVal);
+        double r = (rightVal.type() == typeid(int)) ? std::any_cast<int>(rightVal) : std::any_cast<double>(rightVal);
+
+        if (ctx->EQ() != nullptr) return l == r;
+        if (ctx->NEQ() != nullptr) return l != r;
+        if (ctx->L_ANGLE() != nullptr) return l < r;
+        if (ctx->L_ANGLE_EQ() != nullptr) return l <= r;
+        if (ctx->R_ANGLE() != nullptr) return l > r;
+        if (ctx->R_ANGLE_EQ() != nullptr) return l >= r;
     }
 
     size_t line = ctx->getStart()->getLine();
-    throw std::runtime_error("Line " + std::to_string(line) + ": Relational operators (==, !=, <, >) currently only support INT values.");
+    throw std::runtime_error("Runtime Error in line " + std::to_string(line) + ": Cannot evaluate relational operator for these types.");
 }
 
 std::any TonInterpreter::visitParensExpr(TonParser::ParensExprContext *ctx) {

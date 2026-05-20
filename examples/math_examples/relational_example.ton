@@ -1,0 +1,15 @@
+!make INT x <- 123;
+!make NUMERICAL y <- 123.4;
+
+!if <x <= y> {
+    !shout x;
+    !make STRING x <- "s123";
+    !make STRING y <- "123";
+    !make BOOL a <- FALSE;
+    !make BOOL b <- FALSE;
+    !if <a > b> {
+        !shout "WORKS";
+    } !otherwise {
+        !shout "DOESNT WORK";
+    }
+}

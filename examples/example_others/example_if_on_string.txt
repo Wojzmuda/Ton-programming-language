@@ -1,0 +1,9 @@
+
+
+!make STRING a <- "xx";
+!make STRING b <- "yy";
+!if < a == b > {
+    !shout "Ocena: A";
+} !otherwise {
+    !shout "Ocena: F (Oblane)";
+}

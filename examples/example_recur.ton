@@ -26,7 +26,7 @@ result <- factorial(10);
 result <- factorial(10);
 result <- factorial(10);
 result <- factorial(10);
-result <- factorial(10);
+result <- factorial(99);
 $ result <- factorial(10);
 $ !shout "Silnia z 5 to:";
 !shout result;

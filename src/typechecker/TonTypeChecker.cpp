@@ -25,7 +25,9 @@ std::any TonTypeChecker::visitNotExpr(TonParser::NotExprContext *ctx) {
 
 
 std::any TonTypeChecker::visitAndExpr(TonParser::AndExprContext *ctx) { return std::string("BOOL"); }
+
 std::any TonTypeChecker::visitOrExpr(TonParser::OrExprContext *ctx) { return std::string("BOOL"); }
+
 std::any TonTypeChecker::visitRelationalExpr(TonParser::RelationalExprContext *ctx) {
     std::string left = std::any_cast<std::string>(visit(ctx->expr(0)));
     std::string right = std::any_cast<std::string>(visit(ctx->expr(1)));
