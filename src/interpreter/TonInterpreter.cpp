@@ -853,9 +853,18 @@ std::any TonInterpreter::visitReturnStat(TonParser::ReturnStatContext *ctx){
     throw ReturnException(valueToReturn);
 }
 
+void TonInterpreter::validateStackDepth() {
+    if (currentStackDepth >= TonInterpreter::MAX_STACK_DEPTH) {
+        throw std::runtime_error("Stack depth limit reached.");
+    }
+}
+
 std::any TonInterpreter::executeFunctionLogic(const std:: string& funcName, const std::vector<TonParser::ExprContext*>& argsCtx){
+
+    this->validateStackDepth();
+
     if(!currentScope-> exists(funcName)){
-        throw std::runtime_error("[Error] Function doesn't exist.");
+        throw std::runtime_error("Function doesn't exist.");
     }
     std::any func = currentScope->get(funcName);
     auto funcdefctx = std::any_cast<TonParser::FuncDefContext*>(func);
@@ -866,7 +875,7 @@ std::any TonInterpreter::executeFunctionLogic(const std:: string& funcName, cons
     size_t providedargs = argsCtx.size();
 
     if(expectedargs != providedargs){
-        throw std::runtime_error("[Error] Function '"+ funcName + "' expects " + std::to_string(expectedargs) + " recieved only " + std::to_string(providedargs) + "arguments.");
+        throw std::runtime_error("Function '"+ funcName + "' expects " + std::to_string(expectedargs) + " recieved only " + std::to_string(providedargs) + "arguments.");
     }
     std::vector<std::any> evaluatedArgs;
     for(auto exprctx : argsCtx){
@@ -875,6 +884,7 @@ std::any TonInterpreter::executeFunctionLogic(const std:: string& funcName, cons
 
     auto previousScope = currentScope;
     currentScope = std::make_shared<Scope<std::any>>(previousScope);
+    this->currentStackDepth++;
 
     for(size_t i = 0; i < expectedargs; i++){
         std::string paramType = funcdefctx->type(i+1)->getText();
@@ -895,8 +905,9 @@ std::any TonInterpreter::executeFunctionLogic(const std:: string& funcName, cons
         else if (paramType == "TRACK" && argval.type() == typeid(Track)) typeMatch = true;
 
         if (!typeMatch) {
-            currentScope = previousScope; 
-            throw std::runtime_error("[Error] Argument '" + paramName + "' in function '" + funcName + "' must be of type " + paramType + ".");
+            currentScope = previousScope;
+            this->currentStackDepth--;
+            throw std::runtime_error("Argument '" + paramName + "' in function '" + funcName + "' must be of type " + paramType + ".");
         }
         currentScope->define(paramName, paramType, argval);
     }
@@ -905,7 +916,7 @@ std::any TonInterpreter::executeFunctionLogic(const std:: string& funcName, cons
     try{
         visit(funcdefctx->block());
         if (expectedReturnType != "VOID") {
-            throw std::runtime_error("[Error] Function '" + funcName + "' missing return statement (!out).");
+            throw std::runtime_error("Function '" + funcName + "' missing return statement (!out).");
         }
     } catch( const ReturnException& ret){
       result = ret.returnValue;
@@ -913,13 +924,13 @@ std::any TonInterpreter::executeFunctionLogic(const std:: string& funcName, cons
         if (expectedReturnType == "VOID") {
             
             if (result.has_value()) {
-                throw std::runtime_error("[Error] Function '" + funcName + "' is of type VOID and cannot return a value.");
+                throw std::runtime_error("Function '" + funcName + "' is of type VOID and cannot return a value.");
             }
         } 
         else {
 
             if (!result.has_value()) {
-                throw std::runtime_error("[Error] Function '" + funcName + "' must return a value of type " + expectedReturnType + ".");
+                throw std::runtime_error("Function '" + funcName + "' must return a value of type " + expectedReturnType + ".");
             }
 
             bool typeMatch = false;
@@ -936,14 +947,16 @@ std::any TonInterpreter::executeFunctionLogic(const std:: string& funcName, cons
             else if (expectedReturnType == "TRACK" && result.type() == typeid(Track)) typeMatch = true;
 
             if (!typeMatch) {
-                throw std::runtime_error("[Error] Function '" + funcName + "' returned wrong type. Expected " + expectedReturnType + ".");
+                throw std::runtime_error("Function '" + funcName + "' returned wrong type. Expected " + expectedReturnType + ".");
             }
         }
     }catch(...){
         currentScope = previousScope;
+        this->currentStackDepth--;
         throw;
     }
     currentScope = previousScope;
+    this->currentStackDepth--;
     return result;
 
 }

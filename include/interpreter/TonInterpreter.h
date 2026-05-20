@@ -17,13 +17,17 @@ class ReturnException : public std::exception{
 class TonInterpreter: public TonBaseVisitor {
     private:
         std::shared_ptr<Scope<std::any>> currentScope;
+        static constexpr int MAX_STACK_DEPTH = 1000;
+        int currentStackDepth;
+
         struct BreakException : public std::exception {};
         struct ContinueException : public std::exception {};
 
         std::any executeFunctionLogic(const std:: string& funcName, const std::vector<TonParser::ExprContext*>& argsCtx);
+        void validateStackDepth();
 
     public:
-        TonInterpreter(){
+        TonInterpreter() : currentStackDepth{0} {
             currentScope = std::make_shared<Scope<std::any>>();
         }
         

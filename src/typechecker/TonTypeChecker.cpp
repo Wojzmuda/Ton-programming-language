@@ -79,7 +79,7 @@ std::any TonTypeChecker::visitAddSubMixExpr(TonParser::AddSubMixExprContext *ctx
     size_t line = ctx->getStart()->getLine();
     std::string op = ctx->PLUS() ? "+" : "-";
     throw std::runtime_error("Type Error in line " + std::to_string(line) + 
-        ": Cannot apply operator" + op + " to " + left + " and " + right);
+        ": Cannot apply operator " + op + " to " + left + " and " + right);
 }
 
 std::any TonTypeChecker::visitConcatExpr(TonParser::ConcatExprContext *ctx) {
@@ -110,6 +110,12 @@ std::any TonTypeChecker::visitFunctionCallExpr(TonParser::FunctionCallExprContex
         visit(exprCtx);
     }
     std::string funcName = ctx->ID()->getText();
+
+    if (!currentScope->exists(funcName)) {
+        size_t line = ctx->getStart()->getLine();
+        throw std::runtime_error("Error in line " + std::to_string(line) + 
+                                 ": Function '" + funcName + "' is not defined.");
+    }
     std::string returnType = currentScope->resolveType(funcName);
     return returnType;
 }

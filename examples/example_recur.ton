@@ -1,0 +1,32 @@
+!shout "--- TEST REKURENCJI ---";
+
+!define INT factorial <INT n> {
+    !if < n <= 1 > {
+        !out 1;
+    } !otherwise {
+        !out n * factorial(n - 1);
+    }
+}
+
+!define INT foo <INT n> {
+    !make INT a <- 3;
+    !shout a; $ 3
+    !define INT foo2<INT n> {
+        !make INT a <- 0;
+        !shout a; $ 0
+        !out n + a; $ n + 0
+    }
+    foo2(2);
+    !shout a;
+    !out foo2(n+a); $ n + 0 + 3
+}
+
+!make INT result <- factorial(10);
+result <- factorial(10);
+result <- factorial(10);
+result <- factorial(10);
+result <- factorial(10);
+result <- factorial(10);
+$ result <- factorial(10);
+$ !shout "Silnia z 5 to:";
+!shout result;
