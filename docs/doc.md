@@ -4,6 +4,19 @@ Tøn is a strongly typed, context-free programming language designed to compile 
 
 ---
 
+## Table of contents
+- [Core Concepts & Data Types](#1-core-concepts--data-types)
+- [Basic Syntax & Variables](#2-basic-syntax--variables)
+- [Audio Construction & Timelines](#3-audio-construction--timelines)
+- [Audio Manipulation Operators](#4-audio-manipulation-operators)
+- [Control Flow](#5-control-flow)
+- [Functions & Scoping](#6-functions--scoping)
+- [Exporting](#7-exporting)
+- [Complete Example](#8-complete-example)
+
+
+---
+
 ## 1. Core Concepts & Data Types
 
 Tøn features standard programming types as well as specific domain types for music generation.
