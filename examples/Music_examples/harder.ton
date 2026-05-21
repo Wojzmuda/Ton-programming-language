@@ -1,0 +1,103 @@
+USE cello;
+USE piano;
+USE guitar;
+
+$// ==========================================
+$// 1. DEFINICJE DŹWIĘKÓW (SOUNDS)
+$// ==========================================
+
+$// --- Fundament basowy (Cello - trwający 2 sekundy na akord) ---
+!make SOUND bassA <- cello A2 2000;
+!make SOUND bassF <- cello F2 2000;
+!make SOUND bassC <- cello C3 2000;
+!make SOUND bassG <- cello G2 2000;
+
+$// --- Fortepianowe Arpeggia (Szybkie nuty po 250ms) ---
+$// Akord Am (A-C-E)
+!make SOUND pA <- piano A4 250;
+!make SOUND pC <- piano C5 250;
+!make SOUND pE <- piano E5 250;
+
+$// Akord F (F-A-C)
+!make SOUND pF <- piano F4 250;
+$// (pA i pC mamy już zdefiniowane wyżej!)
+
+$ Akord C (C-E-G)
+!make SOUND pClow <- piano C4 250;
+!make SOUND pElow <- piano E4 250;
+!make SOUND pGlow <- piano G4 250;
+
+$ Akord G (G-B-D)
+!make SOUND pG <- piano G4 250;
+!make SOUND pB <- piano B4 250;
+!make SOUND pD <- piano D5 250;
+
+$  --- Melodia główna (Flet - różne długości) ---
+!make SOUND mE5_long <- guitar E5 1000;
+!make SOUND mD5_short <- guitar D5 500;
+!make SOUND mC5_short <- guitar C5 500;
+
+!make SOUND mA5_long <- guitar A5 1000;
+!make SOUND mG5_short <- guitar G5 500;
+!make SOUND mF5_short <- guitar F5 500;
+
+!make SOUND mG5_long <- guitar G5 1000;
+!make SOUND mF5_short2 <- guitar F5 500;
+!make SOUND mE5_short <- guitar E5 500;
+
+!make SOUND mD5_long <- guitar D5 2000;
+
+
+$ ==========================================
+$ 2. ARANŻACJA (TIMELINE)
+$==========================================
+
+!make TIMELINE cinematic;
+
+$ --- Ścieżka 1: Bas ---
+cinematic NEW TRACK bass;
+cinematic.bass <- [
+    bassA AT 0,
+    bassF AT 2000,
+    bassC AT 4000,
+    bassG AT 6000
+];
+
+$ --- Ścieżka 2: Arpeggiator ---
+cinematic NEW TRACK piano_arp;
+cinematic.piano_arp <- [
+    $ Am (0 - 2000ms)
+    pA AT 0, pC AT 250, pE AT 500, pA AT 750,
+    pC AT 1000, pE AT 1250, pC AT 1500, pA AT 1750,
+
+    $ F (2000 - 4000ms)
+    pF AT 2000, pA AT 2250, pC AT 2500, pF AT 2750,
+    pA AT 3000, pC AT 3250, pA AT 3500, pF AT 3750,
+
+    $ C (4000 - 6000ms)
+    pClow AT 4000, pElow AT 4250, pGlow AT 4500, pClow AT 4750,
+    pElow AT 5000, pGlow AT 5250, pElow AT 5500, pClow AT 5750,
+
+    $ G (6000 - 8000ms)
+    pG AT 6000, pB AT 6250, pD AT 6500, pG AT 6750,
+    pB AT 7000, pD AT 7250, pB AT 7500, pG AT 7750
+];
+
+$ --- Ścieżka 3: Solówka na flecie ---
+$ cinematic NEW TRACK melody;
+$ cinematic.melody <- [
+$     $/ Am
+$     mE5_long AT 0, mD5_short AT 1000, mC5_short AT 1500,
+$     $ F
+$     mA5_long AT 2000, mG5_short AT 3000, mF5_short AT 3500,
+$     $ C
+$     mG5_long AT 4000, mF5_short2 AT 5000, mE5_short AT 5500,
+$     $ G
+$     mD5_long AT 6000
+$ ];
+
+
+$ ==========================================
+$ 3. EXPORT
+$ ==========================================
+!save cinematic "cinematic_journey.wav";

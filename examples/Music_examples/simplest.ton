@@ -1,0 +1,10 @@
+USE piano;
+USE cello;
+!make SOUND x <- cello C4 500;
+!make SOUND y <- cello D4 500;
+!make SOUND z <- cello E4 500;
+!make SOUND e <- cello F4 500;
+!make SOUND f <- cello G4 500;
+!make SOUND g <- cello B4 500;
+!make SOUND h <- cello C5 500;
+!save (x & y & z & e & f & g & h) "song.wav";

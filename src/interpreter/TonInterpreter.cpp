@@ -2,6 +2,49 @@
 #include "interpreter/TonInterpreter.h"
 #include <cmath>
 
+#define TSF_IMPLEMENTATION
+#include "core/tsf.h"
+
+const std::unordered_map<std::string, int> TonInterpreter::SAMPLE_INSTRUMENTS = {
+    {"piano",      0}, // YAMAHA GRAND PIANO
+    {"organ",      19}, // CHURCH ORGAN
+    {"rock_organ", 18}, // ROCK ORGAN
+    {"guitar",     24}, // NYLON STRING GUITAR
+    {"overdrive",  29}, // OVERDRIVE GUITAR
+    {"bass",       33}, // Fingered Bass
+    {"violin",     40}, // Violin
+    {"cello",      42}, // Cello
+    {"contrabass", 43}, // Contrabass
+    {"strings",    48}, // Strings
+    {"trumpet",    56}, // Trumpet
+    {"flute",      73}, // Flute
+    {"drums",      116} // Taiko Drum
+};
+
+const std::unordered_set<std::string> TonInterpreter::SYNTHS = {
+    "sine"
+};
+
+TonInterpreter::TonInterpreter() : currentStackDepth{0} {
+    currentScope = std::make_shared<Scope<std::any>>();
+
+    soundFont = tsf_load_filename("data/FluidR3_GM.sf2");
+    if (!this->soundFont) {
+        std::cerr << "Could not load SoundFont from data/FluidR3_GM.sf2!" << std::endl;
+    } else {
+        tsf_set_output(soundFont, TSF_MONO, 44100, 0);
+    }
+
+    for (const std::string& synthName : SYNTHS) {
+        loadedInstruments.emplace(synthName, Instrument(synthName));
+    }
+}
+
+TonInterpreter::~TonInterpreter() {
+    if (this->soundFont != nullptr) {
+        tsf_close(this->soundFont);
+    }
+}
 
 std::any TonInterpreter::visitProgram(TonParser::ProgramContext *ctx) {
     return visitChildren(ctx);
@@ -89,6 +132,26 @@ std::any TonInterpreter::visitTargetExpr(TonParser::TargetExprContext *ctx) {
     }
 
     return timeline.tracks[trackName];
+}
+
+std::any TonInterpreter::visitHeader(TonParser::HeaderContext *ctx) {
+    std::string instrName = ctx->ID()->getText();
+
+    if (!soundFont) {
+        throw std::runtime_error("SoundFont library is not initialized!");
+    }
+
+    auto it = SAMPLE_INSTRUMENTS.find(instrName);
+
+    if (it != SAMPLE_INSTRUMENTS.end()) {
+        loadedInstruments.emplace(instrName, Instrument(instrName, it->second));
+    }
+    else {
+        size_t line = ctx->getStart()->getLine();
+        throw std::runtime_error("Line " + std::to_string(line) + ": Unknown standard instrument '" + instrName + "'.");
+    }
+
+    return {};
 }
 
 
@@ -234,7 +297,7 @@ std::any TonInterpreter::visitShoutStat(TonParser::ShoutStatContext *ctx) {
     }
     else if (value.type() == typeid(Instrument)) {
         Instrument currentInstrument = std::any_cast<Instrument>(value);
-        std::cout << "INSTRUMENT(" << currentInstrument.name << ")";
+        std::cout << "INSTRUMENT(" << currentInstrument.getName() << ")";
     }
     else if (value.type() == typeid(std::vector<std::any>)) {
         auto arrayElements = std::any_cast<std::vector<std::any>>(value);
@@ -285,7 +348,7 @@ std::any TonInterpreter::visitSaveStat(TonParser::SaveStatContext *ctx) {
 
     if (exportedValue.type() == typeid(Sound)) {
         Sound soundToSave = std::any_cast<Sound>(exportedValue);
-        AudioFile<double> audioFile;
+        AudioFile<float> audioFile;
         audioFile.setNumChannels(1);
         audioFile.setNumSamplesPerChannel(soundToSave.samples.size());
         audioFile.setSampleRate(soundToSave.sampleRate);
@@ -343,40 +406,57 @@ std::any TonInterpreter::visitSaveStat(TonParser::SaveStatContext *ctx) {
 
 
 std::any TonInterpreter::visitCreateSoundExpr(TonParser::CreateSoundExprContext *ctx) {
-    std::string instrumentOrSoundId = ctx->ID()->getText();
+    std::string soundId = ctx->ID()->getText();
     std::any arg1 = visit(ctx->expr(0));
     std::any arg2 = visit(ctx->expr(1));
 
-    Note note;
-    int durationMs;
+    Note note = std::any_cast<Note>(arg1);;
+    int durationMs = std::any_cast<int>(arg2);;
 
-    note = std::any_cast<Note>(arg1);
-    durationMs = std::any_cast<int>(arg2);
+    Sound generatedSound;
+    int totalSamples = (durationMs / 1000.0) * generatedSound.sampleRate;
+
+    auto it = loadedInstruments.find(soundId);
+
+    if (it == loadedInstruments.end()) {
+        size_t line = ctx->getStart()->getLine();
+        throw std::runtime_error("Line " + std::to_string(line) + ": Instrument or synth '"
+            + soundId + "' not found. Did you USE it?");
+    }
+
+    Instrument& instr = it->second;
 
     
-
-    note = std::any_cast<Note>(arg1);
-    durationMs = std::any_cast<int>(arg2);
-
-    
-    // TODO choose right sample instead of using temp lambda
-    // -----
-    auto createTemporarySinWave = [](Note note, int dur) {
-        Sound generatedSound;
-        int totalSamples = (dur / 1000.0) * generatedSound.sampleRate;
-        for (int i = 0; i < totalSamples; ++i) {
-            double time = (double)i / generatedSound.sampleRate;
-            double sampleValue = std::sin(2.0 * M_PI * note.getFrequency() * time);
-            generatedSound.samples.push_back(sampleValue);
+    if (instr.getType() == InstrumentType::Synth) {
+        try {
+            generatedSound.generateSynthWave(instr.getName(), note, durationMs);
         }
-        return generatedSound;
-    };
-    // ------
-    
-    Sound sound = createTemporarySinWave(note, durationMs);
+        catch(std::runtime_error& ex) {
+            size_t line = ctx->getStart()->getLine();
+            throw std::runtime_error("Line " + std::to_string(line) + ": There is no synth named'"
+                                     + soundId + ".");
+        }
+    }
+    else if (instr.getType() == InstrumentType::SoundFont) {
+        std::cout << instr.getName();
+        if (!soundFont) throw std::runtime_error("SoundFont library is not initialized.");
+        int realPresetIndex = tsf_get_presetindex(soundFont, 0, instr.getMidiPresetIndex());
 
-    
-    return sound;
+        if (realPresetIndex < 0) {
+            std::cerr << ">>> [WARNING] MIDI Preset " << instr.getMidiPresetIndex() << " not found in SoundFont! Using default.\n";
+            realPresetIndex = 0;
+        }
+
+        float velocity = 0.8f;
+        std::vector<float> floatSamples(totalSamples);
+        tsf_note_on(soundFont, realPresetIndex, note.toMidiNumber(), velocity);
+        tsf_render_float(soundFont, floatSamples.data(), totalSamples, 0);
+        tsf_note_off(soundFont, realPresetIndex, note.toMidiNumber());
+
+        generatedSound.samples.assign(floatSamples.begin(), floatSamples.end());
+    }
+
+    return generatedSound;
 }
 
 std::any TonInterpreter::visitStringValExpr(TonParser::StringValExprContext *ctx) {
@@ -660,7 +740,6 @@ std::any TonInterpreter::visitAddSubMixExpr(TonParser::AddSubMixExprContext *ctx
             Sound s2 = std::any_cast<Sound>(right);
             
             Sound mixedSound;
-            mixedSound.sampleRate = s1.sampleRate; 
             
             size_t maxSize = std::max(s1.samples.size(), s2.samples.size());
             mixedSound.samples.reserve(maxSize);
@@ -707,7 +786,6 @@ std::any TonInterpreter::visitConcatExpr(TonParser::ConcatExprContext *ctx)
         Sound s2 = std::any_cast<Sound>(right);
         
         Sound concatSound;
-        concatSound.sampleRate = s1.sampleRate;
         
         concatSound.samples.reserve(s1.samples.size() + s2.samples.size());
         

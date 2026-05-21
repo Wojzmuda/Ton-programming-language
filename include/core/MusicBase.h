@@ -4,11 +4,28 @@
 #include "AudioFile.h"
 #include <map>
 
-struct Instrument {
+enum class InstrumentType {
+    SoundFont,
+    RawSample, // For now we leave that
+    Synth      // Built-in synth function (eg Sine Wave)
+};
+
+class Instrument {
+private:
     std::string name;
+
+    InstrumentType type;
+
     std::vector<double> sampleData;
-    // Tutaj w przyszłości można dodać wskaźnik do mapy sampli
-    Instrument(std::string n) : name(n) {}
+
+    // something for SoundFont (?)
+    int midiPresetIndex = -1;
+
+public:
+    Instrument(std::string n) : name{n}, type{InstrumentType::Synth} {}
+
+    Instrument(std::string n, int preset) : name{n}, type{InstrumentType::SoundFont}, midiPresetIndex{preset} {}
+
     Instrument(std::string n, std::string filePath) : name(n) {
         AudioFile<double> audioFile;
         if (audioFile.load(filePath)) {
@@ -18,13 +35,22 @@ struct Instrument {
             std::cerr << ">>> [ERROR] Could not load sample: " << filePath << "\n";
         }
     }
-    Instrument() : name("SineWave") {}
+
+    inline std::string getName() const {
+        return this->name;
+    }
+    inline InstrumentType getType() const {
+        return this->type;
+    }
+    inline int getMidiPresetIndex() const {
+        return this->midiPresetIndex;
+    }
 };
 
 
 struct Note {
     std::string pitchClass; 
-    int octave;            
+    int octave;
 
     Note(std::string p, int o) {
         pitchClass = p;
@@ -35,28 +61,79 @@ struct Note {
         pitchClass = "C";
         octave = 4;
     }
+    inline static const std::map<std::string, int> pitchToSemitone = {
+        {"C", -9}, {"C#", -8}, {"Db", -8}, {"D", -7}, {"D#", -6}, {"Eb", -6},
+        {"E", -5}, {"F", -4}, {"F#", -3}, {"Gb", -3}, {"G", -2}, {"G#", -1},
+        {"Ab", -1}, {"A", 0}, {"A#", 1}, {"Bb", 1}, {"B", 2}
+    };
+
+    int getOffsetFromA4() const {
+        int semitoneOffset = 0;
+        auto it = pitchToSemitone.find(pitchClass);
+        if (it != pitchToSemitone.end()) {
+            semitoneOffset = it->second;
+        }
+
+        int octaveOffset = (octave - 4) * 12;
+        return semitoneOffset + octaveOffset;
+    }
 
     double getFrequency() const {
-        std::map<std::string, int> pitchToSemitone = {
-            {"C", -9}, {"C#", -8}, {"Db", -8}, {"D", -7}, {"D#", -6}, {"Eb", -6},
-            {"E", -5}, {"F", -4}, {"F#", -3}, {"Gb", -3}, {"G", -2}, {"G#", -1},
-            {"Ab", -1}, {"A", 0}, {"A#", 1}, {"Bb", 1}, {"B", 2}
-        };
-        
-        int semitoneOffset = pitchToSemitone[pitchClass];
-        int octaveOffset = (octave - 4) * 12;
-        int totalOffset = semitoneOffset + octaveOffset;
-        
-        return 440.0 * std::pow(2.0, totalOffset / 12.0);
+        return 440.0 * std::pow(2.0, getOffsetFromA4() / 12.0);
+    }
+
+    int toMidiNumber() const {
+        // Nuta A4 to w standardzie MIDI numer 69.
+        // Środkowe C4 to numer 60 (69 - 9).
+        return 69 + getOffsetFromA4();
     }
 };
 
 
-struct Sound {
-    std::vector<double> samples;
-    int sampleRate = 44100;
+class Sound {
+public:
+    std::vector<float> samples;
 
+    void generateSineWave(Note note, int durationMs) {
+        samples.clear();
+        int totalSamples = (durationMs / 1000.0) * sampleRate;
+        samples.reserve(totalSamples);
+        for (int i = 0; i < totalSamples; ++i) {
+            double time = (double)i / sampleRate;
+            double sampleValue = std::sin(2.0 * M_PI * note.getFrequency() * time);
+            samples.push_back(sampleValue);
+        }
+    }
+    void generateSawWave(Note note, int durationMs) {
+        // TODO
+        samples.clear();
+        return;
+    }
+    void generateSquareWave(Note note, int durationMs) {
+        // TODO
+        samples.clear();
+        return;
+    }
+
+public:
+    static constexpr int sampleRate = 44100;
+    void generateSynthWave(std::string synthName, Note note, int durationMs) {
+        if (synthName == "sine") {
+            this->generateSineWave(note, durationMs);
+        }
+        else if (synthName == "saw") {
+            this->generateSawWave(note, durationMs);
+        }
+        else if (synthName == "square") {
+            this->generateSawWave(note, durationMs);
+        }
+        else {
+            throw std::runtime_error("no such synth");
+        }
+    }
     Sound() {}
+
+
 };
 
 

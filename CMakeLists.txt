@@ -27,6 +27,7 @@ set(HEADERS
     include/listener/TonDeclarationListener.h
     include/listener/TonSyntaxErrorListener.h
     include/core/MusicBase.h
+    include/core/tsf.h
     include/core/Scope.h
     include/core/Timeline.h
 )
@@ -41,3 +42,6 @@ target_include_directories( ton_app PRIVATE
 )
 
 target_link_libraries(ton_app PRIVATE antlr4_static)
+
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/data
+     DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
