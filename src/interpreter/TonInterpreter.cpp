@@ -390,61 +390,35 @@ std::any TonInterpreter::visitSaveStat(TonParser::SaveStatContext *ctx) {
     std::string fileName = rawFileName.substr(1, rawFileName.length() - 2);
     std::any exportedValue = visit(ctx->expr());
 
+    Sound soundToSave;
+
     if (exportedValue.type() == typeid(Sound)) {
-        Sound soundToSave = std::any_cast<Sound>(exportedValue);
-        AudioFile<float> audioFile;
-        audioFile.setNumChannels(1);
-        audioFile.setNumSamplesPerChannel(soundToSave.samples.size());
-        audioFile.setSampleRate(soundToSave.sampleRate);
-        audioFile.samples[0] = soundToSave.samples;
-        
-        if (audioFile.save(fileName)) {
-            std::cout << ">>> [SYSTEM] Successfully exported SOUND to: " << fileName << std::endl;
-        } else throw std::runtime_error("Error: Failed to write WAV.");
+        soundToSave = std::any_cast<Sound>(exportedValue);
+        soundToSave.normalize();
     } 
     else if (exportedValue.type() == typeid(Timeline)) {
-  
         Timeline tl = std::any_cast<Timeline>(exportedValue);
-        int sampleRate = 44100;
-        int maxSamples = sampleRate; 
-
-   
-        for (const auto& pair : tl.tracks) {
-            if (pair.second.isMuted) continue;
-            for (const auto& ev : pair.second.events) {
-                int endSample = (ev.startTimeMs / 1000.0) * sampleRate + ev.sound.samples.size();
-                if (endSample > maxSamples) maxSamples = endSample;
-            }
-        }
-
-        std::vector<double> mixedSamples(maxSamples, 0.0);
-
-    
-        for (const auto& pair : tl.tracks) {
-            if (pair.second.isMuted) continue;
-            for (const auto& ev : pair.second.events) {
-                int startSample = (ev.startTimeMs / 1000.0) * sampleRate;
-                for (size_t i = 0; i < ev.sound.samples.size(); ++i) {
-                    mixedSamples[startSample + i] += ev.sound.samples[i];
-                }
-            }
-        }
-
-
-        AudioFile<double> audioFile;
-        audioFile.setNumChannels(1);
-        audioFile.setSampleRate(sampleRate);
-        audioFile.setNumSamplesPerChannel(maxSamples);
-        audioFile.samples[0] = mixedSamples;
-        
-        if (audioFile.save(fileName)) {
-            std::cout << ">>> [SYSTEM] Successfully mixed and exported TIMELINE to: " << fileName << std::endl;
-        } else throw std::runtime_error("Error: Failed to write WAV.");
+        soundToSave = tl.renderFinalSound(); 
+        soundToSave.normalize(); 
     }
     else {
-        throw std::runtime_error("Error: !save command requires a SOUND or TIMELINE type.");
+        size_t line = ctx->getStart()->getLine();
+        throw std::runtime_error("Line " + std::to_string(line) + ": !save command requires a SOUND or TIMELINE type.");
     }
 
+    AudioFile<float> audioFile;
+    audioFile.setNumChannels(1);
+    audioFile.setNumSamplesPerChannel(soundToSave.samples.size());
+    audioFile.setSampleRate(Sound::sampleRate);
+    audioFile.samples[0] = soundToSave.samples;
+        
+    if (audioFile.save(fileName)) {
+        std::cout << ">>> [SYSTEM] Successfully exported SOUND to: " << fileName << std::endl;
+    } 
+    else {
+        throw std::runtime_error("Error: Failed to write WAV.");
+    }
+    
     return {};
 }
 
@@ -791,10 +765,10 @@ std::any TonInterpreter::visitAddSubMixExpr(TonParser::AddSubMixExprContext *ctx
             for (size_t i = 0; i < maxSize; ++i) {
                 double val1 = (i < s1.samples.size()) ? s1.samples[i] : 0.0;
                 double val2 = (i < s2.samples.size()) ? s2.samples[i] : 0.0;
-                // TODO for now tanh, normalizing later on!
-                mixedSound.samples.push_back(std::tanh(val1 + val2));
-                //mixedSound.samples.push_back(val1 + val2);
+                mixedSound.samples.push_back((val1 + val2));
+                
             }
+            std::cout << *std::max_element(mixedSound.samples.begin(), mixedSound.samples.end());
             return mixedSound;
         }
         
