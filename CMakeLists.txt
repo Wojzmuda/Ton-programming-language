@@ -42,6 +42,3 @@ target_include_directories( ton_app PRIVATE
 )
 
 target_link_libraries(ton_app PRIVATE antlr4_static)
-
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/data
-     DESTINATION ${CMAKE_CURRENT_BINARY_DIR})

@@ -5,12 +5,15 @@
 #include "TonBaseVisitor.h"
 #include "core/Timeline.h"
 #include "core/Scope.h"
+
+#include <filesystem>
 #include <unordered_map>
 #include <unordered_set>
 #include <string>
 #include <any>
 #include <vector>
 #include <exception>
+#include <cstdlib>
 
 struct tsf;
 
@@ -21,6 +24,7 @@ public:
 };
 class TonInterpreter: public TonBaseVisitor {
 private:
+    std::string findSoundFontPath();
     tsf* soundFont = nullptr;
     std::unordered_map<std::string, Instrument> loadedInstruments;
     static const std::unordered_map<std::string, int> SAMPLE_INSTRUMENTS;

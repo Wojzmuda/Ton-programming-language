@@ -84,17 +84,17 @@ cinematic.piano_arp <- [
 ];
 
 $ --- Ścieżka 3: Solówka na flecie ---
-$ cinematic NEW TRACK melody;
-$ cinematic.melody <- [
-$     $/ Am
-$     mE5_long AT 0, mD5_short AT 1000, mC5_short AT 1500,
-$     $ F
-$     mA5_long AT 2000, mG5_short AT 3000, mF5_short AT 3500,
-$     $ C
-$     mG5_long AT 4000, mF5_short2 AT 5000, mE5_short AT 5500,
-$     $ G
-$     mD5_long AT 6000
-$ ];
+cinematic NEW TRACK melody;
+cinematic.melody <- [
+    $/ Am
+    mE5_long AT 0, mD5_short AT 1000, mC5_short AT 1500,
+    $ F
+    mA5_long AT 2000, mG5_short AT 3000, mF5_short AT 3500,
+    $ C
+    mG5_long AT 4000, mF5_short2 AT 5000, mE5_short AT 5500,
+    $ G
+    mD5_long AT 6000
+];
 
 
 $ ==========================================

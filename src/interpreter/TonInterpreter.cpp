@@ -25,14 +25,58 @@ const std::unordered_set<std::string> TonInterpreter::SYNTHS = {
     "sine"
 };
 
+std::string TonInterpreter::findSoundFontPath() {
+    std::string fileName = "FluidR3_GM.sf2";
+
+    // 1. Env Path - optional
+    if (const char* envPath = std::getenv("TON_SOUNDFONT_PATH")) {
+        std::filesystem::path p(envPath);
+        if (std::filesystem::exists(p)) {
+            return p.string();
+        }
+    }
+
+    // possible directories
+    // for debug purposes when running Ton from ./{PROJECT_ROOT} or ./{PROJECT_ROOT}/build
+    std::vector<std::filesystem::path> possiblePaths = {
+        std::filesystem::path("data") / fileName,              // Terminal w głównym folderze
+        std::filesystem::path("..") / "data" / fileName,       // Terminal w folderze build/
+        std::filesystem::path("..") / ".." / "data" / fileName // Typowe dla IDE na Windowsie
+    };
+
+    // Fetching home directory
+    const char* homeDir = std::getenv("HOME"); // Linux / macOS
+    if (!homeDir) {
+        homeDir = std::getenv("USERPROFILE");  // Windows
+    }
+
+    if (homeDir) {
+        std::filesystem::path home(homeDir);
+        // Looking for file named FluidR3_GM.sf2 in $HOME/.ton/ directory
+        possiblePaths.push_back(home / ".ton" / fileName);
+    }
+
+    // One by one verification in created possible paths.
+    // searching order is: EnvPath ; debug directories ; $HOME/.ton
+    for (const auto& path : possiblePaths) {
+        if (std::filesystem::exists(path)) {
+            return path.string();
+        }
+    }
+
+    // Returning data/fileName if the file was not found.
+    return (std::filesystem::path("data") / fileName).string();
+}
+
 TonInterpreter::TonInterpreter() : currentStackDepth{0} {
     currentScope = std::make_shared<Scope<std::any>>();
 
-    soundFont = tsf_load_filename("data/FluidR3_GM.sf2");
+    std::string sfPath = findSoundFontPath();
+    soundFont = tsf_load_filename(sfPath.c_str());
     if (!this->soundFont) {
         std::cerr << "Could not load SoundFont from data/FluidR3_GM.sf2!" << std::endl;
     } else {
-        tsf_set_output(soundFont, TSF_MONO, 44100, 0);
+        tsf_set_output(soundFont, TSF_MONO, Sound::sampleRate, 0);
     }
 
     for (const std::string& synthName : SYNTHS) {
