@@ -394,17 +394,17 @@ std::any TonInterpreter::visitSaveStat(TonParser::SaveStatContext *ctx) {
 
     if (exportedValue.type() == typeid(Sound)) {
         soundToSave = std::any_cast<Sound>(exportedValue);
-        soundToSave.normalize();
     } 
     else if (exportedValue.type() == typeid(Timeline)) {
         Timeline tl = std::any_cast<Timeline>(exportedValue);
         soundToSave = tl.renderFinalSound(); 
-        soundToSave.normalize(); 
     }
     else {
         size_t line = ctx->getStart()->getLine();
         throw std::runtime_error("Line " + std::to_string(line) + ": !save command requires a SOUND or TIMELINE type.");
     }
+
+    soundToSave.normalize();
 
     AudioFile<float> audioFile;
     audioFile.setNumChannels(1);
@@ -418,7 +418,7 @@ std::any TonInterpreter::visitSaveStat(TonParser::SaveStatContext *ctx) {
     else {
         throw std::runtime_error("Error: Failed to write WAV.");
     }
-    
+
     return {};
 }
 
@@ -465,7 +465,7 @@ std::any TonInterpreter::visitCreateSoundExpr(TonParser::CreateSoundExprContext 
             realPresetIndex = 0;
         }
 
-        float velocity = 0.8f;
+        float velocity = 0.5f;
         std::vector<float> floatSamples(totalSamples);
         tsf_note_on(soundFont, realPresetIndex, note.toMidiNumber(), velocity);
         tsf_render_float(soundFont, floatSamples.data(), totalSamples, 0);
@@ -726,27 +726,63 @@ std::any TonInterpreter::visitNumValExpr(TonParser::NumValExprContext *ctx) {
     return std::stod(ctx->NUM_VAL()->getText());
 }
 
-std::any TonInterpreter::visitMulDivExpr(TonParser::MulDivExprContext *ctx) {
-    std::any left = visit(ctx -> expr(0));
-    std::any right = visit(ctx -> expr(1));
-    
-    double leftVal =(left.type() == typeid(int)) ? std::any_cast<int>(left) : std::any_cast<double>(left);
-    double rightVal = (right.type() == typeid(int)) ? std::any_cast<int>(right) : std::any_cast<double>(right);
 
-    if (ctx-> MULT()){
-        if(left.type() == typeid(int) && right.type() == typeid(int)) return (int)(leftVal * rightVal);
+std::any TonInterpreter::visitMulDivExpr(TonParser::MulDivExprContext *ctx) {
+    std::any left = visit(ctx->expr(0));
+    std::any right = visit(ctx->expr(1));
+
+    if (ctx->MULT()) {
+        bool isLeftSound = (left.type() == typeid(Sound));
+        bool isRightSound = (right.type() == typeid(Sound));
+
+        if (isLeftSound || isRightSound) {
+            std::any numberAny = isLeftSound ? right : left;
+            
+            if (numberAny.type() == typeid(double) || numberAny.type() == typeid(int)) {
+                Sound s = isLeftSound ? std::any_cast<Sound>(left) : std::any_cast<Sound>(right);
+                double multiplier = (numberAny.type() == typeid(double)) 
+                    ? std::any_cast<double>(numberAny) 
+                    : static_cast<double>(std::any_cast<int>(numberAny));
+                return s * multiplier;
+            } 
+            else {
+                size_t line = ctx->getStart()->getLine();
+                throw std::runtime_error("Line " + std::to_string(line) + ": Error - SOUND can only be multiplied by INT or NUMERICAL.");
+            }
+        }
+
+        if ((left.type() != typeid(int) && left.type() != typeid(double)) ||
+            (right.type() != typeid(int) && right.type() != typeid(double))) {
+            size_t line = ctx->getStart()->getLine();
+            throw std::runtime_error("Line " + std::to_string(line) + ": Error - Mathematical multiplication requires numbers.");
+        }
+
+        double leftVal = (left.type() == typeid(int)) ? std::any_cast<int>(left) : std::any_cast<double>(left);
+        double rightVal = (right.type() == typeid(int)) ? std::any_cast<int>(right) : std::any_cast<double>(right);
+
+        if (left.type() == typeid(int) && right.type() == typeid(int)) return (int)(leftVal * rightVal);
         return (leftVal * rightVal);   
     }
-    else if (ctx->DIV_OP()){
-        if (rightVal==0.0){
+    else if (ctx->DIV_OP()) {
+        if ((left.type() != typeid(int) && left.type() != typeid(double)) ||
+            (right.type() != typeid(int) && right.type() != typeid(double))) {
+            size_t line = ctx->getStart()->getLine();
+            throw std::runtime_error("Line " + std::to_string(line) + ": Error - Mathematical division requires numbers.");
+        }
+
+        double leftVal = (left.type() == typeid(int)) ? std::any_cast<int>(left) : std::any_cast<double>(left);
+        double rightVal = (right.type() == typeid(int)) ? std::any_cast<int>(right) : std::any_cast<double>(right);
+
+        if (rightVal == 0.0) {
             throw std::runtime_error("Line " + std::to_string(ctx->getStart()->getLine()) + ": ERROR - Division by zero!");
         }
+        
         if (left.type() == typeid(int) && right.type() == typeid(int)) return (int)(leftVal / rightVal);
         return leftVal / rightVal;
     }
+    
     return {};
 }
-
 
 std::any TonInterpreter::visitAddSubMixExpr(TonParser::AddSubMixExprContext *ctx) {
     std::any left = visit(ctx->expr(0));

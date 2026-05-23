@@ -55,6 +55,23 @@ std::any TonTypeChecker::visitMulDivExpr(TonParser::MulDivExprContext *ctx) {
     std::string left = std::any_cast<std::string>(visit(ctx->expr(0)));
     std::string right = std::any_cast<std::string>(visit(ctx->expr(1)));
 
+    if (left == "SOUND" || right == "SOUND") {
+        if (ctx->DIV_OP() != nullptr) {
+            size_t line = ctx->getStart()->getLine();
+            throw std::runtime_error("Type Error in line " + std::to_string(line) + 
+               ": Cannot divide a SOUND. Use multiplication with fractions (e.g. SOUND * 0.5) instead.");
+        }
+        if (left == "SOUND" && (right == "INT" || right == "NUMERICAL")) {
+            return std::string("SOUND");
+        }
+        if (right == "SOUND" && (left == "INT" || left == "NUMERICAL")) {
+            return std::string("SOUND");
+        }
+        size_t line = ctx->getStart()->getLine();
+        throw std::runtime_error("Type Error in line " + std::to_string(line) + 
+            ": A SOUND can only be multiplied by an INT or NUMERICAL.");
+    }
+    
     if ((left == "INT" || left == "NUMERICAL") && (right == "INT" || right == "NUMERICAL")) {
         return (left == "NUMERICAL" || right == "NUMERICAL") ? std::string("NUMERICAL") : std::string("INT");
     }

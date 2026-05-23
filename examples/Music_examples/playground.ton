@@ -5,19 +5,19 @@ USE violin;
 !make SOUND p1 <- piano A4 500;
 !make SOUND g1 <- overdrive A4 500;
 !make SOUND v1 <- violin A4 500;
-
+p1 <- p1 * 16;
 !make SOUND gv <- (p1 + p1);
 !make TIMELINE a;
 
 a NEW TRACK single;
 a.single <- [
-    p1 AT 0
+    p1 AS "aaa" AT 0 
 ];
 
 a NEW TRACK mixed;
 a.mixed <- [
-    (violin A4 500) AT 1000,
-    p1 AT 1100
+    (violin A4 500) AS "violin" AT 1000
+    $ p1 AT 1100
 ];
 
 !save a "timeline.wav";
