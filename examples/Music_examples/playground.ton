@@ -16,7 +16,7 @@ a.single <- [
 
 a NEW TRACK mixed;
 a.mixed <- [
-    p1 AT 1000,
+    (violin A4 500) AT 1000,
     p1 AT 1100
 ];
 
