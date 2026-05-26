@@ -430,7 +430,31 @@ std::any TonInterpreter::visitCreateSoundExpr(TonParser::CreateSoundExprContext 
 
     Note note = std::any_cast<Note>(arg1);;
     int durationMs = std::any_cast<int>(arg2);;
+    float volume = 0.5f;
 
+    if (ctx->expr().size() > 2) {
+        std::any arg3 = visit(ctx->expr(2));
+        if (arg3.type() == typeid(int)) {
+            volume = static_cast<float>(std::any_cast<int>(arg3));
+        }
+        else if (arg3.type() == typeid(double)) {
+            volume = static_cast<float>(std::any_cast<double>(arg3));
+        }
+        else if (arg3.type() == typeid(float)) {
+            volume = std::any_cast<float>(arg3);
+        }
+        else {
+            size_t line = ctx->getStart()->getLine();
+            throw std::runtime_error("Line " + std::to_string(line) +
+                                     ": Volume must be a number in range [0, 2].");
+        }
+        if (volume < 0.0f || volume > 2.0f) {
+            size_t line = ctx->getStart()->getLine();
+            throw std::runtime_error("Line " + std::to_string(line) +
+                                     ": Volume must be a number in range [0, 2]. Given: " + std::to_string(volume));
+        }
+        volume /= 2;
+    }
     Sound generatedSound;
     int totalSamples = (durationMs / 1000.0) * generatedSound.sampleRate;
 
@@ -465,9 +489,8 @@ std::any TonInterpreter::visitCreateSoundExpr(TonParser::CreateSoundExprContext 
             realPresetIndex = 0;
         }
 
-        float velocity = 0.5f;
         std::vector<float> floatSamples(totalSamples);
-        tsf_note_on(soundFont, realPresetIndex, note.toMidiNumber(), velocity);
+        tsf_note_on(soundFont, realPresetIndex, note.toMidiNumber(), volume);
         tsf_render_float(soundFont, floatSamples.data(), totalSamples, 0);
         tsf_note_off(soundFont, realPresetIndex, note.toMidiNumber());
 

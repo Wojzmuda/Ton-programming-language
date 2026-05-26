@@ -86,7 +86,7 @@ type : TYPE_BOOL | TYPE_INT | TYPE_NUM | TYPE_CHAR | TYPE_STRING
 expr
     : L_BRACKET (expr (COMMA expr)*)? R_BRACKET                # ArrayExpr
     | ID L_PAREN (expr (COMMA expr)*)? R_PAREN                 # FunctionCallExpr
-    | ID expr expr                                             # CreateSoundExpr
+    | ID expr expr expr?                                       # CreateSoundExpr
     | expr (AS STRING_VAL)? AT expr                            # TrackEventExpr
     | expr L_BRACKET expr R_BRACKET                            # IndexExpr    
     | expr L_BRACKET expr COLON expr R_BRACKET                 # SliceExpr    
