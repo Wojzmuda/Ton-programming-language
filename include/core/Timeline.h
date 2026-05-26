@@ -14,6 +14,7 @@ struct Track {
     std::string name;
     std::vector<TrackEvent> events;
     bool isMuted = false;
+    float volume = 1.0f;
 };
 
 struct Timeline {
@@ -46,7 +47,8 @@ struct Timeline {
             for (const auto& ev : track.events) {
                 int startSample = (ev.startTimeMs / 1000.0) * Sound::sampleRate;
                 for (size_t i = 0; i < ev.sound.samples.size(); ++i) {
-                    resultSound.samples[startSample + i] += ev.sound.samples[i];
+
+                    resultSound.samples[startSample + i] += ev.sound.samples[i] * track.volume;
                 }
             }
         }

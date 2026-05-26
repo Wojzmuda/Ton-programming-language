@@ -72,6 +72,7 @@ audioOpStat
     | MUTE target SEMI
     | UNMUTE (target | ALL) SEMI
     | TRASH target SEMI
+    | target VOL expr SEMI
     ;
 
 saveStat : EXCLAM_MARK SAVE expr STRING_VAL SEMI ;
@@ -159,6 +160,7 @@ MUTE           : 'MUTE' ;
 UNMUTE         : 'UNMUTE' ;
 DIVIDE         : 'DIVIDE' ;
 EMPTYSOUND     : 'EMPTYSOUND' ;
+VOL            : 'VOL' ;
 
 ASSIGN         : '<-' ; 
 ADD_ASSIGN     : '+<-' ;

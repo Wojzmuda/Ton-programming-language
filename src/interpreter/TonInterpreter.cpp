@@ -595,6 +595,77 @@ std::any TonInterpreter::visitAudioOpStat(TonParser::AudioOpStatContext *ctx) {
         if (!found) throw std::runtime_error("Error: Alias '" + aliasName + "' not found on track.");
     }
 
+    if (ctx->MUTE()) {
+        if (targetNode->ID().size() != 2 || targetNode->STRING_VAL() != nullptr) {
+            size_t line = ctx->getStart()->getLine();
+            throw std::runtime_error("Line " + std::to_string(line) +
+                                     ": The MUTE operation can only be applied to a TRACK.");
+        }
+        try {
+            timeline.tracks.at(trackName).isMuted = true;
+        } catch (std::out_of_range& ex) {
+            size_t line = ctx->getStart()->getLine();
+            throw std::runtime_error("Line " + std::to_string(line) +
+                                     ": Given TRACK does not exist.");
+        }
+    }
+
+    if (ctx->UNMUTE()) {
+        if (targetNode->ID().size() != 2 || targetNode->STRING_VAL() != nullptr) {
+            size_t line = ctx->getStart()->getLine();
+            throw std::runtime_error("Line " + std::to_string(line) +
+                                     ": The MUTE operation can only be applied to a TRACK.");
+        }
+        try {
+            timeline.tracks.at(trackName).isMuted = false;
+        } catch (std::out_of_range& ex) {
+            size_t line = ctx->getStart()->getLine();
+            throw std::runtime_error("Line " + std::to_string(line) +
+                                     ": Given TRACK does not exist.");
+        }
+    }
+
+    if (ctx->VOL()) {
+        auto targetCtx = ctx->target();
+
+        if (targetCtx->ID().size() != 2 || targetCtx->STRING_VAL() != nullptr) {
+            size_t line = ctx->getStart()->getLine();
+            throw std::runtime_error("Line " + std::to_string(line) +
+                                     ": The VOL operation can only be applied to a TRACK.");
+        }
+        std::any volAny = visit(ctx->expr());
+        float newVolume = 1.0f;
+
+        if (volAny.type() == typeid(int)) {
+            newVolume = static_cast<float>(std::any_cast<int>(volAny));
+        } else if (volAny.type() == typeid(double)) {
+            newVolume = static_cast<float>(std::any_cast<double>(volAny));
+        } else if (volAny.type() == typeid(float)) {
+            newVolume = std::any_cast<float>(volAny);
+        } else {
+            size_t line = ctx->getStart()->getLine();
+            throw std::runtime_error("Line " + std::to_string(line) +
+                                     ": Volume must be a number in range [0, 2].");
+        }
+
+        if (newVolume < 0.0f) {
+            size_t line = ctx->getStart()->getLine();
+            throw std::runtime_error("Line " + std::to_string(line) +
+                                     ": Track volume must be positive. Given: " + std::to_string(newVolume));
+        }
+
+        std::string trackName = targetCtx->ID(1)->getText();
+        try {
+            auto& track = timeline.tracks.at(trackName);
+            std::cout << "$" << newVolume << " ";
+            track.volume = newVolume;
+            std::cout << "$" << track.volume << " ";
+        } catch(const std::out_of_range& ex) {
+            size_t line = ctx->getStart()->getLine();
+            throw std::runtime_error("Line " + std::to_string(line) +
+                                     ": Given TRACK does not exist.");
+        }
+    }
     return {};
 }
 
