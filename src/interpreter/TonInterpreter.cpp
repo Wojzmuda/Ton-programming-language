@@ -480,7 +480,6 @@ std::any TonInterpreter::visitCreateSoundExpr(TonParser::CreateSoundExprContext 
         }
     }
     else if (instr.getType() == InstrumentType::SoundFont) {
-        std::cout << instr.getName();
         if (!soundFont) throw std::runtime_error("SoundFont library is not initialized.");
         int realPresetIndex = tsf_get_presetindex(soundFont, 0, instr.getMidiPresetIndex());
 
@@ -657,9 +656,7 @@ std::any TonInterpreter::visitAudioOpStat(TonParser::AudioOpStatContext *ctx) {
         std::string trackName = targetCtx->ID(1)->getText();
         try {
             auto& track = timeline.tracks.at(trackName);
-            std::cout << "$" << newVolume << " ";
             track.volume = newVolume;
-            std::cout << "$" << track.volume << " ";
         } catch(const std::out_of_range& ex) {
             size_t line = ctx->getStart()->getLine();
             throw std::runtime_error("Line " + std::to_string(line) +
