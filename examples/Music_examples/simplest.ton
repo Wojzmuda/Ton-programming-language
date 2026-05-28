@@ -1,0 +1,23 @@
+USE piano;
+USE cello;
+
+!make ARRAY notes <- [C4, D4, E4, F4, G4, B4, C5];
+
+$ WONT WORK FOR NOW -> LACK OF ARRAY INDEXING
+!make SOUND octaveOnCello;
+!save octaveOnCello "test.wav";
+!loop <INT i FROM 0 TO 6> {
+    !make SOUND tmp <- cello notes[i] 500;
+    octaveOnCello <- octaveOnCello & tmp;
+}
+!save octaveOnCello "octave.wav";
+
+
+!make SOUND x <- cello C4 500;
+!make SOUND y <- cello D4 500;
+!make SOUND z <- cello E4 500;
+!make SOUND e <- cello F4 500;
+!make SOUND f <- cello G4 500;
+!make SOUND g <- cello B4 500;
+!make SOUND h <- cello C5 500;
+!save (x & y & z & e & f & g & h) "octave.wav";

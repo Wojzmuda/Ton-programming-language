@@ -1,0 +1,113 @@
+USE guitar;
+USE bass;
+
+$ ==========================================
+$ 1. DEFINICJE DZWIEKOW (Oryginalne A-dur)
+$ ==========================================
+$ Tempo: 1 uderzenie (cwiercnuta) = 500ms
+
+$ --- BASS (Niski fundament) ---
+!make SOUND bA <- bass A2 2000;
+!make SOUND bD <- bass D3 2000;
+!make SOUND bE <- bass E3 2000;
+
+$ --- GITARA AKUSTYCZNA 1 (Bicie akordowe po 500ms) ---
+$ Akord A-dur
+!make SOUND cA1 <- guitar A3 500;
+!make SOUND cA2 <- guitar C#4 500;
+!make SOUND cA3 <- guitar E4 500;
+
+$ Akord D-dur
+!make SOUND cD1 <- guitar D4 500;
+!make SOUND cD2 <- guitar F#4 500;
+!make SOUND cD3 <- guitar A4 500;
+
+$ Akord E7
+!make SOUND cE1 <- guitar E4 500;
+!make SOUND cE2 <- guitar G#4 500;
+!make SOUND cE3 <- guitar D5 500;
+
+$ --- GITARA AKUSTYCZNA 2 (Melodia wiodaca) ---
+$ Cwiercnuty (500ms)
+!make SOUND mCs5_q <- guitar C#5 500;
+!make SOUND mB4_q  <- guitar B4 500;
+!make SOUND mA4_q  <- guitar A4 500;
+!make SOUND mD5_q  <- guitar D5 500;
+!make SOUND mE5_q  <- guitar E5 500;
+
+$ Osemki (250ms)
+!make SOUND mA4_e  <- guitar A4 250;
+!make SOUND mB4_e  <- guitar B4 250;
+!make SOUND mCs5_e <- guitar C#5 250;
+!make SOUND mFs4_e <- guitar F#4 250;
+
+$ ==========================================
+$ 2. ARANZACJA TIMELINE
+$ ==========================================
+!make TIMELINE sun_acoustic;
+
+$ --- SCIEZKA 1: BAS ---
+sun_acoustic NEW TRACK bass;
+sun_acoustic.bass <- [
+    bA AT 0,
+    bD AT 2000,
+    bA AT 4000,
+    bD AT 6000,
+    bE AT 8000,
+    bA AT 10000
+];
+
+$ --- SCIEZKA 2: GITARA RYTMICZNA (Podklad) ---
+sun_acoustic NEW TRACK chords;
+sun_acoustic.chords <- [
+    $ Takt 1 i 2 (A-dur)
+    cA1 AT 0, cA2 AT 0, cA3 AT 0,
+    cA1 AT 1000, cA2 AT 1000, cA3 AT 1000,
+    
+    $ Takt 3 (D-dur)
+    cD1 AT 2000, cD2 AT 2000, cD3 AT 2000,
+    cD1 AT 3000, cD2 AT 3000, cD3 AT 3000,
+    
+    $ Takt 4 (A-dur)
+    cA1 AT 4000, cA2 AT 4000, cA3 AT 4000,
+    cA1 AT 5000, cA2 AT 5000, cA3 AT 5000,
+    
+    $ Takt 5 (D-dur)
+    cD1 AT 6000, cD2 AT 6000, cD3 AT 6000,
+    cD1 AT 7000, cD2 AT 7000, cD3 AT 7000,
+    
+    $ Takt 6 (E7)
+    cE1 AT 8000, cE2 AT 8000, cE3 AT 8000,
+    cE1 AT 9000, cE2 AT 9000, cE3 AT 9000,
+    
+    $ Takt 7 (Powrot do A)
+    cA1 AT 10000, cA2 AT 10000, cA3 AT 10000
+];
+
+$ --- SCIEZKA 3: GITARA SOLOWA (Melodia) ---
+sun_acoustic NEW TRACK melody;
+sun_acoustic.melody <- [
+    $ "Here comes the"
+    mCs5_q AT 500, mB4_q AT 1000, mCs5_q AT 1500,
+    
+    $ "sun, doo da doo doo"
+    mA4_q AT 2000, mFs4_e AT 2750, mB4_e AT 3000, mA4_e AT 3250, mB4_e AT 3500,
+    
+    $ "Here comes the"
+    mCs5_q AT 4500, mB4_q AT 5000, mCs5_q AT 5500,
+    
+    $ "sun, and I say"
+    mA4_q AT 6000, mA4_e AT 6750, mB4_q AT 7000, mA4_q AT 7500,
+    
+    $ "It's all right"
+    mCs5_q AT 8500, mB4_q AT 9000, mA4_q AT 9500,
+    
+    $ Zagrywka Harrisona
+    mFs4_e AT 10000, mA4_e AT 10250, mB4_e AT 10500, mA4_e AT 10750,
+    mE5_q AT 11000, mD5_q AT 11500, mCs5_q AT 12000
+];
+
+$ ==========================================
+$ 3. EXPORT
+$ ==========================================
+!save sun_acoustic "sun_acoustic.wav";

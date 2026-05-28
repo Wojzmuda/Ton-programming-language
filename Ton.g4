@@ -72,6 +72,7 @@ audioOpStat
     | MUTE target SEMI
     | UNMUTE (target | ALL) SEMI
     | TRASH target SEMI
+    | target VOL expr SEMI
     ;
 
 saveStat : EXCLAM_MARK SAVE expr STRING_VAL SEMI ;
@@ -86,7 +87,7 @@ type : TYPE_BOOL | TYPE_INT | TYPE_NUM | TYPE_CHAR | TYPE_STRING
 expr
     : L_BRACKET (expr (COMMA expr)*)? R_BRACKET                # ArrayExpr
     | ID L_PAREN (expr (COMMA expr)*)? R_PAREN                 # FunctionCallExpr
-    | ID expr expr                                             # CreateSoundExpr
+    | ID expr expr expr?                                       # CreateSoundExpr
     | expr (AS STRING_VAL)? AT expr                            # TrackEventExpr
     | expr L_BRACKET expr R_BRACKET                            # IndexExpr    
     | expr L_BRACKET expr COLON expr R_BRACKET                 # SliceExpr    
@@ -159,6 +160,7 @@ MUTE           : 'MUTE' ;
 UNMUTE         : 'UNMUTE' ;
 DIVIDE         : 'DIVIDE' ;
 EMPTYSOUND     : 'EMPTYSOUND' ;
+VOL            : 'VOL' ;
 
 ASSIGN         : '<-' ; 
 ADD_ASSIGN     : '+<-' ;

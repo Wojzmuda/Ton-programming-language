@@ -55,6 +55,23 @@ std::any TonTypeChecker::visitMulDivExpr(TonParser::MulDivExprContext *ctx) {
     std::string left = std::any_cast<std::string>(visit(ctx->expr(0)));
     std::string right = std::any_cast<std::string>(visit(ctx->expr(1)));
 
+    if (left == "SOUND" || right == "SOUND") {
+        if (ctx->DIV_OP() != nullptr) {
+            size_t line = ctx->getStart()->getLine();
+            throw std::runtime_error("Type Error in line " + std::to_string(line) + 
+               ": Cannot divide a SOUND. Use multiplication with fractions (e.g. SOUND * 0.5) instead.");
+        }
+        if (left == "SOUND" && (right == "INT" || right == "NUMERICAL")) {
+            return std::string("SOUND");
+        }
+        if (right == "SOUND" && (left == "INT" || left == "NUMERICAL")) {
+            return std::string("SOUND");
+        }
+        size_t line = ctx->getStart()->getLine();
+        throw std::runtime_error("Type Error in line " + std::to_string(line) + 
+            ": A SOUND can only be multiplied by an INT or NUMERICAL.");
+    }
+    
     if ((left == "INT" || left == "NUMERICAL") && (right == "INT" || right == "NUMERICAL")) {
         return (left == "NUMERICAL" || right == "NUMERICAL") ? std::string("NUMERICAL") : std::string("INT");
     }
@@ -115,7 +132,7 @@ std::any TonTypeChecker::visitFunctionCallExpr(TonParser::FunctionCallExprContex
 
     if (!currentScope->exists(funcName)) {
         size_t line = ctx->getStart()->getLine();
-        throw std::runtime_error("Error in line " + std::to_string(line) + 
+        throw std::runtime_error("Line " + std::to_string(line) +
                                  ": Function '" + funcName + "' is not defined.");
     }
     std::string returnType = currentScope->resolveType(funcName);
@@ -128,14 +145,24 @@ std::any TonTypeChecker::visitCreateSoundExpr(TonParser::CreateSoundExprContext 
 
     if (arg1Type != "NOTE") {
         size_t line = ctx->getStart()->getLine();
-        throw std::runtime_error("Type Error in line " + std::to_string(line) + 
+        throw std::runtime_error("Line " + std::to_string(line) +
                                  ": First argument of CreateSound must be a NOTE. Given: " + arg1Type);
     }
     
     if (arg2Type != "INT") {
         size_t line = ctx->getStart()->getLine();
-        throw std::runtime_error("Type Error in line " + std::to_string(line) + 
+        throw std::runtime_error("Line " + std::to_string(line) +
                                  ": Second argument (duration) of CreateSound must be an INT. Given: " + arg2Type);
+    }
+
+    if (ctx->expr().size() > 2) {
+        std::string arg3Type = std::any_cast<std::string>(visit(ctx->expr(2)));
+
+        if (arg3Type != "INT" && arg3Type != "NUMERICAL") {
+            size_t line = ctx->getStart()->getLine();
+            throw std::runtime_error("Line " + std::to_string(line) +
+                                     ": Third argument (volume) of SOUND must be INT or NUMERICAL. Given: " + arg3Type);
+        }
     }
     return std::string("SOUND");
 }
