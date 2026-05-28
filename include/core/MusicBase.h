@@ -131,9 +131,41 @@ public:
             throw std::runtime_error("no such synth");
         }
     }
+
+    float getLargestValue() const {
+        float maxValue = 0;
+        for (const auto& val : samples) {
+            float currentValue = std::abs(val);
+            if (currentValue > maxValue) {
+                maxValue = currentValue;
+            }
+        }
+        return maxValue;
+    }
+
+    void normalize() {
+        float value = this->getLargestValue();
+        if (value > 0.0f && value != 1.0f) {
+            for (auto& x : samples) {
+                x /= value;
+            }
+        }
+    }
+
+    Sound operator*(double multiplier) const {
+        Sound amplifiedSound;
+        amplifiedSound.samples.reserve(this->samples.size());
+        for (float val : this->samples) {
+            amplifiedSound.samples.push_back(static_cast<float>(val * multiplier));
+        }
+        return amplifiedSound;
+    }
+
     Sound() {}
-
-
 };
+
+inline Sound operator*(double multiplier, const Sound& sound) {
+    return sound.operator*(multiplier);
+}
 
 
