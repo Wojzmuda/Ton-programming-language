@@ -26,4 +26,5 @@ class TonDeclarationListener : public TonBaseListener {
 
         virtual void enterLoopStat(TonParser::LoopStatContext *ctx) override;
         virtual void exitLoopStat(TonParser::LoopStatContext *ctx) override;
+        void exitArrayOpStat(TonParser::ArrayOpStatContext *ctx) override;
 };

@@ -1,0 +1,6 @@
+!define VOID foo<INT a> {
+  !make INT a <- 3;
+  !shout a;
+}
+
+foo(5);

@@ -138,12 +138,20 @@ void TonDeclarationListener::exitFuncDef(TonParser::FuncDefContext *ctx) {
 
 void TonDeclarationListener::enterBlock(TonParser::BlockContext *ctx)
 {
-    currentScope = std::make_shared<Scope<int>>(currentScope);
+    bool isFuncBody = dynamic_cast<TonParser::FuncDefContext*>(ctx->parent) != nullptr;
+    bool isLoopBody = dynamic_cast<TonParser::LoopStatContext*>(ctx->parent) != nullptr;
+    if (!isFuncBody && !isLoopBody) {
+        currentScope = std::make_shared<Scope<int>>(currentScope);
+    }
 }
 
 void TonDeclarationListener::exitBlock(TonParser::BlockContext *ctx){
-    if(currentScope-> parent){
-        currentScope = currentScope->parent;
+    bool isFuncBody = dynamic_cast<TonParser::FuncDefContext*>(ctx->parent) != nullptr;
+    bool isLoopBody = dynamic_cast<TonParser::LoopStatContext*>(ctx->parent) != nullptr;
+    if (!isFuncBody && !isLoopBody) {
+        if (currentScope->parent) {
+            currentScope = currentScope->parent;
+        }
     }
 }
 
@@ -170,3 +178,27 @@ void TonDeclarationListener::exitLoopStat(TonParser::LoopStatContext *ctx) {
         currentScope = currentScope->parent;
     }
 }
+
+void TonDeclarationListener::exitArrayOpStat(TonParser::ArrayOpStatContext *ctx) {
+    std::string varName = ctx->ID()->getText();
+
+    if (!currentScope->exists(varName)) {
+        size_t line = ctx->getStart()->getLine();
+        throw std::runtime_error("Error in line " + std::to_string(line) +
+                                 ": Variable '" + varName + "' is not defined.");
+    }
+
+    std::string targetType = currentScope->resolveType(varName);
+    if (targetType != "ARRAY") {
+        size_t line = ctx->getStart()->getLine();
+        throw std::runtime_error("Type Error in line " + std::to_string(line) +
+                                 ": Cannot perform array operations on type " + targetType + ".");
+    }
+
+    // Jeśli to operacja APPEND, sprawdzamy też wyrażenie (np. zeby wyłapać błąd w 'APPEND 10 + "tekst" TO lista')
+    if (ctx->APPEND()) {
+        TonTypeChecker typeChecker(currentScope);
+        typeChecker.visit(ctx->expr());
+    }
+}
+

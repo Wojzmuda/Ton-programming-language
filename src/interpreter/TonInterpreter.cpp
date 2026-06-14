@@ -95,10 +95,29 @@ std::any TonInterpreter::visitProgram(TonParser::ProgramContext *ctx) {
 }
 
 std::any TonInterpreter::visitBlock(TonParser::BlockContext *ctx) {
+    bool isFuncBody = (dynamic_cast<TonParser::FuncDefContext*>(ctx->parent) != nullptr);
+    bool isLoopBody = (dynamic_cast<TonParser::LoopStatContext*>(ctx->parent) != nullptr);
+    bool skipScope = isFuncBody || isLoopBody;
+
     auto previousScope = currentScope;
-    currentScope = std::make_shared<Scope<std::any>>(previousScope);
-    std::any result = visitChildren(ctx);
-    currentScope = previousScope;
+
+    if (!skipScope) {
+        currentScope = std::make_shared<Scope<std::any>>(previousScope);
+    }
+
+    std::any result;
+    try {
+        result = visitChildren(ctx);
+    } catch (...) {
+        if (!skipScope) {
+            currentScope = previousScope;
+        }
+        throw; 
+    }
+
+    if (!skipScope) {
+        currentScope = previousScope;
+    }
     return result;
 }
 
@@ -124,6 +143,7 @@ std::any TonInterpreter::visitVarDecl(TonParser::VarDeclContext *ctx) {
         else if (typeName == "NOTE") value = Note();
         else if (typeName == "STRING") value = std::string("");
         else if (typeName == "CHAR") value = '\0'; 
+        else if (typeName == "ARRAY") value = std::vector<std::any>{};
         else value = {};
     }
 
@@ -1227,4 +1247,125 @@ std::any TonInterpreter::visitIfStat(TonParser::IfStatContext *ctx) {
     }
 
     return {};
+}
+
+std::any TonInterpreter::visitIndexExpr(TonParser::IndexExprContext *ctx){
+    std::any arrayAny = visit(ctx->expr(0));
+    std::any indexAny = visit(ctx->expr(1));
+
+    if(arrayAny.type() != typeid(std::vector<std::any>)){
+        size_t line = ctx->getStart()->getLine();
+        throw std::runtime_error("Line " + std::to_string(line) + ": Error - Indexing requires an ARRAY.");
+    }
+
+    if (indexAny.type() != typeid(int)) {
+        size_t line = ctx->getStart()->getLine();
+        throw std::runtime_error("Line " + std::to_string(line) + ": Error - Array index must be an INT.");
+    }
+    auto arrayVec = std::any_cast<std::vector<std::any>>(arrayAny);
+    int index = std::any_cast<int>(indexAny);
+
+    if (index < 0) {
+        index += arrayVec.size();
+    }
+
+    if (index < 0 || index >= arrayVec.size()) {
+        size_t line = ctx->getStart()->getLine();
+        throw std::runtime_error("Line " + std::to_string(line) + ": Error - Array index out of bounds.");
+    }
+    return arrayVec[index];
+}
+
+std::any TonInterpreter::visitSliceExpr(TonParser::SliceExprContext *ctx) {
+    std::any arrayAny = visit(ctx->expr(0));
+    std::any startAny = visit(ctx->expr(1));
+    std::any endAny = visit(ctx->expr(2));
+
+    if (arrayAny.type() != typeid(std::vector<std::any>)) {
+        size_t line = ctx->getStart()->getLine();
+        throw std::runtime_error("Line " + std::to_string(line) + ": Error - Slicing requires an ARRAY.");
+    }
+
+    if (startAny.type() != typeid(int) || endAny.type() != typeid(int)) {
+        size_t line = ctx->getStart()->getLine();
+        throw std::runtime_error("Line " + std::to_string(line) + ": Error - Slice indices must be INT.");
+    }
+
+    auto arrayVec = std::any_cast<std::vector<std::any>>(arrayAny);
+    int start = std::any_cast<int>(startAny);
+    int end = std::any_cast<int>(endAny);
+
+    if (start < 0) start += arrayVec.size();
+    if (end < 0) end += arrayVec.size();
+
+    if (start < 0) start = 0;
+    if (end > arrayVec.size()) end = arrayVec.size();
+
+    if (start >= end) {
+        return std::vector<std::any>{}; 
+    }
+
+    std::vector<std::any> slicedVec(arrayVec.begin() + start, arrayVec.begin() + end);
+    return slicedVec;
+}
+
+
+std::any TonInterpreter::visitArrayOpStat(TonParser::ArrayOpStatContext *ctx) {
+    std::string varName = ctx->ID()->getText(); 
+
+    if (!currentScope->exists(varName)) {
+        size_t line = ctx->getStart()->getLine();
+        throw std::runtime_error("Line " + std::to_string(line) + ": Error - Array '" + varName + "' not found.");
+    }
+
+    std::any arrayVal = currentScope->get(varName);
+    
+    if (arrayVal.type() != typeid(std::vector<std::any>)) {
+        size_t line = ctx->getStart()->getLine();
+        throw std::runtime_error("Line " + std::to_string(line) + ": Error - '" + varName + "' is not an ARRAY.");
+    }
+
+    auto vec = std::any_cast<std::vector<std::any>>(arrayVal);
+
+    if (ctx->APPEND()) {
+        std::any newVal = visit(ctx->expr());
+        vec.push_back(newVal);
+    } 
+    else if (ctx->CLEAR()) {
+        vec.clear();
+    }
+
+    currentScope->set(varName, vec);
+    return {};
+}
+
+
+std::any TonInterpreter::visitPopExpr(TonParser::PopExprContext *ctx) {
+    std::string varName = ctx->ID()->getText(); // Czyste ID!
+
+    if (!currentScope->exists(varName)) {
+        size_t line = ctx->getStart()->getLine();
+        throw std::runtime_error("Line " + std::to_string(line) + ": Error - Array '" + varName + "' not found.");
+    }
+
+    std::any arrayVal = currentScope->get(varName);
+    
+    if (arrayVal.type() != typeid(std::vector<std::any>)) {
+        size_t line = ctx->getStart()->getLine();
+        throw std::runtime_error("Line " + std::to_string(line) + ": Error - POP requires an ARRAY variable.");
+    }
+
+    auto vec = std::any_cast<std::vector<std::any>>(arrayVal);
+    
+    if (vec.empty()) {
+        size_t line = ctx->getStart()->getLine();
+        throw std::runtime_error("Line " + std::to_string(line) + ": Error - Cannot POP from an empty array.");
+    }
+
+    std::any poppedItem = vec.back();
+    vec.pop_back();
+
+    currentScope->set(varName, vec);
+    
+    return poppedItem;
 }

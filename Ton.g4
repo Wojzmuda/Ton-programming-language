@@ -10,6 +10,7 @@ statement
     : varDecl           // !make INT x <- 5;
     | trackDecl         // timeline NEW track;
     | assignment        // x <- 10;
+    | arrayOpStat       // adding, appending, clearing arrays
     | ifStat            // !if < ... > { ... }
     | loopStat          // !loop < ... > { ... }
     | untilStat         // !until < ... > { ... }
@@ -75,6 +76,12 @@ audioOpStat
     | target VOL expr SEMI
     ;
 
+
+arrayOpStat
+    : APPEND expr TO ID SEMI
+    | CLEAR ID SEMI
+    ;
+
 saveStat : EXCLAM_MARK SAVE expr STRING_VAL SEMI ;
 
 playStat : PLAY target SEMI ;
@@ -89,8 +96,8 @@ expr
     | ID L_PAREN (expr (COMMA expr)*)? R_PAREN                 # FunctionCallExpr
     | ID expr expr expr?                                       # CreateSoundExpr
     | expr (AS STRING_VAL)? AT expr                            # TrackEventExpr
+    | expr L_BRACKET expr COLON expr R_BRACKET                 # SliceExpr 
     | expr L_BRACKET expr R_BRACKET                            # IndexExpr    
-    | expr L_BRACKET expr COLON expr R_BRACKET                 # SliceExpr    
     | L_PAREN expr R_PAREN                                     # ParensExpr
     | (NOT_KW) expr                                            # NotExpr
     | (PLUS | MINUS) expr                                      # UnaryExpr
@@ -109,7 +116,8 @@ expr
     | target                                                   # TargetExpr       // Zastępuje samo ID, by wspierać np. t1.skrzypeczki
     | LENGTH target                                            # LengthOfExpr 
     | EMPTYSOUND                                               # EmptySoundExpr   
-    | ISOLATE target                                           # IsolateExpr                        
+    | ISOLATE target                                           # IsolateExpr  
+    | POP ID                                                   # PopExpr                      
     ;
 
 // --- TOKENS ---
@@ -200,6 +208,10 @@ NUM_VAL        : [0-9]+ '.' [0-9]+ ;
 BOOL_VAL       : 'true' | 'false' | 'TRUE' | 'FALSE' ;
 CHAR_VAL       : '\'' . '\'' ;
 STRING_VAL     : '"' ~["]* '"' ;
+
+APPEND         : 'APPEND' ;
+CLEAR          : 'CLEAR' ;
+POP            : 'POP' ;
 
 ID             : [a-zA-Z_][a-zA-Z0-9_]* ;
 WS             : [ \t\r\n]+ -> skip ;
