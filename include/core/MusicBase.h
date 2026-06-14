@@ -87,6 +87,28 @@ struct Note {
         // Środkowe C4 to numer 60 (69 - 9).
         return 69 + getOffsetFromA4();
     }
+    bool operator==(const Note& other) const {
+        return this->toMidiNumber() == other.toMidiNumber();
+    }
+
+    bool operator!=(const Note& other) const {
+        return !(*this == other);
+    }
+    bool operator<(const Note& other) const {
+        return this->toMidiNumber() < other.toMidiNumber();
+    }
+
+    bool operator<=(const Note& other) const {
+        return this->toMidiNumber() <= other.toMidiNumber();
+    }
+
+    bool operator>(const Note& other) const {
+        return this->toMidiNumber() > other.toMidiNumber();
+    }
+
+    bool operator>=(const Note& other) const {
+        return this->toMidiNumber() >= other.toMidiNumber();
+    }
 };
 
 

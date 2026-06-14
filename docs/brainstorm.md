@@ -9,6 +9,7 @@
 
 3. Add references. We are using some external libraries, we should list them here.
 
+4. Add list of possible `USE x;`
 ---
 
 #### Personally, I would divide docs for a few files.

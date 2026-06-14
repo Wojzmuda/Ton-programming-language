@@ -37,6 +37,9 @@ std::any TonTypeChecker::visitRelationalExpr(TonParser::RelationalExprContext *c
     if (left == "SOUND" && right == "SOUND") {
         return std::string("BOOL");
     }
+    if (left == "NOTE" && right == "NOTE") {
+        return std::string("BOOL");
+    }
     if (left != right && !( (left == "INT" || left == "NUMERICAL") && (right == "INT" || right == "NUMERICAL") )) {
         size_t line = ctx->getStart()->getLine();
         throw std::runtime_error("Type Error in line " + std::to_string(line) + ": Cannot compare " + left + " with " + right);
