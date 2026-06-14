@@ -161,6 +161,29 @@ public:
         return amplifiedSound;
     }
 
+    bool operator==(const Sound& other) const {
+        return this->samples == other.samples;
+    }
+
+    bool operator!=(const Sound& other) const {
+        return !(*this == other);
+    }
+
+    bool operator<(const Sound& other) const {
+        return this->samples.size() < other.samples.size();
+    }
+
+    bool operator<=(const Sound& other) const {
+        return this->samples.size() <= other.samples.size();
+    }
+
+    bool operator>(const Sound& other) const {
+        return this->samples.size() > other.samples.size();
+    }
+
+    bool operator>=(const Sound& other) const {
+        return this->samples.size() >= other.samples.size();
+    }
     Sound() {}
 };
 

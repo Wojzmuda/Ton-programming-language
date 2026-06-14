@@ -789,8 +789,20 @@ std::any TonInterpreter::visitRelationalExpr(TonParser::RelationalExprContext *c
         if (ctx->R_ANGLE_EQ() != nullptr) return l >= r;
     }
 
+    if (leftVal.type() == typeid(Sound) && rightVal.type() == typeid(Sound)) {
+        Sound l = std::any_cast<Sound>(leftVal);
+        Sound r = std::any_cast<Sound>(rightVal);
+
+        if (ctx->EQ() != nullptr) return l == r;
+        if (ctx->NEQ() != nullptr) return l != r;
+        if (ctx->L_ANGLE() != nullptr) return l < r;
+        if (ctx->L_ANGLE_EQ() != nullptr) return l <= r;
+        if (ctx->R_ANGLE() != nullptr) return l > r;
+        if (ctx->R_ANGLE_EQ() != nullptr) return l >= r;
+    }
+
     size_t line = ctx->getStart()->getLine();
-    throw std::runtime_error("Runtime Error in line " + std::to_string(line) + ": Cannot evaluate relational operator for these types.");
+    throw std::runtime_error("in line " + std::to_string(line) + ": Cannot evaluate relational operator for these types.");
 }
 
 std::any TonInterpreter::visitParensExpr(TonParser::ParensExprContext *ctx) {
