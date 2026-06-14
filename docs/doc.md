@@ -59,7 +59,7 @@ Retrieves a single element. Arrays are 0-indexed. Negative indices count backwar
 !make INT first <- nums[0];  $ Returns 10
 !make INT last <- nums[-1];  $ Returns 30
 ```
-Slicing (array[start:end])
+**Slicing (array[start:end])**
 Extracts a sub-array starting at the start index up to, but not including, the end index. Unlike indexing, slicing is highly forgiving: out-of-bounds ranges are safely clamped to the array's limits, and logically invalid ranges simply return an empty array without crashing the execution.
 
 ```text
