@@ -1,6 +1,15 @@
+!shout "Zaczynamy test petli...";
+
+!loop <INT i FROM 1 TO 3> {
+    $ Próba stworzenia nowej zmiennej o tej samej nazwie wewnątrz bloku!
+    !make INT i <- 99; 
+    !shout i;
+}
+
 !define VOID foo<INT a> {
   !make INT a <- 3;
   !shout a;
 }
 
 foo(5);
+
