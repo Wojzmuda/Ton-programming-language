@@ -2,16 +2,18 @@ $______________________________________________
 $
 $ PROGRAM 6: Space Arpeggio 
 $______________________________________________
+USE bass;
+USE piano;
+USE guitar;
 
-
-!make SOUND bassC <- synth C2 2000;
-!make SOUND bassF <- synth F2 2000;
-!make SOUND n1 <- synth C4 250;
-!make SOUND n2 <- synth E4 250;
-!make SOUND n3 <- synth G4 250;
-!make SOUND n4 <- synth B4 250;
-!make SOUND n5 <- synth A4 250;
-!make SOUND n6 <- synth F4 250;
+!make SOUND bassC <- bass C2 2000;
+!make SOUND bassF <- bass F2 2000;
+!make SOUND n1 <- piano C4 250;
+!make SOUND n2 <- piano E4 250;
+!make SOUND n3 <- piano G4 250;
+!make SOUND n4 <- guitar B4 250;
+!make SOUND n5 <- guitar A4 250;
+!make SOUND n6 <- guitar F4 250;
 
 !make TIMELINE song;
 
@@ -48,4 +50,4 @@ song.arp <- [
     n2 AT 3750
 ];
 
-!save song "space_hit.wav";
+!save song "space_hit2.wav";
