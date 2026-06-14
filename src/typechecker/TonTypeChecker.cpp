@@ -204,3 +204,23 @@ std::any TonTypeChecker::visitSliceExpr(TonParser::SliceExprContext *ctx) {
 
     return baseType; 
 }
+std::any TonTypeChecker::visitPopExpr(TonParser::PopExprContext *ctx) {
+    std::string varName = ctx->ID()->getText();
+
+    if (!currentScope->exists(varName)) {
+        size_t line = ctx->getStart()->getLine();
+        throw std::runtime_error("Type Error in line " + std::to_string(line) + 
+                                 ": Array '" + varName + "' is not defined.");
+    }
+
+    std::string targetType = currentScope->resolveType(varName);
+    if (targetType != "ARRAY") {
+        size_t line = ctx->getStart()->getLine();
+        throw std::runtime_error("Type Error in line " + std::to_string(line) + 
+                                 ": POP requires an ARRAY variable. Given: " + targetType);
+    }
+
+    // Tablice w Tøn mogą trzymać dowolny typ, więc w czasie kompilacji nie wiemy, co z niej wyjdzie.
+    // Zwracamy "UNKNOWN", zostawiając weryfikację właściwemu Interpreterowi.
+    return std::string("UNKNOWN");
+}

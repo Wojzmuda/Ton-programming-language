@@ -10,6 +10,7 @@ statement
     : varDecl           // !make INT x <- 5;
     | trackDecl         // timeline NEW track;
     | assignment        // x <- 10;
+    | arrayOpStat       // adding, appending, clearing arrays
     | ifStat            // !if < ... > { ... }
     | loopStat          // !loop < ... > { ... }
     | untilStat         // !until < ... > { ... }
@@ -74,6 +75,11 @@ audioOpStat
     | TRASH target SEMI
     ;
 
+arrayOpStat
+    : APPEND expr TO ID SEMI
+    | CLEAR ID SEMI
+    ;
+
 saveStat : EXCLAM_MARK SAVE expr STRING_VAL SEMI ;
 
 playStat : PLAY target SEMI ;
@@ -108,7 +114,8 @@ expr
     | target                                                   # TargetExpr       // Zastępuje samo ID, by wspierać np. t1.skrzypeczki
     | LENGTH target                                            # LengthOfExpr 
     | EMPTYSOUND                                               # EmptySoundExpr   
-    | ISOLATE target                                           # IsolateExpr                        
+    | ISOLATE target                                           # IsolateExpr
+    | POP ID                                                   # PopExpr                        
     ;
 
 // --- TOKENS ---
@@ -198,6 +205,10 @@ NUM_VAL        : [0-9]+ '.' [0-9]+ ;
 BOOL_VAL       : 'true' | 'false' | 'TRUE' | 'FALSE' ;
 CHAR_VAL       : '\'' . '\'' ;
 STRING_VAL     : '"' ~["]* '"' ;
+
+APPEND         : 'APPEND' ;
+CLEAR          : 'CLEAR' ;
+POP            : 'POP' ;
 
 ID             : [a-zA-Z_][a-zA-Z0-9_]* ;
 WS             : [ \t\r\n]+ -> skip ;

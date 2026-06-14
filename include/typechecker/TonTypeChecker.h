@@ -51,4 +51,6 @@ public:
     std::any visitSliceExpr(TonParser::SliceExprContext *ctx) override;
     std::any visitLengthOfExpr(TonParser::LengthOfExprContext *ctx) override;
     std::any visitIsolateExpr(TonParser::IsolateExprContext *ctx) override;
+
+    std::any visitPopExpr(TonParser::PopExprContext *ctx) override;
 };

@@ -37,6 +37,7 @@ std::any TonInterpreter::visitVarDecl(TonParser::VarDeclContext *ctx) {
         else if (typeName == "NOTE") value = Note();
         else if (typeName == "STRING") value = std::string("");
         else if (typeName == "CHAR") value = '\0'; 
+        else if (typeName == "ARRAY") value = std::vector<std::any>{};
         else value = {};
     }
 
@@ -1064,4 +1065,65 @@ std::any TonInterpreter::visitSliceExpr(TonParser::SliceExprContext *ctx) {
 
     std::vector<std::any> slicedVec(arrayVec.begin() + start, arrayVec.begin() + end);
     return slicedVec;
+}
+
+
+std::any TonInterpreter::visitArrayOpStat(TonParser::ArrayOpStatContext *ctx) {
+    std::string varName = ctx->ID()->getText(); 
+
+    if (!currentScope->exists(varName)) {
+        size_t line = ctx->getStart()->getLine();
+        throw std::runtime_error("Line " + std::to_string(line) + ": Error - Array '" + varName + "' not found.");
+    }
+
+    std::any arrayVal = currentScope->get(varName);
+    
+    if (arrayVal.type() != typeid(std::vector<std::any>)) {
+        size_t line = ctx->getStart()->getLine();
+        throw std::runtime_error("Line " + std::to_string(line) + ": Error - '" + varName + "' is not an ARRAY.");
+    }
+
+    auto vec = std::any_cast<std::vector<std::any>>(arrayVal);
+
+    if (ctx->APPEND()) {
+        std::any newVal = visit(ctx->expr());
+        vec.push_back(newVal);
+    } 
+    else if (ctx->CLEAR()) {
+        vec.clear();
+    }
+
+    currentScope->set(varName, vec);
+    return {};
+}
+
+
+std::any TonInterpreter::visitPopExpr(TonParser::PopExprContext *ctx) {
+    std::string varName = ctx->ID()->getText(); // Czyste ID!
+
+    if (!currentScope->exists(varName)) {
+        size_t line = ctx->getStart()->getLine();
+        throw std::runtime_error("Line " + std::to_string(line) + ": Error - Array '" + varName + "' not found.");
+    }
+
+    std::any arrayVal = currentScope->get(varName);
+    
+    if (arrayVal.type() != typeid(std::vector<std::any>)) {
+        size_t line = ctx->getStart()->getLine();
+        throw std::runtime_error("Line " + std::to_string(line) + ": Error - POP requires an ARRAY variable.");
+    }
+
+    auto vec = std::any_cast<std::vector<std::any>>(arrayVal);
+    
+    if (vec.empty()) {
+        size_t line = ctx->getStart()->getLine();
+        throw std::runtime_error("Line " + std::to_string(line) + ": Error - Cannot POP from an empty array.");
+    }
+
+    std::any poppedItem = vec.back();
+    vec.pop_back();
+
+    currentScope->set(varName, vec);
+    
+    return poppedItem;
 }

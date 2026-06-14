@@ -1,0 +1,28 @@
+$ ==========================================
+$ TESTY: MANIPULACJA TABLICAMI
+$ ==========================================
+
+!shout "--- TEST APPEND ---" ;
+!make ARRAY mojaLista;
+!shout "Poczatkowa tablica:" ;
+!shout mojaLista ;
+
+APPEND 10 TO mojaLista ;
+APPEND 20 TO mojaLista ;
+APPEND "hejka" TO mojaLista ;
+
+!shout "Po dodaniu elementow:" ;
+!shout mojaLista ;
+
+!shout "--- TEST POP ---" ;
+!make STRING sciagnietyTekst <- POP mojaLista ;
+!shout "Zdjety z konca element:" ;
+!shout sciagnietyTekst ;
+
+!shout "Stan tablicy po sciagnieciu:" ;
+!shout mojaLista ;
+
+!shout "--- TEST CLEAR ---" ;
+CLEAR mojaLista ;
+!shout "Po wyczyszczeniu:" ;
+!shout mojaLista ;

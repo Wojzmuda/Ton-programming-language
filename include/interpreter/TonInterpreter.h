@@ -84,4 +84,7 @@ class TonInterpreter: public TonBaseVisitor {
 
         std::any visitIndexExpr(TonParser::IndexExprContext *ctx) override;
         std::any visitSliceExpr(TonParser::SliceExprContext *ctx) override;
+
+        std::any visitArrayOpStat(TonParser::ArrayOpStatContext *ctx) override;
+        std::any visitPopExpr(TonParser::PopExprContext *ctx) override;
 };
