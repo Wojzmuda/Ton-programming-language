@@ -88,8 +88,8 @@ expr
     | ID L_PAREN (expr (COMMA expr)*)? R_PAREN                 # FunctionCallExpr
     | ID expr expr                                             # CreateSoundExpr
     | expr (AS STRING_VAL)? AT expr                            # TrackEventExpr
+    | expr L_BRACKET expr COLON expr R_BRACKET                 # SliceExpr   
     | expr L_BRACKET expr R_BRACKET                            # IndexExpr    
-    | expr L_BRACKET expr COLON expr R_BRACKET                 # SliceExpr    
     | L_PAREN expr R_PAREN                                     # ParensExpr
     | (NOT_KW) expr                                            # NotExpr
     | (PLUS | MINUS) expr                                      # UnaryExpr

@@ -1005,3 +1005,63 @@ std::any TonInterpreter::visitIfStat(TonParser::IfStatContext *ctx) {
 
     return {};
 }
+
+std::any TonInterpreter::visitIndexExpr(TonParser::IndexExprContext *ctx){
+    std::any arrayAny = visit(ctx->expr(0));
+    std::any indexAny = visit(ctx->expr(1));
+
+    if(arrayAny.type() != typeid(std::vector<std::any>)){
+        size_t line = ctx->getStart()->getLine();
+        throw std::runtime_error("Line " + std::to_string(line) + ": Error - Indexing requires an ARRAY.");
+    }
+
+    if (indexAny.type() != typeid(int)) {
+        size_t line = ctx->getStart()->getLine();
+        throw std::runtime_error("Line " + std::to_string(line) + ": Error - Array index must be an INT.");
+    }
+    auto arrayVec = std::any_cast<std::vector<std::any>>(arrayAny);
+    int index = std::any_cast<int>(indexAny);
+
+    if (index < 0) {
+        index += arrayVec.size();
+    }
+
+    if (index < 0 || index >= arrayVec.size()) {
+        size_t line = ctx->getStart()->getLine();
+        throw std::runtime_error("Line " + std::to_string(line) + ": Error - Array index out of bounds.");
+    }
+    return arrayVec[index];
+}
+
+std::any TonInterpreter::visitSliceExpr(TonParser::SliceExprContext *ctx) {
+    std::any arrayAny = visit(ctx->expr(0));
+    std::any startAny = visit(ctx->expr(1));
+    std::any endAny = visit(ctx->expr(2));
+
+    if (arrayAny.type() != typeid(std::vector<std::any>)) {
+        size_t line = ctx->getStart()->getLine();
+        throw std::runtime_error("Line " + std::to_string(line) + ": Error - Slicing requires an ARRAY.");
+    }
+
+    if (startAny.type() != typeid(int) || endAny.type() != typeid(int)) {
+        size_t line = ctx->getStart()->getLine();
+        throw std::runtime_error("Line " + std::to_string(line) + ": Error - Slice indices must be INT.");
+    }
+
+    auto arrayVec = std::any_cast<std::vector<std::any>>(arrayAny);
+    int start = std::any_cast<int>(startAny);
+    int end = std::any_cast<int>(endAny);
+
+    if (start < 0) start += arrayVec.size();
+    if (end < 0) end += arrayVec.size();
+
+    if (start < 0) start = 0;
+    if (end > arrayVec.size()) end = arrayVec.size();
+
+    if (start >= end) {
+        return std::vector<std::any>{}; 
+    }
+
+    std::vector<std::any> slicedVec(arrayVec.begin() + start, arrayVec.begin() + end);
+    return slicedVec;
+}
