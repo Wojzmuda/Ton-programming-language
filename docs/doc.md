@@ -58,12 +58,14 @@ Retrieves a single element. Arrays are 0-indexed. Negative indices count backwar
 !make ARRAY nums <- [10, 20, 30];
 !make INT first <- nums[0];  $ Returns 10
 !make INT last <- nums[-1];  $ Returns 30
+```
 Slicing (array[start:end])
 Extracts a sub-array starting at the start index up to, but not including, the end index. Unlike indexing, slicing is highly forgiving: out-of-bounds ranges are safely clamped to the array's limits, and logically invalid ranges simply return an empty array without crashing the execution.
 
 ```text
 !make ARRAY sub <- nums[0:2];    $ Returns [10, 20]
 !make ARRAY safe <- nums[1:100]; $ Returns [20, 30] (Safely clamped)
+```
 
 ### Operators
 Tøn supports standard programming operators for logic and math, as well as unique operators designed specifically for audio manipulation.
