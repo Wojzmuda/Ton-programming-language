@@ -45,7 +45,13 @@ bash install-linux.sh
 ```
 
 ### Windows :poop:
-*Currently under development*
+To run the script, simply open your terminal in the project root directory and execute the following command:
+
+```bash
+.\install-windows.bat
+```
+
+Important: Please restart your terminal/IDE after the script finishes to apply the new system PATH variable!
 
 ---
 
@@ -123,7 +129,9 @@ wget --show-progress -O "FluidR3_GM.sf2" "$DOWNLOAD_URL"
 
 #####  Windows :poop:
 ```
-# co tu sie robi tu ??
+mkdir data
+cd data
+curl -L -# -o "FluidR3_GM.sf2" "[https://github.com/pianobooster/fluid-soundfont/releases/download/v3.1/FluidR3_GM.sf2](https://github.com/pianobooster/fluid-soundfont/releases/download/v3.1/FluidR3_GM.sf2)"
 ```
 
 Now, you will find `FluidR3_GM.sf2` file located in `/path/to/project/root/data` directory. It will work out of the box when running Tøn scripts directly from project root directory. However,to simplify the workflow and enable global access, it is highly recommended to move `.sf2` file into `$HOME/.ton` directory (`C:\Users\YourUsername\.ton` on Windows :poop:). Because this is the interpreter's primary search path, Tøn will be able to locate the SoundFont regardless of which directory you run your scripts from.
