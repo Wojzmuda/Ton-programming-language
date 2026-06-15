@@ -100,4 +100,6 @@ public:
     std::any visitSliceExpr(TonParser::SliceExprContext *ctx) override;
     std::any visitArrayOpStat(TonParser::ArrayOpStatContext *ctx) override;
     std::any visitPopExpr(TonParser::PopExprContext *ctx) override;
+
+    std::any visitLengthOfExpr(TonParser::LengthOfExprContext *ctx) override;
 };
