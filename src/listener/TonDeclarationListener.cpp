@@ -35,7 +35,10 @@ void TonDeclarationListener::exitVarDecl(TonParser::VarDeclContext *ctx) {
 }
 
 void TonDeclarationListener::enterTrackDecl(TonParser::TrackDeclContext *ctx){
-    std::string trackName = ctx->ID(1)->getText();
+    // ZMIANA: Pobieramy timelineName z target, a trackName z jedynego wolnego ID
+    std::string timelineName = ctx->target()->ID(0)->getText(); 
+    std::string trackName = ctx->ID()->getText(); 
+
     int currentLine = ctx->getStart()->getLine();
     if (currentScope->existsLocally(trackName)) {
         int previousLine = currentScope->get(trackName);
@@ -180,7 +183,8 @@ void TonDeclarationListener::exitLoopStat(TonParser::LoopStatContext *ctx) {
 }
 
 void TonDeclarationListener::exitArrayOpStat(TonParser::ArrayOpStatContext *ctx) {
-    std::string varName = ctx->ID()->getText();
+    // ZMIANA: Pobieramy varName z target
+    std::string varName = ctx->target()->ID(0)->getText();
 
     if (!currentScope->exists(varName)) {
         size_t line = ctx->getStart()->getLine();
@@ -200,5 +204,6 @@ void TonDeclarationListener::exitArrayOpStat(TonParser::ArrayOpStatContext *ctx)
         TonTypeChecker typeChecker(currentScope);
         typeChecker.visit(ctx->expr());
     }
+
 }
 

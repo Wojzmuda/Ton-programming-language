@@ -25,6 +25,21 @@ const std::unordered_set<std::string> TonInterpreter::SYNTHS = {
     "sine"
 };
 
+
+std::shared_ptr<Scope<std::any>> TonInterpreter::resolveScope(TonParser::TargetContext *ctx) {
+    int parentCount = ctx->parentRef().size();
+    auto targetScope = currentScope;
+    
+    for (int i = 0; i < parentCount; ++i) {
+        if (targetScope->parent == nullptr) {
+            size_t line = ctx->getStart()->getLine();
+            throw std::runtime_error("Error in line " + std::to_string(line) + ": 'parent::' reached beyond global scope.");
+        }
+        targetScope = targetScope->parent;
+    }
+    return targetScope;
+}
+
 std::string TonInterpreter::findSoundFontPath() {
     std::string fileName = "FluidR3_GM.sf2";
 
@@ -153,22 +168,23 @@ std::any TonInterpreter::visitVarDecl(TonParser::VarDeclContext *ctx) {
 
 
 std::any TonInterpreter::visitTargetExpr(TonParser::TargetExprContext *ctx) {
-
     auto targetNode = ctx->target(); 
     std::string baseName = targetNode->ID(0)->getText();
 
-    if (!currentScope->exists(baseName)) {
+    auto targetScope = resolveScope(targetNode);
+
+    if (!targetScope->exists(baseName)) {
         size_t line = ctx->getStart()->getLine();
         throw std::runtime_error("Error in line " + std::to_string(line) + ": Undefined variable or timeline '" + baseName + "'.");
     }
 
     if (targetNode->ID().size() == 1) {
-        return currentScope->get(baseName);
+        return targetScope->get(baseName);
     }
 
     std::string trackName = targetNode->ID(1)->getText();
     
-    std::any baseObj = currentScope->get(baseName);
+    std::any baseObj = targetScope->get(baseName);
     if (baseObj.type() != typeid(Timeline)) {
         throw std::runtime_error("Error: '" + baseName + "' is not a TIMELINE, cannot access tracks.");
     }
@@ -181,8 +197,7 @@ std::any TonInterpreter::visitTargetExpr(TonParser::TargetExprContext *ctx) {
 
     if (targetNode->STRING_VAL()) {
         std::string rawAlias = targetNode->STRING_VAL()->getText();
-        std::string aliasName = rawAlias.substr(1, rawAlias.length() - 2); // usuwamy " "
-
+        std::string aliasName = rawAlias.substr(1, rawAlias.length() - 2); 
 
         for (const auto& event : timeline.tracks[trackName].events) {
             if (event.alias == aliasName) {
@@ -190,13 +205,14 @@ std::any TonInterpreter::visitTargetExpr(TonParser::TargetExprContext *ctx) {
             }
         }
         
-    
         throw std::runtime_error("Error: Event alias '" + aliasName + "' does not exist in track '" + trackName + "'.");
-        
     }
 
     return timeline.tracks[trackName];
 }
+
+
+
 
 std::any TonInterpreter::visitHeader(TonParser::HeaderContext *ctx) {
     std::string instrName = ctx->ID()->getText();
@@ -225,27 +241,28 @@ std::any TonInterpreter::visitHeader(TonParser::HeaderContext *ctx) {
 std::any TonInterpreter::visitAssignment(TonParser::AssignmentContext *ctx) {
     auto targetNode = ctx->target();
 
+    auto targetScope = resolveScope(targetNode);
+
     if (targetNode->ID().size() == 1) {
         std::string varName = targetNode->ID(0)->getText();
-        if (!currentScope->exists(varName)) {
+        if (!targetScope->exists(varName)) {
             throw std::runtime_error("Error: Variable '" + varName + "' must be declared first.");
         }
-        currentScope->set(varName, visit(ctx->expr()));
+        targetScope->set(varName, visit(ctx->expr()));
         return {};
     }
 
     std::string timelineName = targetNode->ID(0)->getText();
     std::string trackName = targetNode->ID(1)->getText();
 
-    if (!currentScope->exists(timelineName)) throw std::runtime_error("Timeline not found");
+    if (!targetScope->exists(timelineName)) throw std::runtime_error("Timeline not found");
     
-    std::any& baseObj = currentScope->get(timelineName);
+    std::any& baseObj = targetScope->get(timelineName);
     Timeline& timeline = std::any_cast<Timeline&>(baseObj);
 
     if (timeline.tracks.find(trackName) == timeline.tracks.end()) throw std::runtime_error("Track not found");
 
     std::any rightSide = visit(ctx->expr());
-
 
     if (targetNode->STRING_VAL()) {
         std::string rawAlias = targetNode->STRING_VAL()->getText();
@@ -538,19 +555,18 @@ std::any TonInterpreter::visitIntValExpr(TonParser::IntValExprContext *ctx) {
 }
 
 
-
 std::any TonInterpreter::visitTrackDecl(TonParser::TrackDeclContext *ctx) {
+    auto targetNode = ctx->target();
+    std::string timelineName = targetNode->ID(0)->getText(); 
+    std::string trackName = ctx->ID()->getText(); // Pobiera czyste ID (nazwę tracku) z reguły
 
-    std::string timelineName = ctx->ID(0)->getText(); 
-    std::string trackName = ctx->ID(1)->getText();    
+    auto targetScope = resolveScope(targetNode);
 
-
-    if (!currentScope->exists(timelineName)) {
+    if (!targetScope->exists(timelineName)) {
         throw std::runtime_error("Error: Timeline '" + timelineName + "' not found.");
     }
 
-
-    std::any& baseObj = currentScope->get(timelineName);
+    std::any& baseObj = targetScope->get(timelineName);
     if (baseObj.type() != typeid(Timeline)) {
         throw std::runtime_error("Error: '" + timelineName + "' is not a TIMELINE.");
     }
@@ -569,19 +585,18 @@ std::any TonInterpreter::visitTrackDecl(TonParser::TrackDeclContext *ctx) {
 }
 
 
-
 std::any TonInterpreter::visitAudioOpStat(TonParser::AudioOpStatContext *ctx) {
     auto targetNode = ctx->target();
     std::string timelineName = targetNode->ID(0)->getText();
 
+    auto targetScope = resolveScope(targetNode);
 
-    if (!currentScope->exists(timelineName)) {
+    if (!targetScope->exists(timelineName)) {
         throw std::runtime_error("Error: Timeline '" + timelineName + "' not found.");
     }
-    std::any& baseObj = currentScope->get(timelineName);
+    std::any& baseObj = targetScope->get(timelineName);
     if (baseObj.type() != typeid(Timeline)) throw std::runtime_error("Error: Target is not a TIMELINE.");
     Timeline& timeline = std::any_cast<Timeline&>(baseObj);
-
 
     std::string trackName = "";
     if (targetNode->ID().size() > 1) {
@@ -594,9 +609,8 @@ std::any TonInterpreter::visitAudioOpStat(TonParser::AudioOpStatContext *ctx) {
     std::string aliasName = "";
     if (targetNode->STRING_VAL()) {
         std::string rawAlias = targetNode->STRING_VAL()->getText();
-        aliasName = rawAlias.substr(1, rawAlias.length() - 2); // usuwamy " "
+        aliasName = rawAlias.substr(1, rawAlias.length() - 2); 
     }
-
 
     if (ctx->SHIFT()) {
         if (trackName.empty() || aliasName.empty()) {
@@ -673,7 +687,6 @@ std::any TonInterpreter::visitAudioOpStat(TonParser::AudioOpStatContext *ctx) {
                                      ": Track volume must be positive. Given: " + std::to_string(newVolume));
         }
 
-        std::string trackName = targetCtx->ID(1)->getText();
         try {
             auto& track = timeline.tracks.at(trackName);
             track.volume = newVolume;
@@ -686,14 +699,19 @@ std::any TonInterpreter::visitAudioOpStat(TonParser::AudioOpStatContext *ctx) {
     return {};
 }
 
+
 std::any TonInterpreter::visitIsolateExpr(TonParser::IsolateExprContext *ctx) {
     auto targetNode = ctx -> target();
     std::string timelineName = targetNode->ID(0)->getText();
-    if (!currentScope->exists(timelineName)){
+
+    // WDROŻENIE WZORCA DRY:
+    auto targetScope = resolveScope(targetNode);
+
+    if (!targetScope->exists(timelineName)){
         throw std::runtime_error("Error: Timeline '" + timelineName + "' not found.");
     }
 
-    std::any& baseObj = currentScope->get(timelineName);
+    std::any& baseObj = targetScope->get(timelineName);
     if (baseObj.type() != typeid(Timeline)){
         throw std::runtime_error("Error: Target is not a TIMELINE.");
     }
@@ -1311,14 +1329,17 @@ std::any TonInterpreter::visitSliceExpr(TonParser::SliceExprContext *ctx) {
 
 
 std::any TonInterpreter::visitArrayOpStat(TonParser::ArrayOpStatContext *ctx) {
-    std::string varName = ctx->ID()->getText(); 
+    auto targetNode = ctx->target(); 
+    std::string varName = targetNode->ID(0)->getText(); 
 
-    if (!currentScope->exists(varName)) {
+    auto targetScope = resolveScope(targetNode);
+
+    if (!targetScope->exists(varName)) {
         size_t line = ctx->getStart()->getLine();
         throw std::runtime_error("Line " + std::to_string(line) + ": Error - Array '" + varName + "' not found.");
     }
 
-    std::any arrayVal = currentScope->get(varName);
+    std::any arrayVal = targetScope->get(varName);
     
     if (arrayVal.type() != typeid(std::vector<std::any>)) {
         size_t line = ctx->getStart()->getLine();
@@ -1335,20 +1356,23 @@ std::any TonInterpreter::visitArrayOpStat(TonParser::ArrayOpStatContext *ctx) {
         vec.clear();
     }
 
-    currentScope->set(varName, vec);
+    targetScope->set(varName, vec);
     return {};
 }
 
 
 std::any TonInterpreter::visitPopExpr(TonParser::PopExprContext *ctx) {
-    std::string varName = ctx->ID()->getText(); // Czyste ID!
+    auto targetNode = ctx->target(); 
+    std::string varName = targetNode->ID(0)->getText();
 
-    if (!currentScope->exists(varName)) {
+    auto targetScope = resolveScope(targetNode);
+
+    if (!targetScope->exists(varName)) {
         size_t line = ctx->getStart()->getLine();
         throw std::runtime_error("Line " + std::to_string(line) + ": Error - Array '" + varName + "' not found.");
     }
 
-    std::any arrayVal = currentScope->get(varName);
+    std::any arrayVal = targetScope->get(varName);
     
     if (arrayVal.type() != typeid(std::vector<std::any>)) {
         size_t line = ctx->getStart()->getLine();
@@ -1365,7 +1389,7 @@ std::any TonInterpreter::visitPopExpr(TonParser::PopExprContext *ctx) {
     std::any poppedItem = vec.back();
     vec.pop_back();
 
-    currentScope->set(varName, vec);
+    targetScope->set(varName, vec);
     
     return poppedItem;
 }

@@ -28,10 +28,12 @@ statement
 
 varDecl : EXCLAM_MARK MAKE type ID (ASSIGN expr)? SEMI ;
 
-trackDecl : ID NEW TRACK ID SEMI ;
+trackDecl : target NEW TRACK ID SEMI ;
 
 // Target żeby się dało: adresowanie wielopoziomowe: ID, ID.ID, lub ID.ID."alias"
-target : ID (DOT ID (DOT STRING_VAL)?)? ;
+target : parentRef* ID (DOT ID (DOT STRING_VAL)?)? ;
+
+parentRef : PARENT DOUBLE_COLON ;
 
 // Zeby sie dalo wywolac funkcje void
 callStat : ID L_PAREN (expr (COMMA expr)*)? R_PAREN SEMI ;
@@ -78,8 +80,8 @@ audioOpStat
 
 
 arrayOpStat
-    : APPEND expr TO ID SEMI
-    | CLEAR ID SEMI
+    : APPEND expr TO target SEMI
+    | CLEAR target SEMI
     ;
 
 saveStat : EXCLAM_MARK SAVE expr STRING_VAL SEMI ;
@@ -117,7 +119,7 @@ expr
     | LENGTH target                                            # LengthOfExpr 
     | EMPTYSOUND                                               # EmptySoundExpr   
     | ISOLATE target                                           # IsolateExpr  
-    | POP ID                                                   # PopExpr                      
+    | POP target                                               # PopExpr                      
     ;
 
 // --- TOKENS ---
@@ -170,6 +172,10 @@ DIVIDE         : 'DIVIDE' ;
 EMPTYSOUND     : 'EMPTYSOUND' ;
 VOL            : 'VOL' ;
 
+// --- Najpierw tokeny dwuznakowe / specjalne dla parent ---
+PARENT         : 'parent' ;
+DOUBLE_COLON   : '::' ;
+
 ASSIGN         : '<-' ; 
 ADD_ASSIGN     : '+<-' ;
 SUB_ASSIGN     : '-<-' ;
@@ -216,3 +222,4 @@ POP            : 'POP' ;
 ID             : [a-zA-Z_][a-zA-Z0-9_]* ;
 WS             : [ \t\r\n]+ -> skip ;
 COMMENT        : '$' ~[\r\n]* -> skip ;
+

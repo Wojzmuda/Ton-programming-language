@@ -234,7 +234,7 @@ std::any TonTypeChecker::visitSliceExpr(TonParser::SliceExprContext *ctx) {
 
 
 std::any TonTypeChecker::visitPopExpr(TonParser::PopExprContext *ctx) {
-    std::string varName = ctx->ID()->getText();
+    std::string varName = ctx->target()->ID(0)->getText();
 
     if (!currentScope->exists(varName)) {
         size_t line = ctx->getStart()->getLine();
@@ -252,4 +252,33 @@ std::any TonTypeChecker::visitPopExpr(TonParser::PopExprContext *ctx) {
     // Tablice w Tøn mogą trzymać dowolny typ, więc w czasie kompilacji nie wiemy, co z niej wyjdzie.
     // Zwracamy "UNKNOWN", zostawiając weryfikację właściwemu Interpreterowi.
     return std::string("UNKNOWN");
+}
+
+std::any TonTypeChecker::visitArrayOpStat(TonParser::ArrayOpStatContext *ctx) {
+    // 1. We extract the array name using the new target rule structure
+    std::string varName = ctx->target()->ID(0)->getText();
+
+    // 2. Verify the array exists in the current scope
+    if (!currentScope->exists(varName)) {
+        size_t line = ctx->getStart()->getLine();
+        throw std::runtime_error("Type Error in line " + std::to_string(line) + 
+                                 ": Array '" + varName + "' is not defined.");
+    }
+
+    // 3. Verify that the target is actually an ARRAY
+    std::string targetType = currentScope->resolveType(varName);
+    if (targetType != "ARRAY") {
+        size_t line = ctx->getStart()->getLine();
+        throw std::runtime_error("Type Error in line " + std::to_string(line) + 
+                                 ": Array operation requires an ARRAY variable. Given: " + targetType);
+    }
+
+    // 4. If this is an APPEND operation, we must visit the expression being appended 
+    //    so the Type Checker can recursively validate it (e.g., catching errors inside the appended expr).
+    if (ctx->APPEND()) {
+         visit(ctx->expr());
+    }
+
+    // Array operations are statements, they don't "return" a type value themselves.
+    return {}; 
 }
