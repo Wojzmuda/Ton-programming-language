@@ -1,0 +1,7 @@
+$ TEST 1: !break poza pętla (powinien być błąd)
+!make INT x <- 42;
+!shout "Zmienna x wynosi: ", x;
+
+!break; $ Tu kompilator powinien natychmiast zaprotestować
+
+!shout "To się nigdy nie wypisze";

@@ -155,29 +155,6 @@ void TonDeclarationListener::exitBlock(TonParser::BlockContext *ctx){
     }
 }
 
-void TonDeclarationListener::enterLoopStat(TonParser::LoopStatContext *ctx) {
-    currentScope = std::make_shared<Scope<int>>(currentScope);
-
-    int currentLine = ctx->getStart()->getLine();
-    if (ctx->FROM()) {
-        std::string varName = ctx->ID()->getText();
-        std::string typeName = ctx->type()->getText();
-        
-        currentScope->define(varName, typeName, currentLine);
-    }
-    else if (ctx->ASSIGN()) {
-        std::string varName = ctx->ID()->getText();
-        std::string typeName = ctx->type()->getText();
-        
-        currentScope->define(varName, typeName, currentLine);
-    }
-}
-
-void TonDeclarationListener::exitLoopStat(TonParser::LoopStatContext *ctx) {
-    if (currentScope->parent) {
-        currentScope = currentScope->parent;
-    }
-}
 
 void TonDeclarationListener::exitArrayOpStat(TonParser::ArrayOpStatContext *ctx) {
     std::string varName = ctx->ID()->getText();
@@ -199,5 +176,56 @@ void TonDeclarationListener::exitArrayOpStat(TonParser::ArrayOpStatContext *ctx)
     if (ctx->APPEND()) {
         TonTypeChecker typeChecker(currentScope);
         typeChecker.visit(ctx->expr());
+    }
+}
+
+
+void TonDeclarationListener::enterLoopStat(TonParser::LoopStatContext *ctx) {
+    loopLevel++;
+    currentScope = std::make_shared<Scope<int>>(currentScope);
+
+    int currentLine = ctx->getStart()->getLine();
+    if (ctx->FROM()) {
+        std::string varName = ctx->ID()->getText();
+        std::string typeName = ctx->type()->getText();
+        
+        currentScope->define(varName, typeName, currentLine);
+    }
+    else if (ctx->ASSIGN()) {
+        std::string varName = ctx->ID()->getText();
+        std::string typeName = ctx->type()->getText();
+        
+        currentScope->define(varName, typeName, currentLine);
+    }
+}
+
+void TonDeclarationListener::exitLoopStat(TonParser::LoopStatContext *ctx) {
+    loopLevel--; 
+    if (currentScope->parent) {
+        currentScope = currentScope->parent;
+    }
+}
+
+void TonDeclarationListener::enterUntilStat(TonParser::UntilStatContext *ctx) {
+    loopLevel++;
+}
+
+void TonDeclarationListener::exitUntilStat(TonParser::UntilStatContext *ctx) {
+    loopLevel--;
+}
+
+void TonDeclarationListener::enterBreakStat(TonParser::BreakStatContext *ctx) {
+    if (loopLevel == 0) {
+        size_t line = ctx->getStart()->getLine();
+        throw std::runtime_error("Validation Error in line " + std::to_string(line) + 
+                                 ": '!break' statement is not allowed outside of a loop.");
+    }
+}
+
+void TonDeclarationListener::enterContinueStat(TonParser::ContinueStatContext *ctx) {
+    if (loopLevel == 0) {
+        size_t line = ctx->getStart()->getLine();
+        throw std::runtime_error("Validation Error in line " + std::to_string(line) + 
+                                 ": '!continue' statement is not allowed outside of a loop.");
     }
 }

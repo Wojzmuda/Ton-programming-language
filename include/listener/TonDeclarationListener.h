@@ -7,6 +7,7 @@
 class TonDeclarationListener : public TonBaseListener {
     private:
         std::shared_ptr<Scope<int>> currentScope;
+        int loopLevel = 0;
     public:
         TonDeclarationListener(){
             currentScope = std::make_shared<Scope<int>>();
@@ -24,7 +25,13 @@ class TonDeclarationListener : public TonBaseListener {
         void exitFuncDef(TonParser::FuncDefContext *ctx) override;
         void exitReturnStat(TonParser::ReturnStatContext *ctx) override;
 
-        virtual void enterLoopStat(TonParser::LoopStatContext *ctx) override;
-        virtual void exitLoopStat(TonParser::LoopStatContext *ctx) override;
+
         void exitArrayOpStat(TonParser::ArrayOpStatContext *ctx) override;
+
+        void enterLoopStat(TonParser::LoopStatContext *ctx) override;
+        void exitLoopStat(TonParser::LoopStatContext *ctx) override;
+        void enterUntilStat(TonParser::UntilStatContext *ctx) override;
+        void exitUntilStat(TonParser::UntilStatContext *ctx) override;
+        void enterBreakStat(TonParser::BreakStatContext *ctx) override;
+        void enterContinueStat(TonParser::ContinueStatContext *ctx) override;
 };
