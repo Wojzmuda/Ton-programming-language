@@ -27,6 +27,7 @@ set(HEADERS
     include/listener/TonDeclarationListener.h
     include/listener/TonSyntaxErrorListener.h
     include/core/MusicBase.h
+    include/core/tsf.h
     include/core/Scope.h
     include/core/Timeline.h
 )

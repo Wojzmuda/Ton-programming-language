@@ -2,6 +2,93 @@
 #include "interpreter/TonInterpreter.h"
 #include <cmath>
 
+#define TSF_IMPLEMENTATION
+#include "core/tsf.h"
+
+const std::unordered_map<std::string, int> TonInterpreter::SAMPLE_INSTRUMENTS = {
+    {"piano",      0}, // YAMAHA GRAND PIANO
+    {"organ",      19}, // CHURCH ORGAN
+    {"rock_organ", 18}, // ROCK ORGAN
+    {"guitar",     24}, // NYLON STRING GUITAR
+    {"overdrive",  29}, // OVERDRIVE GUITAR
+    {"bass",       33}, // Fingered Bass
+    {"violin",     40}, // Violin
+    {"cello",      42}, // Cello
+    {"contrabass", 43}, // Contrabass
+    {"strings",    48}, // Strings
+    {"trumpet",    56}, // Trumpet
+    {"flute",      73}, // Flute
+    {"drums",      116} // Taiko Drum
+};
+
+const std::unordered_set<std::string> TonInterpreter::SYNTHS = {
+    "sine"
+};
+
+std::string TonInterpreter::findSoundFontPath() {
+    std::string fileName = "FluidR3_GM.sf2";
+
+    // 1. Env Path - optional
+    if (const char* envPath = std::getenv("TON_SOUNDFONT_PATH")) {
+        std::filesystem::path p(envPath);
+        if (std::filesystem::exists(p)) {
+            return p.string();
+        }
+    }
+
+    // possible directories
+    // for debug purposes when running Ton from ./{PROJECT_ROOT} or ./{PROJECT_ROOT}/build
+    std::vector<std::filesystem::path> possiblePaths = {
+        std::filesystem::path("data") / fileName,              // Terminal w głównym folderze
+        std::filesystem::path("..") / "data" / fileName,       // Terminal w folderze build/
+        std::filesystem::path("..") / ".." / "data" / fileName // Typowe dla IDE na Windowsie
+    };
+
+    // Fetching home directory
+    const char* homeDir = std::getenv("HOME"); // Linux / macOS
+    if (!homeDir) {
+        homeDir = std::getenv("USERPROFILE");  // Windows
+    }
+
+    if (homeDir) {
+        std::filesystem::path home(homeDir);
+        // Looking for file named FluidR3_GM.sf2 in $HOME/.ton/ directory
+        possiblePaths.push_back(home / ".ton" / fileName);
+    }
+
+    // One by one verification in created possible paths.
+    // searching order is: EnvPath ; debug directories ; $HOME/.ton
+    for (const auto& path : possiblePaths) {
+        if (std::filesystem::exists(path)) {
+            return path.string();
+        }
+    }
+
+    // Returning data/fileName if the file was not found.
+    return (std::filesystem::path("data") / fileName).string();
+}
+
+TonInterpreter::TonInterpreter() : currentStackDepth{0} {
+    currentScope = std::make_shared<Scope<std::any>>();
+
+    std::string sfPath = findSoundFontPath();
+    soundFont = tsf_load_filename(sfPath.c_str());
+    if (!this->soundFont) {
+        std::cerr << "Could not load SoundFont from data/FluidR3_GM.sf2!" << std::endl;
+    } else {
+        tsf_set_output(soundFont, TSF_MONO, Sound::sampleRate, 0);
+    }
+
+    for (const std::string& synthName : SYNTHS) {
+        loadedInstruments.emplace(synthName, Instrument(synthName));
+    }
+}
+
+TonInterpreter::~TonInterpreter() {
+    if (this->soundFont != nullptr) {
+        tsf_close(this->soundFont);
+    }
+}
 
 std::any TonInterpreter::visitProgram(TonParser::ProgramContext *ctx) {
     return visitChildren(ctx);
@@ -90,6 +177,26 @@ std::any TonInterpreter::visitTargetExpr(TonParser::TargetExprContext *ctx) {
     }
 
     return timeline.tracks[trackName];
+}
+
+std::any TonInterpreter::visitHeader(TonParser::HeaderContext *ctx) {
+    std::string instrName = ctx->ID()->getText();
+
+    if (!soundFont) {
+        throw std::runtime_error("SoundFont library is not initialized!");
+    }
+
+    auto it = SAMPLE_INSTRUMENTS.find(instrName);
+
+    if (it != SAMPLE_INSTRUMENTS.end()) {
+        loadedInstruments.emplace(instrName, Instrument(instrName, it->second));
+    }
+    else {
+        size_t line = ctx->getStart()->getLine();
+        throw std::runtime_error("Line " + std::to_string(line) + ": Unknown standard instrument '" + instrName + "'.");
+    }
+
+    return {};
 }
 
 
@@ -235,7 +342,7 @@ std::any TonInterpreter::visitShoutStat(TonParser::ShoutStatContext *ctx) {
     }
     else if (value.type() == typeid(Instrument)) {
         Instrument currentInstrument = std::any_cast<Instrument>(value);
-        std::cout << "INSTRUMENT(" << currentInstrument.name << ")";
+        std::cout << "INSTRUMENT(" << currentInstrument.getName() << ")";
     }
     else if (value.type() == typeid(std::vector<std::any>)) {
         auto arrayElements = std::any_cast<std::vector<std::any>>(value);
@@ -284,59 +391,33 @@ std::any TonInterpreter::visitSaveStat(TonParser::SaveStatContext *ctx) {
     std::string fileName = rawFileName.substr(1, rawFileName.length() - 2);
     std::any exportedValue = visit(ctx->expr());
 
+    Sound soundToSave;
+
     if (exportedValue.type() == typeid(Sound)) {
-        Sound soundToSave = std::any_cast<Sound>(exportedValue);
-        AudioFile<double> audioFile;
-        audioFile.setNumChannels(1);
-        audioFile.setNumSamplesPerChannel(soundToSave.samples.size());
-        audioFile.setSampleRate(soundToSave.sampleRate);
-        audioFile.samples[0] = soundToSave.samples;
-        
-        if (audioFile.save(fileName)) {
-            std::cout << ">>> [SYSTEM] Successfully exported SOUND to: " << fileName << std::endl;
-        } else throw std::runtime_error("Error: Failed to write WAV.");
+        soundToSave = std::any_cast<Sound>(exportedValue);
     } 
     else if (exportedValue.type() == typeid(Timeline)) {
-  
         Timeline tl = std::any_cast<Timeline>(exportedValue);
-        int sampleRate = 44100;
-        int maxSamples = sampleRate; 
-
-   
-        for (const auto& pair : tl.tracks) {
-            if (pair.second.isMuted) continue;
-            for (const auto& ev : pair.second.events) {
-                int endSample = (ev.startTimeMs / 1000.0) * sampleRate + ev.sound.samples.size();
-                if (endSample > maxSamples) maxSamples = endSample;
-            }
-        }
-
-        std::vector<double> mixedSamples(maxSamples, 0.0);
-
-    
-        for (const auto& pair : tl.tracks) {
-            if (pair.second.isMuted) continue;
-            for (const auto& ev : pair.second.events) {
-                int startSample = (ev.startTimeMs / 1000.0) * sampleRate;
-                for (size_t i = 0; i < ev.sound.samples.size(); ++i) {
-                    mixedSamples[startSample + i] += ev.sound.samples[i];
-                }
-            }
-        }
-
-
-        AudioFile<double> audioFile;
-        audioFile.setNumChannels(1);
-        audioFile.setSampleRate(sampleRate);
-        audioFile.setNumSamplesPerChannel(maxSamples);
-        audioFile.samples[0] = mixedSamples;
-        
-        if (audioFile.save(fileName)) {
-            std::cout << ">>> [SYSTEM] Successfully mixed and exported TIMELINE to: " << fileName << std::endl;
-        } else throw std::runtime_error("Error: Failed to write WAV.");
+        soundToSave = tl.renderFinalSound(); 
     }
     else {
-        throw std::runtime_error("Error: !save command requires a SOUND or TIMELINE type.");
+        size_t line = ctx->getStart()->getLine();
+        throw std::runtime_error("Line " + std::to_string(line) + ": !save command requires a SOUND or TIMELINE type.");
+    }
+
+    soundToSave.normalize();
+
+    AudioFile<float> audioFile;
+    audioFile.setNumChannels(1);
+    audioFile.setNumSamplesPerChannel(soundToSave.samples.size());
+    audioFile.setSampleRate(Sound::sampleRate);
+    audioFile.samples[0] = soundToSave.samples;
+        
+    if (audioFile.save(fileName)) {
+        std::cout << ">>> [SYSTEM] Successfully exported SOUND to: " << fileName << std::endl;
+    } 
+    else {
+        throw std::runtime_error("Error: Failed to write WAV.");
     }
 
     return {};
@@ -344,40 +425,79 @@ std::any TonInterpreter::visitSaveStat(TonParser::SaveStatContext *ctx) {
 
 
 std::any TonInterpreter::visitCreateSoundExpr(TonParser::CreateSoundExprContext *ctx) {
-    std::string instrumentOrSoundId = ctx->ID()->getText();
+    std::string soundId = ctx->ID()->getText();
     std::any arg1 = visit(ctx->expr(0));
     std::any arg2 = visit(ctx->expr(1));
 
-    Note note;
-    int durationMs;
+    Note note = std::any_cast<Note>(arg1);;
+    int durationMs = std::any_cast<int>(arg2);;
+    float volume = 0.5f;
 
-    note = std::any_cast<Note>(arg1);
-    durationMs = std::any_cast<int>(arg2);
-
-    
-
-    note = std::any_cast<Note>(arg1);
-    durationMs = std::any_cast<int>(arg2);
-
-    
-    // TODO choose right sample instead of using temp lambda
-    // -----
-    auto createTemporarySinWave = [](Note note, int dur) {
-        Sound generatedSound;
-        int totalSamples = (dur / 1000.0) * generatedSound.sampleRate;
-        for (int i = 0; i < totalSamples; ++i) {
-            double time = (double)i / generatedSound.sampleRate;
-            double sampleValue = std::sin(2.0 * M_PI * note.getFrequency() * time);
-            generatedSound.samples.push_back(sampleValue);
+    if (ctx->expr().size() > 2) {
+        std::any arg3 = visit(ctx->expr(2));
+        if (arg3.type() == typeid(int)) {
+            volume = static_cast<float>(std::any_cast<int>(arg3));
         }
-        return generatedSound;
-    };
-    // ------
-    
-    Sound sound = createTemporarySinWave(note, durationMs);
+        else if (arg3.type() == typeid(double)) {
+            volume = static_cast<float>(std::any_cast<double>(arg3));
+        }
+        else if (arg3.type() == typeid(float)) {
+            volume = std::any_cast<float>(arg3);
+        }
+        else {
+            size_t line = ctx->getStart()->getLine();
+            throw std::runtime_error("Line " + std::to_string(line) +
+                                     ": Volume must be a number in range [0, 2].");
+        }
+        if (volume < 0.0f || volume > 2.0f) {
+            size_t line = ctx->getStart()->getLine();
+            throw std::runtime_error("Line " + std::to_string(line) +
+                                     ": Volume must be a number in range [0, 2]. Given: " + std::to_string(volume));
+        }
+        volume /= 2;
+    }
+    Sound generatedSound;
+    int totalSamples = (durationMs / 1000.0) * generatedSound.sampleRate;
+
+    auto it = loadedInstruments.find(soundId);
+
+    if (it == loadedInstruments.end()) {
+        size_t line = ctx->getStart()->getLine();
+        throw std::runtime_error("Line " + std::to_string(line) + ": Instrument or synth '"
+            + soundId + "' not found. Did you USE it?");
+    }
+
+    Instrument& instr = it->second;
 
     
-    return sound;
+    if (instr.getType() == InstrumentType::Synth) {
+        try {
+            generatedSound.generateSynthWave(instr.getName(), note, durationMs);
+        }
+        catch(std::runtime_error& ex) {
+            size_t line = ctx->getStart()->getLine();
+            throw std::runtime_error("Line " + std::to_string(line) + ": There is no synth named'"
+                                     + soundId + ".");
+        }
+    }
+    else if (instr.getType() == InstrumentType::SoundFont) {
+        if (!soundFont) throw std::runtime_error("SoundFont library is not initialized.");
+        int realPresetIndex = tsf_get_presetindex(soundFont, 0, instr.getMidiPresetIndex());
+
+        if (realPresetIndex < 0) {
+            std::cerr << ">>> [WARNING] MIDI Preset " << instr.getMidiPresetIndex() << " not found in SoundFont! Using default.\n";
+            realPresetIndex = 0;
+        }
+
+        std::vector<float> floatSamples(totalSamples);
+        tsf_note_on(soundFont, realPresetIndex, note.toMidiNumber(), volume);
+        tsf_render_float(soundFont, floatSamples.data(), totalSamples, 0);
+        tsf_note_off(soundFont, realPresetIndex, note.toMidiNumber());
+
+        generatedSound.samples.assign(floatSamples.begin(), floatSamples.end());
+    }
+
+    return generatedSound;
 }
 
 std::any TonInterpreter::visitStringValExpr(TonParser::StringValExprContext *ctx) {
@@ -475,6 +595,75 @@ std::any TonInterpreter::visitAudioOpStat(TonParser::AudioOpStatContext *ctx) {
         if (!found) throw std::runtime_error("Error: Alias '" + aliasName + "' not found on track.");
     }
 
+    if (ctx->MUTE()) {
+        if (targetNode->ID().size() != 2 || targetNode->STRING_VAL() != nullptr) {
+            size_t line = ctx->getStart()->getLine();
+            throw std::runtime_error("Line " + std::to_string(line) +
+                                     ": The MUTE operation can only be applied to a TRACK.");
+        }
+        try {
+            timeline.tracks.at(trackName).isMuted = true;
+        } catch (std::out_of_range& ex) {
+            size_t line = ctx->getStart()->getLine();
+            throw std::runtime_error("Line " + std::to_string(line) +
+                                     ": Given TRACK does not exist.");
+        }
+    }
+
+    if (ctx->UNMUTE()) {
+        if (targetNode->ID().size() != 2 || targetNode->STRING_VAL() != nullptr) {
+            size_t line = ctx->getStart()->getLine();
+            throw std::runtime_error("Line " + std::to_string(line) +
+                                     ": The MUTE operation can only be applied to a TRACK.");
+        }
+        try {
+            timeline.tracks.at(trackName).isMuted = false;
+        } catch (std::out_of_range& ex) {
+            size_t line = ctx->getStart()->getLine();
+            throw std::runtime_error("Line " + std::to_string(line) +
+                                     ": Given TRACK does not exist.");
+        }
+    }
+
+    if (ctx->VOL()) {
+        auto targetCtx = ctx->target();
+
+        if (targetCtx->ID().size() != 2 || targetCtx->STRING_VAL() != nullptr) {
+            size_t line = ctx->getStart()->getLine();
+            throw std::runtime_error("Line " + std::to_string(line) +
+                                     ": The VOL operation can only be applied to a TRACK.");
+        }
+        std::any volAny = visit(ctx->expr());
+        float newVolume = 1.0f;
+
+        if (volAny.type() == typeid(int)) {
+            newVolume = static_cast<float>(std::any_cast<int>(volAny));
+        } else if (volAny.type() == typeid(double)) {
+            newVolume = static_cast<float>(std::any_cast<double>(volAny));
+        } else if (volAny.type() == typeid(float)) {
+            newVolume = std::any_cast<float>(volAny);
+        } else {
+            size_t line = ctx->getStart()->getLine();
+            throw std::runtime_error("Line " + std::to_string(line) +
+                                     ": Volume must be a number in range [0, 2].");
+        }
+
+        if (newVolume < 0.0f) {
+            size_t line = ctx->getStart()->getLine();
+            throw std::runtime_error("Line " + std::to_string(line) +
+                                     ": Track volume must be positive. Given: " + std::to_string(newVolume));
+        }
+
+        std::string trackName = targetCtx->ID(1)->getText();
+        try {
+            auto& track = timeline.tracks.at(trackName);
+            track.volume = newVolume;
+        } catch(const std::out_of_range& ex) {
+            size_t line = ctx->getStart()->getLine();
+            throw std::runtime_error("Line " + std::to_string(line) +
+                                     ": Given TRACK does not exist.");
+        }
+    }
     return {};
 }
 
@@ -629,27 +818,63 @@ std::any TonInterpreter::visitNumValExpr(TonParser::NumValExprContext *ctx) {
     return std::stod(ctx->NUM_VAL()->getText());
 }
 
-std::any TonInterpreter::visitMulDivExpr(TonParser::MulDivExprContext *ctx) {
-    std::any left = visit(ctx -> expr(0));
-    std::any right = visit(ctx -> expr(1));
-    
-    double leftVal =(left.type() == typeid(int)) ? std::any_cast<int>(left) : std::any_cast<double>(left);
-    double rightVal = (right.type() == typeid(int)) ? std::any_cast<int>(right) : std::any_cast<double>(right);
 
-    if (ctx-> MULT()){
-        if(left.type() == typeid(int) && right.type() == typeid(int)) return (int)(leftVal * rightVal);
+std::any TonInterpreter::visitMulDivExpr(TonParser::MulDivExprContext *ctx) {
+    std::any left = visit(ctx->expr(0));
+    std::any right = visit(ctx->expr(1));
+
+    if (ctx->MULT()) {
+        bool isLeftSound = (left.type() == typeid(Sound));
+        bool isRightSound = (right.type() == typeid(Sound));
+
+        if (isLeftSound || isRightSound) {
+            std::any numberAny = isLeftSound ? right : left;
+            
+            if (numberAny.type() == typeid(double) || numberAny.type() == typeid(int)) {
+                Sound s = isLeftSound ? std::any_cast<Sound>(left) : std::any_cast<Sound>(right);
+                double multiplier = (numberAny.type() == typeid(double)) 
+                    ? std::any_cast<double>(numberAny) 
+                    : static_cast<double>(std::any_cast<int>(numberAny));
+                return s * multiplier;
+            } 
+            else {
+                size_t line = ctx->getStart()->getLine();
+                throw std::runtime_error("Line " + std::to_string(line) + ": Error - SOUND can only be multiplied by INT or NUMERICAL.");
+            }
+        }
+
+        if ((left.type() != typeid(int) && left.type() != typeid(double)) ||
+            (right.type() != typeid(int) && right.type() != typeid(double))) {
+            size_t line = ctx->getStart()->getLine();
+            throw std::runtime_error("Line " + std::to_string(line) + ": Error - Mathematical multiplication requires numbers.");
+        }
+
+        double leftVal = (left.type() == typeid(int)) ? std::any_cast<int>(left) : std::any_cast<double>(left);
+        double rightVal = (right.type() == typeid(int)) ? std::any_cast<int>(right) : std::any_cast<double>(right);
+
+        if (left.type() == typeid(int) && right.type() == typeid(int)) return (int)(leftVal * rightVal);
         return (leftVal * rightVal);   
     }
-    else if (ctx->DIV_OP()){
-        if (rightVal==0.0){
+    else if (ctx->DIV_OP()) {
+        if ((left.type() != typeid(int) && left.type() != typeid(double)) ||
+            (right.type() != typeid(int) && right.type() != typeid(double))) {
+            size_t line = ctx->getStart()->getLine();
+            throw std::runtime_error("Line " + std::to_string(line) + ": Error - Mathematical division requires numbers.");
+        }
+
+        double leftVal = (left.type() == typeid(int)) ? std::any_cast<int>(left) : std::any_cast<double>(left);
+        double rightVal = (right.type() == typeid(int)) ? std::any_cast<int>(right) : std::any_cast<double>(right);
+
+        if (rightVal == 0.0) {
             throw std::runtime_error("Line " + std::to_string(ctx->getStart()->getLine()) + ": ERROR - Division by zero!");
         }
+        
         if (left.type() == typeid(int) && right.type() == typeid(int)) return (int)(leftVal / rightVal);
         return leftVal / rightVal;
     }
+    
     return {};
 }
-
 
 std::any TonInterpreter::visitAddSubMixExpr(TonParser::AddSubMixExprContext *ctx) {
     std::any left = visit(ctx->expr(0));
@@ -661,7 +886,6 @@ std::any TonInterpreter::visitAddSubMixExpr(TonParser::AddSubMixExprContext *ctx
             Sound s2 = std::any_cast<Sound>(right);
             
             Sound mixedSound;
-            mixedSound.sampleRate = s1.sampleRate; 
             
             size_t maxSize = std::max(s1.samples.size(), s2.samples.size());
             mixedSound.samples.reserve(maxSize);
@@ -669,10 +893,10 @@ std::any TonInterpreter::visitAddSubMixExpr(TonParser::AddSubMixExprContext *ctx
             for (size_t i = 0; i < maxSize; ++i) {
                 double val1 = (i < s1.samples.size()) ? s1.samples[i] : 0.0;
                 double val2 = (i < s2.samples.size()) ? s2.samples[i] : 0.0;
-                // TODO for now tanh, normalizing later on!
-                mixedSound.samples.push_back(std::tanh(val1 + val2));
-                //mixedSound.samples.push_back(val1 + val2);
+                mixedSound.samples.push_back((val1 + val2));
+                
             }
+            std::cout << *std::max_element(mixedSound.samples.begin(), mixedSound.samples.end());
             return mixedSound;
         }
         
@@ -708,7 +932,6 @@ std::any TonInterpreter::visitConcatExpr(TonParser::ConcatExprContext *ctx)
         Sound s2 = std::any_cast<Sound>(right);
         
         Sound concatSound;
-        concatSound.sampleRate = s1.sampleRate;
         
         concatSound.samples.reserve(s1.samples.size() + s2.samples.size());
         

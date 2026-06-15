@@ -1,0 +1,17 @@
+USE piano;
+
+!make SOUND quiet <- piano G4 1000 0.5;
+
+!make SOUND loud <- piano G4 1000 2;
+loud <- loud * 0.25;
+!make TIMELINE final;
+
+final NEW TRACK first;
+final.first <- [quiet AT 0, loud AT 1200];
+
+final NEW TRACK second;
+final.second <- [quiet AT 2200, loud AT 3200];
+
+final.second VOL 10;
+
+!save final "vol.wav";
