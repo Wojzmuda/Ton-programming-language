@@ -3,11 +3,7 @@
 Tøn is a Generative Arithmetic Music Language that allows you to script, mix, and manipulate musical events, designed to compile directly into digitally generated audio. This document covers the domain-specific types, timeline structures, and operators used to construct and edit audio.
 
 ---
-# Tøn Language: Audio Construction & Manipulation
 
-Tøn is a Generative Arithmetic Music Language that allows you to script, mix, and manipulate musical events, designed to compile directly into digitally generated audio. This document covers the domain-specific types, timeline structures, and operators used to construct and edit audio.
-
----
 
 ## 1. The `USE` Keyword & Instrument Selection
 
