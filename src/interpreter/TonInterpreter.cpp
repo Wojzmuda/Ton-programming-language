@@ -1,7 +1,7 @@
 #define _USE_MATH_DEFINES
 #include "interpreter/TonInterpreter.h"
 #include <cmath>
-
+#include <filesystem>
 #define TSF_IMPLEMENTATION
 #include "core/tsf.h"
 
@@ -431,7 +431,15 @@ std::any TonInterpreter::visitSaveStat(TonParser::SaveStatContext *ctx) {
     audioFile.setNumSamplesPerChannel(soundToSave.samples.size());
     audioFile.setSampleRate(Sound::sampleRate);
     audioFile.samples[0] = soundToSave.samples;
-        
+
+    std::filesystem::path filePath(fileName);
+    std::filesystem::path parentDir = filePath.parent_path();
+
+    if (!parentDir.empty() && !std::filesystem::exists(parentDir)) {
+        size_t line = ctx->getStart()->getLine();
+        throw std::runtime_error("Line " + std::to_string(line) + ": Directory does not exist: " + parentDir.string());
+    }
+
     if (audioFile.save(fileName)) {
         std::cout << ">>> [SYSTEM] Successfully exported SOUND to: " << fileName << std::endl;
     } 
