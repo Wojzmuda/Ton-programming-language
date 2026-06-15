@@ -95,10 +95,29 @@ std::any TonInterpreter::visitProgram(TonParser::ProgramContext *ctx) {
 }
 
 std::any TonInterpreter::visitBlock(TonParser::BlockContext *ctx) {
+    bool isFuncBody = (dynamic_cast<TonParser::FuncDefContext*>(ctx->parent) != nullptr);
+    bool isLoopBody = (dynamic_cast<TonParser::LoopStatContext*>(ctx->parent) != nullptr);
+    bool skipScope = isFuncBody || isLoopBody;
+
     auto previousScope = currentScope;
-    currentScope = std::make_shared<Scope<std::any>>(previousScope);
-    std::any result = visitChildren(ctx);
-    currentScope = previousScope;
+
+    if (!skipScope) {
+        currentScope = std::make_shared<Scope<std::any>>(previousScope);
+    }
+
+    std::any result;
+    try {
+        result = visitChildren(ctx);
+    } catch (...) {
+        if (!skipScope) {
+            currentScope = previousScope;
+        }
+        throw; 
+    }
+
+    if (!skipScope) {
+        currentScope = previousScope;
+    }
     return result;
 }
 

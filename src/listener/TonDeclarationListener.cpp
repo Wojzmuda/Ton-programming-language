@@ -138,12 +138,20 @@ void TonDeclarationListener::exitFuncDef(TonParser::FuncDefContext *ctx) {
 
 void TonDeclarationListener::enterBlock(TonParser::BlockContext *ctx)
 {
-    currentScope = std::make_shared<Scope<int>>(currentScope);
+    bool isFuncBody = dynamic_cast<TonParser::FuncDefContext*>(ctx->parent) != nullptr;
+    bool isLoopBody = dynamic_cast<TonParser::LoopStatContext*>(ctx->parent) != nullptr;
+    if (!isFuncBody && !isLoopBody) {
+        currentScope = std::make_shared<Scope<int>>(currentScope);
+    }
 }
 
 void TonDeclarationListener::exitBlock(TonParser::BlockContext *ctx){
-    if(currentScope-> parent){
-        currentScope = currentScope->parent;
+    bool isFuncBody = dynamic_cast<TonParser::FuncDefContext*>(ctx->parent) != nullptr;
+    bool isLoopBody = dynamic_cast<TonParser::LoopStatContext*>(ctx->parent) != nullptr;
+    if (!isFuncBody && !isLoopBody) {
+        if (currentScope->parent) {
+            currentScope = currentScope->parent;
+        }
     }
 }
 
