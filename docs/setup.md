@@ -33,7 +33,19 @@ This guide explains the proccess of building Tøn from source.
 
 ## 2. TLDR - Running Instalation Scripts
 
-Script for linux and windows are currently being developed
+For the fastest and seamless setup, we provide an automated instalation scripts for both Linux and Windows environments. Use it for both first time setup and updating Tøn to newer version.
+
+*The script automates the build and setup steps detailed further in this file.*
+
+### Linux :penguin:
+To run the script, simply open your terminal in the project root directory and execute the following command:
+
+```bash
+bash install-linux.sh
+```
+
+### Windows :poop:
+*Currently under development*
 
 ---
 
