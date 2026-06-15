@@ -67,7 +67,6 @@ cmake --build build
 cmake -B build
 cmake --build build
 # ^ Use -j [num of cores] for faster building
-# ^ [num of cores] = -1 takes all there is
 ```
 
 <br>
