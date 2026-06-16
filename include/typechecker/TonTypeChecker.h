@@ -17,6 +17,8 @@ private:
 public:
     TonTypeChecker(std::shared_ptr<Scope<int>> scope) : currentScope{scope} { };
 
+    std::any visitDebugDumpStat(TonParser::DebugDumpStatContext *ctx) override;
+
     std::any visitIntValExpr(TonParser::IntValExprContext *ctx) override { return std::string("INT"); }
     std::any visitNumValExpr(TonParser::NumValExprContext *ctx) override { return std::string("NUMERICAL"); }
     std::any visitBoolValExpr(TonParser::BoolValExprContext *ctx) override { return std::string("BOOL"); }

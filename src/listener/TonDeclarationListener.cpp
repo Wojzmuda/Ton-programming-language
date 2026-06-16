@@ -230,3 +230,6 @@ void TonDeclarationListener::exitArrayOpStat(TonParser::ArrayOpStatContext *ctx)
         typeChecker.visit(ctx->expr());
     }
 }
+
+void TonDeclarationListener::exitDebugDumpStat(TonParser::DebugDumpStatContext *ctx) {
+}

@@ -1,0 +1,2 @@
+!make INT pusta_zmienna ;
+!make INT wynik <- pusta_zmienna + 10 ;

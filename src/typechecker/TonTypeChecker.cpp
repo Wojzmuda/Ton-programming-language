@@ -307,3 +307,7 @@ std::any TonTypeChecker::visitArrayOpStat(TonParser::ArrayOpStatContext *ctx) {
 
     return {}; 
 }
+
+std::any TonTypeChecker::visitDebugDumpStat(TonParser::DebugDumpStatContext *ctx) {
+    return {}; 
+}

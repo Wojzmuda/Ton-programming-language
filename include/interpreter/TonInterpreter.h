@@ -47,6 +47,8 @@ public:
     TonInterpreter();
     ~TonInterpreter();
 
+    std::any visitDebugDumpStat(TonParser::DebugDumpStatContext *ctx) override;
+
     std::any visitProgram(TonParser::ProgramContext *ctx) override;
     std::any visitBlock(TonParser::BlockContext *ctx) override;
     std::any visitStatement(TonParser::StatementContext *ctx) override;

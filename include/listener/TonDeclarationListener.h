@@ -12,6 +12,8 @@ class TonDeclarationListener : public TonBaseListener {
             currentScope = std::make_shared<Scope<int>>();
         }
 
+        void exitDebugDumpStat(TonParser::DebugDumpStatContext *ctx) override;
+
         void enterVarDecl(TonParser::VarDeclContext *ctx) override;
         void enterTrackDecl(TonParser::TrackDeclContext *ctx) override;
         void enterBlock(TonParser::BlockContext *ctx) override;
