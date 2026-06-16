@@ -15,6 +15,7 @@ set(SOURCES
     src/typechecker/TonTypeChecker.cpp
     src/listener/TonDeclarationListener.cpp
     src/listener/TonSyntaxErrorListener.cpp
+    src/repl/TonRepl.cpp
     antlr4_generated/TonLexer.cpp
     antlr4_generated/TonParser.cpp
     antlr4_generated/TonBaseVisitor.cpp
@@ -26,6 +27,7 @@ set(HEADERS
     include/typechecker/TonTypeChecker.h
     include/listener/TonDeclarationListener.h
     include/listener/TonSyntaxErrorListener.h
+    include/repl/TonRepl.h
     include/core/MusicBase.h
     include/core/tsf.h
     include/core/Scope.h
