@@ -1,3 +1,5 @@
+USE bass;
+
 !shout "--- TEST OPERATORA LENGTH ---";
 
 $ 1. Test na tekście (STRING) - zwraca liczbę znaków
@@ -11,7 +13,7 @@ $ 2. Test na tablicy (ARRAY) - zwraca liczbę elementów
 !shout "Elementow w tablicy: ", ileNut;
 
 $ 3. Test na pojedynczym dźwięku (SOUND) - zwraca czas w milisekundach
-!make SOUND bas <- synth C2 1500;
+!make SOUND bas <- bass C2 1500;
 !make INT czasDzwieku <- LENGTH bas;
 !shout "Dlugosc basu (ms): ", czasDzwieku;
 
