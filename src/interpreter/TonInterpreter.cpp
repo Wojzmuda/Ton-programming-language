@@ -27,7 +27,7 @@ const std::unordered_set<std::string> TonInterpreter::SYNTHS = {
 
 
 std::shared_ptr<Scope<std::any>> TonInterpreter::resolveScope(TonParser::TargetContext *ctx) {
-    int parentCount = ctx->parentRef().size();
+    int parentCount = ctx->elderRef().size();
     auto targetScope = currentScope;
     
     for (int i = 0; i < parentCount; ++i) {
@@ -558,7 +558,7 @@ std::any TonInterpreter::visitIntValExpr(TonParser::IntValExprContext *ctx) {
 std::any TonInterpreter::visitTrackDecl(TonParser::TrackDeclContext *ctx) {
     auto targetNode = ctx->target();
     std::string timelineName = targetNode->ID(0)->getText(); 
-    std::string trackName = ctx->ID()->getText(); // Pobiera czyste ID (nazwę tracku) z reguły
+    std::string trackName = ctx->ID()->getText();
 
     auto targetScope = resolveScope(targetNode);
 
@@ -704,7 +704,6 @@ std::any TonInterpreter::visitIsolateExpr(TonParser::IsolateExprContext *ctx) {
     auto targetNode = ctx -> target();
     std::string timelineName = targetNode->ID(0)->getText();
 
-    // WDROŻENIE WZORCA DRY:
     auto targetScope = resolveScope(targetNode);
 
     if (!targetScope->exists(timelineName)){

@@ -31,9 +31,9 @@ varDecl : EXCLAM_MARK MAKE type ID (ASSIGN expr)? SEMI ;
 trackDecl : target NEW TRACK ID SEMI ;
 
 // Target żeby się dało: adresowanie wielopoziomowe: ID, ID.ID, lub ID.ID."alias"
-target : parentRef* ID (DOT ID (DOT STRING_VAL)?)? ;
+target : elderRef* ID (DOT ID (DOT STRING_VAL)?)? ;
 
-parentRef : PARENT DOUBLE_COLON ;
+elderRef : ELDER DOUBLE_COLON ;
 
 // Zeby sie dalo wywolac funkcje void
 callStat : ID L_PAREN (expr (COMMA expr)*)? R_PAREN SEMI ;
@@ -173,7 +173,7 @@ EMPTYSOUND     : 'EMPTYSOUND' ;
 VOL            : 'VOL' ;
 
 // --- Najpierw tokeny dwuznakowe / specjalne dla parent ---
-PARENT         : 'parent' ;
+ELDER         : 'ELDER' ;
 DOUBLE_COLON   : '::' ;
 
 ASSIGN         : '<-' ; 

@@ -35,7 +35,6 @@ void TonDeclarationListener::exitVarDecl(TonParser::VarDeclContext *ctx) {
 }
 
 void TonDeclarationListener::enterTrackDecl(TonParser::TrackDeclContext *ctx){
-    // ZMIANA: Pobieramy timelineName z target, a trackName z jedynego wolnego ID
     std::string timelineName = ctx->target()->ID(0)->getText(); 
     std::string trackName = ctx->ID()->getText(); 
 
@@ -183,7 +182,7 @@ void TonDeclarationListener::exitLoopStat(TonParser::LoopStatContext *ctx) {
 }
 
 void TonDeclarationListener::exitArrayOpStat(TonParser::ArrayOpStatContext *ctx) {
-    // ZMIANA: Pobieramy varName z target
+
     std::string varName = ctx->target()->ID(0)->getText();
 
     if (!currentScope->exists(varName)) {
@@ -199,7 +198,7 @@ void TonDeclarationListener::exitArrayOpStat(TonParser::ArrayOpStatContext *ctx)
                                  ": Cannot perform array operations on type " + targetType + ".");
     }
 
-    // Jeśli to operacja APPEND, sprawdzamy też wyrażenie (np. zeby wyłapać błąd w 'APPEND 10 + "tekst" TO lista')
+    
     if (ctx->APPEND()) {
         TonTypeChecker typeChecker(currentScope);
         typeChecker.visit(ctx->expr());
