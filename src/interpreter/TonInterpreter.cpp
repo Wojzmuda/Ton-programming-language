@@ -137,10 +137,12 @@ std::any TonInterpreter::visitVarDecl(TonParser::VarDeclContext *ctx) {
         if (typeName == "TIMELINE") {
             Timeline tl; tl.name = varName; value = tl;
         }
+        else if (typeName == "TRACK") value = Track();
         else if (typeName == "SOUND") value = Sound();
         else if (typeName == "INT") value = 0;
         else if (typeName == "NUMERICAL") value = 0.0;
         else if (typeName == "NOTE") value = Note();
+        else if (typeName == "BOOL") value = false;
         else if (typeName == "STRING") value = std::string("");
         else if (typeName == "CHAR") value = '\0'; 
         else if (typeName == "ARRAY") value = std::vector<std::any>{};
