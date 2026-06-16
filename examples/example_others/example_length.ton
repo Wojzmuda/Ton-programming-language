@@ -1,0 +1,27 @@
+USE bass;
+
+!shout "--- TEST OPERATORA LENGTH ---";
+
+$ 1. Test na tekście (STRING) - zwraca liczbę znaków
+!make STRING tekst <- "Tøn to super jezyk!";
+!make INT dlugoscTekstu <- LENGTH tekst;
+!shout "Znakow w tekscie: ", dlugoscTekstu;
+
+$ 2. Test na tablicy (ARRAY) - zwraca liczbę elementów
+!make ARRAY listaNut <- [C4, D4, E4, F4];
+!make INT ileNut <- LENGTH listaNut;
+!shout "Elementow w tablicy: ", ileNut;
+
+$ 3. Test na pojedynczym dźwięku (SOUND) - zwraca czas w milisekundach
+!make SOUND bas <- bass C2 1500;
+!make INT czasDzwieku <- LENGTH bas;
+!shout "Dlugosc basu (ms): ", czasDzwieku;
+
+$ 4. Test na osi czasu (TIMELINE) - zwraca czas do konca ostatniego dzwieku
+!make TIMELINE utwor;
+utwor NEW TRACK sciezka;
+$ Kładziemy bas na 0 ms i na 2000 ms (gdzie trwa 1500 ms, wiec konczy sie na 3500 ms)
+utwor.sciezka <- [bas AT 0, bas AT 2000];
+
+!make INT czasUtworu <- LENGTH utwor;
+!shout "Calkowity czas utworu (ms): ", czasUtworu;

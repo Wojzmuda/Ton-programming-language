@@ -113,7 +113,7 @@ expr
     | CHAR_VAL                                                 # CharValExpr
     | STRING_VAL                                               # StringValExpr
     | target                                                   # TargetExpr       // Zastępuje samo ID, by wspierać np. t1.skrzypeczki
-    | LENGTH target                                            # LengthOfExpr 
+    | LENGTH expr                                            # LengthOfExpr 
     | EMPTYSOUND                                               # EmptySoundExpr   
     | ISOLATE target                                           # IsolateExpr
     | POP ID                                                   # PopExpr                        
