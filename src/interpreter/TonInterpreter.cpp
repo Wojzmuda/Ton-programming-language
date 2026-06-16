@@ -1130,7 +1130,7 @@ std::any TonInterpreter::visitFuncDef(TonParser::FuncDefContext *ctx){
 
 std::any TonInterpreter::visitFunctionCallExpr(TonParser::FunctionCallExprContext *ctx){
         std::string funcName = ctx->ID()->getText();
-        return executeFunctionLogic(funcName, ctx->expr());.
+        return executeFunctionLogic(funcName, ctx->expr());
 }
 
 std::any TonInterpreter::visitCallStat(TonParser::CallStatContext *ctx){
