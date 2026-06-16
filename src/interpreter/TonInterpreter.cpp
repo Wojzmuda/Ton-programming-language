@@ -22,7 +22,9 @@ const std::unordered_map<std::string, int> TonInterpreter::SAMPLE_INSTRUMENTS = 
 };
 
 const std::unordered_set<std::string> TonInterpreter::SYNTHS = {
-    "sine"
+    "sine",
+    "saw",
+    "square"
 };
 
 std::string TonInterpreter::findSoundFontPath() {
@@ -1128,7 +1130,7 @@ std::any TonInterpreter::visitFuncDef(TonParser::FuncDefContext *ctx){
 
 std::any TonInterpreter::visitFunctionCallExpr(TonParser::FunctionCallExprContext *ctx){
         std::string funcName = ctx->ID()->getText();
-        return executeFunctionLogic(funcName, ctx->expr());
+        return executeFunctionLogic(funcName, ctx->expr());.
 }
 
 std::any TonInterpreter::visitCallStat(TonParser::CallStatContext *ctx){
@@ -1232,7 +1234,7 @@ std::any TonInterpreter::executeFunctionLogic(const std:: string& funcName, cons
             else if (expectedReturnType == "CHAR" && result.type() == typeid(char)) typeMatch = true;
             else if (expectedReturnType == "STRING" && result.type() == typeid(std::string)) typeMatch = true;
             else if (expectedReturnType == "ARRAY" && result.type() == typeid(std::vector<std::any>)) typeMatch = true;
-            else if (expectedReturnType == "NOTE" && result.type() == typeid(Note)) typeMatch = true;
+            else if (expectedReturnType == "NOTE" && result.type() == typeid(Note)) typeMatch = true;.
             else if (expectedReturnType == "SOUND" && result.type() == typeid(Sound)) typeMatch = true;
             else if (expectedReturnType == "INSTRUMENT" && result.type() == typeid(Instrument)) typeMatch = true;
             else if (expectedReturnType == "TIMELINE" && result.type() == typeid(Timeline)) typeMatch = true;
