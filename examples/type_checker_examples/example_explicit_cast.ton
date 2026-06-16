@@ -1,0 +1,50 @@
+$ ---------------------------------------------------------
+$ Testowanie jawnego rzutowania typów (Explicit Casting)
+$ ---------------------------------------------------------
+
+$ 1. NUMERICAL <-> INT
+!make NUMERICAL pi <- 3.1415;
+!make INT pi_calkowite <- <INT>pi;
+!shout "Wartosc Pi: ", pi;
+!shout "Po zrzutowaniu na INT: ", pi_calkowite;  $ Wypisze: 3
+
+
+$ 2. INT <-> BOOL
+!make INT status_kodu <- 1;
+!make BOOL czy_dziala <- <BOOL>status_kodu;
+
+!if <czy_dziala> {
+    !shout "Status to 1, wiec flaga to TRUE!";
+}
+
+
+$ 3. INT / NUMERICAL -> STRING
+!make INT bpm <- 120;
+!make STRING bpm_tekst <- <STRING>bpm;
+
+$ Teraz mozemy bezpiecznie uzyc konkatenacji (&) dla dwoch stringow!
+!make STRING komunikat <- "Tempo utworu wynosi: " & bpm_tekst;
+!shout komunikat;
+
+
+$ 4. STRING -> CHAR (Dozwolone tylko dla 1 znaku)
+!make STRING ocena_str <- "A";
+!make CHAR ocena <- <CHAR>ocena_str;
+!shout "Twoja ocena za ten kod to: ", ocena;
+
+
+$ ---------------------------------------------------------
+$ CZEGO KOMPILATOR/INTERPRETER TERAZ NIE PRZEPUŚCI:
+$ ---------------------------------------------------------
+
+$ BŁĄD INTERPRETERA (Runtime Error):
+$ !make CHAR zly_znak <- <CHAR>"ABC"; 
+$ ^ Wyrzuci błąd: "Cannot cast STRING to CHAR. String must have exactly 1 character..."
+
+$ BŁĄD TYPECHECKERA (Compile-time Error):
+$ !make CHAR z_liczby <- <CHAR>65; 
+$ ^ Wyrzuci błąd: "Cannot explicitly cast <INT> to <CHAR>." (bo to wyłączyliśmy!)
+
+$ BŁĄD TYPECHECKERA:
+$ !make INT z_tekstu <- <INT>"100";
+$ ^ Wyrzuci błąd: "Cannot explicitly cast <STRING> to <INT>."

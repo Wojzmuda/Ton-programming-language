@@ -96,7 +96,8 @@ expr
     | ID expr expr expr?                                       # CreateSoundExpr
     | expr (AS STRING_VAL)? AT expr                            # TrackEventExpr
     | expr L_BRACKET expr COLON expr R_BRACKET                 # SliceExpr   
-    | expr L_BRACKET expr R_BRACKET                            # IndexExpr    
+    | expr L_BRACKET expr R_BRACKET                            # IndexExpr  
+    | L_ANGLE type R_ANGLE expr                                # CastExpr  
     | L_PAREN expr R_PAREN                                     # ParensExpr
     | (NOT_KW) expr                                            # NotExpr
     | (PLUS | MINUS) expr                                      # UnaryExpr
@@ -113,7 +114,7 @@ expr
     | CHAR_VAL                                                 # CharValExpr
     | STRING_VAL                                               # StringValExpr
     | target                                                   # TargetExpr       // Zastępuje samo ID, by wspierać np. t1.skrzypeczki
-    | LENGTH target                                            # LengthOfExpr 
+    | LENGTH expr                                            # LengthOfExpr 
     | EMPTYSOUND                                               # EmptySoundExpr   
     | ISOLATE target                                           # IsolateExpr
     | POP ID                                                   # PopExpr                        

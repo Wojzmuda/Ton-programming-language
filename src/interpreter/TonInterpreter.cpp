@@ -22,7 +22,9 @@ const std::unordered_map<std::string, int> TonInterpreter::SAMPLE_INSTRUMENTS = 
 };
 
 const std::unordered_set<std::string> TonInterpreter::SYNTHS = {
-    "sine"
+    "sine",
+    "saw",
+    "square"
 };
 
 bool TonInterpreter::doTypesMatch(const std::string &expectedTypeName, const std::any &value)
@@ -1426,6 +1428,55 @@ std::any TonInterpreter::visitPopExpr(TonParser::PopExprContext *ctx) {
     return poppedItem;
 }
 
+std::any TonInterpreter::visitCastExpr(TonParser::CastExprContext *ctx) {
+    std::string targetType = ctx->type()->getText();
+    std::any val = visit(ctx->expr());
+    size_t line = ctx->getStart()->getLine();
+
+    if (targetType == "INT") {
+        if (val.type() == typeid(double)) return static_cast<int>(std::any_cast<double>(val));
+        if (val.type() == typeid(bool)) return std::any_cast<bool>(val) ? 1 : 0;
+        if (val.type() == typeid(int)) return val; 
+    }
+    
+
+    else if (targetType == "NUMERICAL") {
+        if (val.type() == typeid(int)) return static_cast<double>(std::any_cast<int>(val));
+        if (val.type() == typeid(double)) return val;
+    }
+
+
+    else if (targetType == "BOOL") {
+        if (val.type() == typeid(int)) return std::any_cast<int>(val) != 0;
+        if (val.type() == typeid(bool)) return val;
+    }
+
+
+    else if (targetType == "STRING") {
+        if (val.type() == typeid(char)) return std::string(1, std::any_cast<char>(val));
+        if (val.type() == typeid(int)) return std::to_string(std::any_cast<int>(val));
+        if (val.type() == typeid(double)) {
+            std::string s = std::to_string(std::any_cast<double>(val));
+            s.erase(s.find_last_not_of('0') + 1, std::string::npos); 
+            if (s.back() == '.') s.pop_back(); 
+            return s;
+        }
+        if (val.type() == typeid(std::string)) return val;
+    }
+
+else if (targetType == "CHAR") {
+        if (val.type() == typeid(std::string)) {
+            std::string s = std::any_cast<std::string>(val);
+            if (s.length() != 1) { 
+                throw std::runtime_error("Line " + std::to_string(line) + 
+                                         ": Cannot cast STRING to CHAR. String must have exactly 1 character, given " + std::to_string(s.length()) + ".");
+            }
+            return s[0];
+        }
+        if (val.type() == typeid(char)) return val;
+    }
+    throw std::runtime_error("Line " + std::to_string(line) + ": Invalid explicit cast to <" + targetType + "> from the given expression.");
+}
 std::any TonInterpreter::visitLengthOfExpr(TonParser::LengthOfExprContext *ctx) {
     std::any val = visit(ctx->expr());
 
@@ -1455,6 +1506,7 @@ std::any TonInterpreter::visitLengthOfExpr(TonParser::LengthOfExprContext *ctx) 
         return maxMs;
     }
 
+    
     else if (val.type() == typeid(Timeline)) {
         Timeline tl = std::any_cast<Timeline>(val);
         int maxMs = 0;
@@ -1471,5 +1523,6 @@ std::any TonInterpreter::visitLengthOfExpr(TonParser::LengthOfExprContext *ctx) 
 
     size_t line = ctx->getStart()->getLine();
     throw std::runtime_error("Line " + std::to_string(line) +
+    throw std::runtime_error("Runtime Error in line " + std::to_string(line) + 
                              ": LENGTH operator requires STRING, ARRAY, SOUND, TRACK, or TIMELINE.");
 }
