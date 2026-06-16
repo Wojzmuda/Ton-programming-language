@@ -22,7 +22,9 @@ const std::unordered_map<std::string, int> TonInterpreter::SAMPLE_INSTRUMENTS = 
 };
 
 const std::unordered_set<std::string> TonInterpreter::SYNTHS = {
-    "sine"
+    "sine",
+    "saw",
+    "square"
 };
 
 std::string TonInterpreter::findSoundFontPath() {
@@ -137,10 +139,12 @@ std::any TonInterpreter::visitVarDecl(TonParser::VarDeclContext *ctx) {
         if (typeName == "TIMELINE") {
             Timeline tl; tl.name = varName; value = tl;
         }
+        else if (typeName == "TRACK") value = Track();
         else if (typeName == "SOUND") value = Sound();
         else if (typeName == "INT") value = 0;
         else if (typeName == "NUMERICAL") value = 0.0;
         else if (typeName == "NOTE") value = Note();
+        else if (typeName == "BOOL") value = false;
         else if (typeName == "STRING") value = std::string("");
         else if (typeName == "CHAR") value = '\0'; 
         else if (typeName == "ARRAY") value = std::vector<std::any>{};
@@ -1126,7 +1130,7 @@ std::any TonInterpreter::visitFuncDef(TonParser::FuncDefContext *ctx){
 
 std::any TonInterpreter::visitFunctionCallExpr(TonParser::FunctionCallExprContext *ctx){
         std::string funcName = ctx->ID()->getText();
-        return executeFunctionLogic(funcName, ctx->expr());
+        return executeFunctionLogic(funcName, ctx->expr());.
 }
 
 std::any TonInterpreter::visitCallStat(TonParser::CallStatContext *ctx){
@@ -1230,7 +1234,7 @@ std::any TonInterpreter::executeFunctionLogic(const std:: string& funcName, cons
             else if (expectedReturnType == "CHAR" && result.type() == typeid(char)) typeMatch = true;
             else if (expectedReturnType == "STRING" && result.type() == typeid(std::string)) typeMatch = true;
             else if (expectedReturnType == "ARRAY" && result.type() == typeid(std::vector<std::any>)) typeMatch = true;
-            else if (expectedReturnType == "NOTE" && result.type() == typeid(Note)) typeMatch = true;
+            else if (expectedReturnType == "NOTE" && result.type() == typeid(Note)) typeMatch = true;.
             else if (expectedReturnType == "SOUND" && result.type() == typeid(Sound)) typeMatch = true;
             else if (expectedReturnType == "INSTRUMENT" && result.type() == typeid(Instrument)) typeMatch = true;
             else if (expectedReturnType == "TIMELINE" && result.type() == typeid(Timeline)) typeMatch = true;
@@ -1449,4 +1453,51 @@ else if (targetType == "CHAR") {
         if (val.type() == typeid(char)) return val;
     }
     throw std::runtime_error("Line " + std::to_string(line) + ": Invalid explicit cast to <" + targetType + "> from the given expression.");
+}
+std::any TonInterpreter::visitLengthOfExpr(TonParser::LengthOfExprContext *ctx) {
+    std::any val = visit(ctx->expr());
+
+
+    if (val.type() == typeid(std::string)) {
+        return static_cast<int>(std::any_cast<std::string>(val).length());
+    }
+
+    else if (val.type() == typeid(std::vector<std::any>)) {
+        return static_cast<int>(std::any_cast<std::vector<std::any>>(val).size());
+    }
+
+    else if (val.type() == typeid(Sound)) {
+        Sound s = std::any_cast<Sound>(val);
+        double durationSec = static_cast<double>(s.samples.size()) / s.sampleRate;
+        return static_cast<int>(durationSec * 1000.0);
+    }
+
+    else if (val.type() == typeid(Track)) {
+        Track t = std::any_cast<Track>(val);
+        int maxMs = 0;
+        for (const auto& ev : t.events) {
+            double durationSec = static_cast<double>(ev.sound.samples.size()) / ev.sound.sampleRate;
+            int endMs = ev.startTimeMs + static_cast<int>(durationSec * 1000.0);
+            if (endMs > maxMs) maxMs = endMs;
+        }
+        return maxMs;
+    }
+    
+    else if (val.type() == typeid(Timeline)) {
+        Timeline tl = std::any_cast<Timeline>(val);
+        int maxMs = 0;
+        for (const auto& trackPair : tl.tracks) {
+            for (const auto& ev : trackPair.second.events) {
+                double durationSec = static_cast<double>(ev.sound.samples.size()) / ev.sound.sampleRate;
+                int endMs = ev.startTimeMs + static_cast<int>(durationSec * 1000.0);
+                if (endMs > maxMs) maxMs = endMs;
+            }
+        }
+        return maxMs;
+    }
+
+
+    size_t line = ctx->getStart()->getLine();
+    throw std::runtime_error("Runtime Error in line " + std::to_string(line) + 
+                             ": LENGTH operator requires STRING, ARRAY, SOUND, TRACK, or TIMELINE.");
 }
