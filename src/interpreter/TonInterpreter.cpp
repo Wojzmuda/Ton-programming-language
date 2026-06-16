@@ -1234,7 +1234,7 @@ std::any TonInterpreter::executeFunctionLogic(const std:: string& funcName, cons
             else if (expectedReturnType == "CHAR" && result.type() == typeid(char)) typeMatch = true;
             else if (expectedReturnType == "STRING" && result.type() == typeid(std::string)) typeMatch = true;
             else if (expectedReturnType == "ARRAY" && result.type() == typeid(std::vector<std::any>)) typeMatch = true;
-            else if (expectedReturnType == "NOTE" && result.type() == typeid(Note)) typeMatch = true;.
+            else if (expectedReturnType == "NOTE" && result.type() == typeid(Note)) typeMatch = true;
             else if (expectedReturnType == "SOUND" && result.type() == typeid(Sound)) typeMatch = true;
             else if (expectedReturnType == "INSTRUMENT" && result.type() == typeid(Instrument)) typeMatch = true;
             else if (expectedReturnType == "TIMELINE" && result.type() == typeid(Timeline)) typeMatch = true;
