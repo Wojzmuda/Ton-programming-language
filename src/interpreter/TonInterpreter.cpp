@@ -1446,9 +1446,7 @@ else if (targetType == "CHAR") {
             }
             return s[0];
         }
-        if (val.type() == typeid(int)) return static_cast<char>(std::any_cast<int>(val));
-        if (val.type() == typeid(double)) return static_cast<char>(static_cast<int>(std::any_cast<double>(val)));
         if (val.type() == typeid(char)) return val;
-
+    }
     throw std::runtime_error("Line " + std::to_string(line) + ": Invalid explicit cast to <" + targetType + "> from the given expression.");
 }

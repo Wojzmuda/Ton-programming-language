@@ -257,3 +257,41 @@ std::any TonTypeChecker::visitPopExpr(TonParser::PopExprContext *ctx) {
     // Zwracamy "UNKNOWN", zostawiając weryfikację właściwemu Interpreterowi.
     return std::string("UNKNOWN");
 }
+
+
+std::any TonTypeChecker::visitCastExpr(TonParser::CastExprContext *ctx) {
+
+    std::string targetType = ctx->type()->getText();
+    
+
+    std::string exprType = std::any_cast<std::string>(visit(ctx->expr()));
+    size_t line = ctx->getStart()->getLine();
+
+    
+    if (exprType == "UNKNOWN") {
+        return targetType;
+    }
+
+    if (targetType == "INT") {
+        if (exprType == "NUMERICAL" || exprType == "BOOL" || exprType == "INT") return std::string("INT");
+    }
+
+    else if (targetType == "NUMERICAL") {
+        if (exprType == "INT" || exprType == "NUMERICAL") return std::string("NUMERICAL");
+    }
+   
+    else if (targetType == "BOOL") {
+        if (exprType == "INT" || exprType == "BOOL") return std::string("BOOL");
+    }
+
+    else if (targetType == "STRING") {
+        if (exprType == "CHAR" || exprType == "INT" || exprType == "NUMERICAL" || exprType == "STRING") return std::string("STRING");
+    }
+
+else if (targetType == "CHAR") {
+        if (exprType == "STRING" || exprType == "CHAR") return std::string("CHAR");
+    }
+
+    throw std::runtime_error("Type Error in line " + std::to_string(line) +
+                             ": Cannot explicitly cast <" + exprType + "> to <" + targetType + ">.");
+}
