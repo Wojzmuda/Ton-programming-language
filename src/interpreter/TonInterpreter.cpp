@@ -22,7 +22,9 @@ const std::unordered_map<std::string, int> TonInterpreter::SAMPLE_INSTRUMENTS = 
 };
 
 const std::unordered_set<std::string> TonInterpreter::SYNTHS = {
-    "sine"
+    "sine",
+    "saw",
+    "square"
 };
 
 std::string TonInterpreter::findSoundFontPath() {
