@@ -1,8 +1,27 @@
 #include "typechecker/TonTypeChecker.h"
 
+template <typename T>
+static std::shared_ptr<Scope<T>> resolveElderScopeTC(std::shared_ptr<Scope<T>> currentScope, int elderCount, size_t line) {
+    auto targetScope = currentScope;
+    for (int i = 0; i < elderCount; ++i) {
+        if (targetScope->parent != nullptr) {
+            targetScope = targetScope->parent;
+        } else {
+            throw std::runtime_error("Type Error in line " + std::to_string(line) + ": 'ELDER::' reached beyond global scope.");
+        }
+    }
+    return targetScope;
+}
+
+
 std::any TonTypeChecker::visitTargetExpr(TonParser::TargetExprContext *ctx) {
+    int elderCount = ctx->target()->elderRef().size();
+    auto targetScope = resolveElderScopeTC(currentScope, elderCount, ctx->getStart()->getLine());
+    
     std::string baseVarName = ctx->target()->ID(0)->getText();
-    std::string type = currentScope->resolveType(baseVarName);
+   
+    std::string type = targetScope->resolveType(baseVarName); 
+    
     if (ctx->target()->ID().size() > 1) {
         return std::string("SOUND");
     }
@@ -234,15 +253,18 @@ std::any TonTypeChecker::visitSliceExpr(TonParser::SliceExprContext *ctx) {
 
 
 std::any TonTypeChecker::visitPopExpr(TonParser::PopExprContext *ctx) {
+    int elderCount = ctx->target()->elderRef().size();
+    auto targetScope = resolveElderScopeTC(currentScope, elderCount, ctx->getStart()->getLine());
+    
     std::string varName = ctx->target()->ID(0)->getText();
 
-    if (!currentScope->exists(varName)) {
+    if (!targetScope->exists(varName)) { 
         size_t line = ctx->getStart()->getLine();
         throw std::runtime_error("Type Error in line " + std::to_string(line) + 
                                  ": Array '" + varName + "' is not defined.");
     }
 
-    std::string targetType = currentScope->resolveType(varName);
+    std::string targetType = targetScope->resolveType(varName);
     if (targetType != "ARRAY") {
         size_t line = ctx->getStart()->getLine();
         throw std::runtime_error("Type Error in line " + std::to_string(line) + 
@@ -253,16 +275,18 @@ std::any TonTypeChecker::visitPopExpr(TonParser::PopExprContext *ctx) {
 }
 
 std::any TonTypeChecker::visitArrayOpStat(TonParser::ArrayOpStatContext *ctx) {
+    int elderCount = ctx->target()->elderRef().size();
+    auto targetScope = resolveElderScopeTC(currentScope, elderCount, ctx->getStart()->getLine());
     
     std::string varName = ctx->target()->ID(0)->getText();
 
-    if (!currentScope->exists(varName)) {
+    if (!targetScope->exists(varName)) {
         size_t line = ctx->getStart()->getLine();
         throw std::runtime_error("Type Error in line " + std::to_string(line) + 
                                  ": Array '" + varName + "' is not defined.");
     }
 
-    std::string targetType = currentScope->resolveType(varName);
+    std::string targetType = targetScope->resolveType(varName);
     if (targetType != "ARRAY") {
         size_t line = ctx->getStart()->getLine();
         throw std::runtime_error("Type Error in line " + std::to_string(line) + 
