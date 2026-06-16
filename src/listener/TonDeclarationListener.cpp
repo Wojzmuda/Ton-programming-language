@@ -169,7 +169,7 @@ void TonDeclarationListener::enterLoopStat(TonParser::LoopStatContext *ctx) {
         } else {
             if (!currentScope->parent || !currentScope->parent->exists(varName)) {
                 throw std::runtime_error("Validation Error in line " + std::to_string(currentLine) + 
-                                         ": Variable '" + varName + "' used in loop without type declaration is not defined.");
+                         ": Variable '" + varName + "' used in loop declaration is not defined.");
             }
         }
     }
