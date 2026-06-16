@@ -40,7 +40,7 @@ echo ">>> [4/6] Configuring CMake environment."
 cmake -B build
 
 echo ">>> [5/6] Building Tøn..."
-cmake --build build -j
+cmake --build build -j $(nproc)
 
 echo ">>> [6/6] Adding the interpreter to the system PATH"
 mkdir -p "$BIN_DIR"
