@@ -151,7 +151,18 @@ std::any TonTypeChecker::visitArrayExpr(TonParser::ArrayExprContext *ctx) {
     return std::string("ARRAY"); 
 }
 
-std::any TonTypeChecker::visitLengthOfExpr(TonParser::LengthOfExprContext *ctx) { return std::string("INT"); }
+std::any TonTypeChecker::visitLengthOfExpr(TonParser::LengthOfExprContext *ctx) { 
+    std::string type = std::any_cast<std::string>(visit(ctx->expr()));
+    
+    if (type != "STRING" && type != "ARRAY" && type != "SOUND" && 
+        type != "TRACK" && type != "TIMELINE" && type != "UNKNOWN") {
+        size_t line = ctx->getStart()->getLine();
+        throw std::runtime_error("Type Error in line " + std::to_string(line) + 
+            ": LENGTH operator requires STRING, ARRAY, SOUND, TRACK, or TIMELINE. Given: " + type);
+    }
+    
+    return std::string("INT"); 
+}
 std::any TonTypeChecker::visitIsolateExpr(TonParser::IsolateExprContext *ctx) { return std::string("SOUND"); }
 
 
