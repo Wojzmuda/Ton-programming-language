@@ -145,24 +145,28 @@ std::any TonInterpreter::visitVarDecl(TonParser::VarDeclContext *ctx) {
     std::string typeName = ctx->type()->getText(); 
 
     std::any value;
+    bool hasValue = false;
 
     if (ctx->expr()) {
         value = visit(ctx->expr());
+        hasValue = true; 
     } else {
+        
         if (typeName == "TIMELINE") {
             Timeline tl; tl.name = varName; value = tl;
+            hasValue = true;
         }
-        else if (typeName == "SOUND") value = Sound();
+        else if (typeName == "SOUND") { value = Sound(); hasValue = true; }
+        else if (typeName == "ARRAY") { value = std::vector<std::any>{}; hasValue = true; }
         else if (typeName == "INT") value = 0;
         else if (typeName == "NUMERICAL") value = 0.0;
         else if (typeName == "NOTE") value = Note();
         else if (typeName == "STRING") value = std::string("");
         else if (typeName == "CHAR") value = '\0'; 
-        else if (typeName == "ARRAY") value = std::vector<std::any>{};
         else value = {};
     }
 
-    currentScope->define(varName, typeName, value);
+    currentScope->define(varName, typeName, value, hasValue);
     return value;
 }
 
