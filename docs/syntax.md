@@ -255,14 +255,20 @@ Strings support relational operators, making it easy to build logic around text 
 
 ```
 
-**Retrieving Length**
-???
+#### Retrieving String Length
+Tøn provides `LENGTH` operator which can be used on `ARRAY` object and returns a positive `INT` number.
+```
+!make STRING x <- "May the force be with you"
+!make INT x_len <- LENGTH x;
+!shout x_len;
+$ prints 25
+```
 
 ### Arrays (`ARRAY`)
 
 Arrays are collections of items grouped together under a single variable name. They are defined using square brackets `[ ]` with elements separated by commas.
 
-**Creation and Assignment**
+#### Creation and Assignment
 You can create an array of numbers, notes, or even sounds.
 
 ```text
@@ -270,11 +276,49 @@ You can create an array of numbers, notes, or even sounds.
 !make ARRAY notes <- [C4, E4, G4];
 
 ```
+#### Retrieving Array Length
+Tøn provides `LENGTH` operator which can be used on `ARRAY` object and returns a positive `INT` number.
+```
+!make ARRAY x <- ["may", "the", "force", "be", "with", "you"];
+!make INT x_len <- LENGTH x;
+!shout x_len;
+$ prints 6
+```
 
-**Iterating Over Arrays (Foreach Loop)**
-???
+#### Array Indexing & Slicing
+Tøn provides a robust syntax for accessing elements within an `ARRAY` using square brackets `[]`.
 
-**Retrieving Array Length**
+**Indexing (`array[index]`)**
+Retrieves a single element. Arrays are 0-indexed. Negative indices count backwards from the end of the array (e.g., `-1` is the last element). Requesting an out-of-bounds index is strict and will throw a runtime error.
 
-???
+```text
+!make ARRAY nums <- [10, 20, 30];
+!make INT first <- nums[0];  $ Returns 10
+!make INT last <- nums[-1];  $ Returns 30
+```
+**Slicing (array[start:end])**
+Extracts a sub-array starting at the start index up to, but not including, the end index. Unlike indexing, slicing is highly forgiving: out-of-bounds ranges are safely clamped to the array's limits, and logically invalid ranges simply return an empty array without crashing the execution.
 
+```text
+!make ARRAY sub <- nums[0:2];    $ Returns [10, 20]
+!make ARRAY safe <- nums[1:100]; $ Returns [20, 30] (Safely clamped)
+```
+### Dynamic Array Operations
+Tøn allows you to modify the contents of an `ARRAY` dynamically during execution using specific domain keywords.
+
+* **`APPEND <expr> TO <array>`**: Adds a new element to the end of the specified array.
+* **`POP <array>`**: Removes the last element from the array and returns it. Because it returns a value, `POP` must be used as part of an expression (e.g., assigned to a variable).
+* **`CLEAR <array>`**: Completely empties the array, removing all its elements.
+
+```text
+!make ARRAY playlist <- ["Track A", "Track B"];
+
+$ Add a new element
+APPEND "Track C" TO playlist;  
+
+$ Remove and capture the last element
+!make STRING lastSong <- POP playlist;  $ Returns "Track C"
+
+$ Empty the array
+CLEAR playlist;  $ playlist is now [ ]
+```
