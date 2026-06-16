@@ -1,0 +1,16 @@
+$ TEST 3: Poprawne działanie pętli z !break i !continue
+!shout "--- START TESTU ---";
+
+!loop < 3 TIMES > {
+    !shout "Start iteracji...";
+    !continue;
+    !shout "ERROR: To sie nigdy nie wypisze!";
+}
+
+!loop < INT k FROM 1 TO 5 > {
+    !shout "Wejscie do petli i natychmiastowy break!";
+    !break;
+    !shout "ERROR: To tez sie nie wypisze!";
+}
+
+!shout "--- KONIEC TESTU (Sukces) ---";
