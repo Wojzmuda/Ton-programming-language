@@ -53,4 +53,5 @@ public:
     std::any visitIsolateExpr(TonParser::IsolateExprContext *ctx) override;
 
     std::any visitPopExpr(TonParser::PopExprContext *ctx) override;
+    std::any visitCastExpr(TonParser::CastExprContext *ctx) override;
 };
