@@ -100,14 +100,14 @@ audioOpStat
     | target VOL expr SEMI
     ;
 
-playStat : PLAY target SEMI ;
+
 saveStat : EXCLAM_MARK SAVE expr STRING_VAL SEMI ;
 ```
 
 **Features:**
 - Real-time manipulation of audio targets (shifting, moving, muting)
 - Multi-level addressing support via `target` rule (e.g., `t1.violin."chorus"`)
-- Direct audio playback and file saving
+- Direct audio  file saving
 
 ### 2.5 Control Flow Statements
 
@@ -189,7 +189,10 @@ COMMENT    : '$' ~[\r\n]* -> skip ;
 expr : L_ANGLE type R_ANGLE expr ; # CastExpr
 ```
 
-The language supports explicit type casting for basic data types (`INT`, `NUMERICAL`, `BOOL`, `STRING`, `CHAR`). It handles safe string conversions, truncation of floating-point numbers, and boolean evaluations natively.
+The `visitCastExpr` module strictly defines a safe casting matrix:
+- **Numeric/Logic:** `INT`, `NUMERICAL`, and `BOOL` are mutually convertible.
+- **Textual:** `STRING` can safely absorb `CHAR`, `INT`, `NUMERICAL`, and `STRING`. `CHAR` strictly accepts only `STRING` or `CHAR`.
+- **Dynamic:** The `UNKNOWN` type (e.g., from arrays) bypasses static casting limits, deferring final type validation to the runtime engine.
 
 ## 3. System Overview
 
@@ -433,6 +436,9 @@ void TonSyntaxErrorListener::syntaxError(antlr4::Recognizer *recognizer,
               << "    " << message << "\n";
 }
 ```
+#### 4.4.2 Semantic Typo Correction (Levenshtein Algorithm)
+The Typechecker enhances Developer Experience (DX) by implementing the Levenshtein distance algorithm. When an unresolved identifier (variable, array, or function) is encountered, the compiler scans the `Scope` for all currently visible names. If a known identifier has an edit distance of less than 3, it intercepts the standard error and appends a smart suggestion (e.g., `"Variable 'X' is not defined. Suggestion: Did you mean 'Y'?"`).
+
 
 ### 4.5 Variable Scoping and Semantic Pre-processing
 
@@ -486,8 +492,8 @@ The listener heavily validates assignments (`exitAssignment`), splitting logic b
 - **Scenario B1**: Assignment to a specific alias within a Timeline track (e.g., `mySong.bassline."start"`), validating that only `SOUND` or `TRACK_EVENT` types are assigned
 - **Scenario B2**: Whole-track assignment (e.g., `mySong.bassline <- [...]`), requiring `ARRAY` or `TRACK_EVENT` types
 
-#### 4.5.5 Explicit Scope Resolution
-To handle deep nesting (e.g., inside loops or function calls), the `resolveScope` mechanism allows for explicit upward scope traversal. By utilizing `elderRef()`, the interpreter can bypass the local namespace and intentionally target variables in outer scopes, effectively solving variable shadowing issues without breaking strict lexical scoping rules.
+#### 4.5.5 Multi-Level Scope Climbing (`ELDER::`)
+To handle deep nesting, the `ELDER::` operator allows for explicit upward scope traversal. The implementation (`resolveElderScopeTC`) supports cascading resolution (e.g., `ELDER::ELDER::varName`). The Typechecker iterates up the parent hierarchy based on the token count and strictly enforces bounds, throwing a compile-time exception if the user attempts to reach beyond the global scope.
 
 ### 4.6 Static Analysis (Typechecker)
 
@@ -501,6 +507,8 @@ The typechecker implements strict rules for domain-specific musical types (`SOUN
 // CreateSound validation: arg1 must be NOTE, arg2 must be INT
 // MulDiv validation: SOUND / x is forbidden, SOUND * NUMERICAL is allowed
 ```
+**Semantic Guardrails & DX:**
+The module provides actionable, domain-specific feedback rather than generic type mismatches. For example, attempting to use the division operator on a `SOUND` object triggers an educational compiler hint rather than a raw crash: `"Cannot divide a SOUND. Use multiplication with fractions (e.g. SOUND * 0.5) instead."`
 
 #### 4.6.2 Dynamic Arrays & UNKNOWN Types
 
