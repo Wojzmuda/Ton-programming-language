@@ -219,6 +219,25 @@ Functions are created using the `!define` keyword, followed by the return type, 
     }
 }
 ```
+---
+
+## 5. Functions & Scoping
+
+Tøn allows you to encapsulate logic into functions and manage memory dynamically using block scopes. 
+
+### Defining Functions
+Functions are created using the `!define` keyword, followed by the return type, the function name, and its arguments inside angle brackets `< >`. Use the `!out` keyword to return a value.
+
+```text
+!define STRING introduce <INT arg1, INT arg2> {
+    !if <arg1 > arg2> {
+        !out "High";
+    }
+    !otherwise {
+        !out "Low";
+    }
+}
+```
 
 ### Calling Functions
 How you call a function depends strictly on its return type:
