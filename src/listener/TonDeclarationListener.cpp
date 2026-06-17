@@ -175,7 +175,33 @@ void TonDeclarationListener::exitBlock(TonParser::BlockContext *ctx){
     }
 }
 
+
+void TonDeclarationListener::exitArrayOpStat(TonParser::ArrayOpStatContext *ctx) {
+    std::string varName = ctx->ID()->getText();
+
+    if (!currentScope->exists(varName)) {
+        size_t line = ctx->getStart()->getLine();
+        throw std::runtime_error("Error in line " + std::to_string(line) +
+                                 ": Variable '" + varName + "' is not defined.");
+    }
+
+    std::string targetType = currentScope->resolveType(varName);
+    if (targetType != "ARRAY") {
+        size_t line = ctx->getStart()->getLine();
+        throw std::runtime_error("Type Error in line " + std::to_string(line) +
+                                 ": Cannot perform array operations on type " + targetType + ".");
+    }
+
+    // Jeśli to operacja APPEND, sprawdzamy też wyrażenie (np. zeby wyłapać błąd w 'APPEND 10 + "tekst" TO lista')
+    if (ctx->APPEND()) {
+        TonTypeChecker typeChecker(currentScope);
+        typeChecker.visit(ctx->expr());
+    }
+}
+
+
 void TonDeclarationListener::enterLoopStat(TonParser::LoopStatContext *ctx) {
+    loopLevel++;
     currentScope = std::make_shared<Scope<int>>(currentScope);
 
     int currentLine = ctx->getStart()->getLine();
@@ -194,6 +220,7 @@ void TonDeclarationListener::enterLoopStat(TonParser::LoopStatContext *ctx) {
 }
 
 void TonDeclarationListener::exitLoopStat(TonParser::LoopStatContext *ctx) {
+    loopLevel--; 
     if (currentScope->parent) {
         currentScope = currentScope->parent;
     }
@@ -220,5 +247,28 @@ void TonDeclarationListener::exitArrayOpStat(TonParser::ArrayOpStatContext *ctx)
     if (ctx->APPEND()) {
         TonTypeChecker typeChecker(currentScope); 
         typeChecker.visit(ctx->expr());
+    }
+}
+void TonDeclarationListener::enterUntilStat(TonParser::UntilStatContext *ctx) {
+    loopLevel++;
+}
+
+void TonDeclarationListener::exitUntilStat(TonParser::UntilStatContext *ctx) {
+    loopLevel--;
+}
+
+void TonDeclarationListener::enterBreakStat(TonParser::BreakStatContext *ctx) {
+    if (loopLevel == 0) {
+        size_t line = ctx->getStart()->getLine();
+        throw std::runtime_error("Validation Error in line " + std::to_string(line) + 
+                                 ": '!break' statement is not allowed outside of a loop.");
+    }
+}
+
+void TonDeclarationListener::enterContinueStat(TonParser::ContinueStatContext *ctx) {
+    if (loopLevel == 0) {
+        size_t line = ctx->getStart()->getLine();
+        throw std::runtime_error("Validation Error in line " + std::to_string(line) + 
+                                 ": '!continue' statement is not allowed outside of a loop.");
     }
 }

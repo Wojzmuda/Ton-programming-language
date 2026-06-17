@@ -1,0 +1,12 @@
+$ Najpierw musimy stworzyc tablice!
+!make ARRAY liczby <- [10, 20, 30, 40, 50, 60] ;
+
+$ Teraz mozemy po niej iterowac:
+!shout "--- TEST PETLI FOREACH ---" ;
+!shout "Iterujemy po tablicy 'liczby' element po elemencie:" ;
+
+!loop < INT element <- liczby > {
+    !shout element ;
+}
+
+!shout "--- KONIEC TESTU PETLI ---" ;

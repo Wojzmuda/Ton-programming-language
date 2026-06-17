@@ -1,0 +1,65 @@
+$ ==========================================
+$ TESTY: INDEKSOWANIE I SLICING TABLIC
+$ ==========================================
+
+!shout "--- START TESTU TABLIC ---" ;
+
+$ 1. Tworzymy główną tablicę do testów
+!make ARRAY liczby <- [10, 20, 30, 40, 50, 60] ;
+!shout "Nasza tablica bazowa:" ;
+!shout liczby ;
+
+$ ==========================================
+$ TEST 1: INDEKSOWANIE (INDEXING)
+$ ==========================================
+!shout "--- TEST INDEKSOWANIA ---" ;
+
+!make INT pierwszy <- liczby[0] ;
+!shout "Indeks 0 (oczekiwane 10):" ;
+!shout pierwszy ;
+
+!make INT trzeci <- liczby[2] ;
+!shout "Indeks 2 (oczekiwane 30):" ;
+!shout trzeci ;
+
+$ Sprawdzamy nasz "ficzer" z Pythonowymi ujemnymi indeksami
+!make INT ostatni <- liczby[-1] ;
+!shout "Indeks -1, czyli od konca (oczekiwane 60):" ;
+!shout ostatni ;
+
+$ ==========================================
+$ TEST 2: WYCINANIE (SLICING)
+$ ==========================================
+!shout "--- TEST SLICINGU ---" ;
+
+$ Wycinamy od początku do indeksu 3 (bez niego)
+!make ARRAY poczatek <- liczby[0:3] ;
+!shout "Slice [0:3] (oczekiwane [ 10, 20, 30 ]):" ;
+!shout poczatek ;
+
+$ Wycinamy środek
+!make ARRAY srodek <- liczby[2:5] ;
+!shout "Slice [2:5] (oczekiwane [ 30, 40, 50 ]):" ;
+!shout srodek ;
+
+$ ==========================================
+$ TEST 3: SLICING UJEMNY I POZA ZAKRESEM
+$ ==========================================
+!shout "--- TEST ZAAWANSOWANY ---" ;
+
+$ Ujemny zakres (od 3 elementu od końca, do 1 elementu od końca)
+!make ARRAY ujemnySlice <- liczby[-3:-1] ;
+!shout "Slice [-3:-1] (oczekiwane [ 40, 50 ]):" ;
+!shout ujemnySlice ;
+
+$ Bezpieczne przycinanie (clamping), indeks wykracza poza rozmiar
+!make ARRAY clamping <- liczby[4:100] ;
+!shout "Slice [4:100] (oczekiwane [ 50, 60 ]):" ;
+!shout clamping ;
+
+$ Pusty zakres (start jest większy niż koniec)
+!make ARRAY pustySlice <- liczby[4:2] ;
+!shout "Slice [4:2] pusty przedzial (oczekiwane [ ]):" ;
+!shout pustySlice ;
+
+!shout "--- TEST ZAKONCZONY ---" ;
