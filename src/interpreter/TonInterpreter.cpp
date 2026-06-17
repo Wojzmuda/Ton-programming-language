@@ -1595,7 +1595,7 @@ else if (targetType == "CHAR") {
     throw std::runtime_error("Line " + std::to_string(line) + ": Invalid explicit cast to <" + targetType + "> from the given expression.");
 }
 std::any TonInterpreter::visitLengthOfExpr(TonParser::LengthOfExprContext *ctx) {
-    std::any val = visit(ctx->expr())
+    std::any val = visit(ctx->expr());
 
 
     if (val.type() == typeid(std::string)) {
