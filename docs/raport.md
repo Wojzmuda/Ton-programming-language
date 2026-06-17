@@ -387,54 +387,56 @@ int main(int argc, const char* argv[]){
 
 ### 4.4 Error Handling Architecture
 
-#### 4.4.1 Custom Error Listener (TonSyntaxErrorListener)
+#### 4.4.1 Custom Error Listener & Visual Diagnostics (TonSyntaxErrorListener)
 
-Ton actively suppresses raw, confusing ANTLR4 exceptions in favor of a custom-built diagnostic system. The listener intercepts `RecognitionException` events and transforms them into readable hints by querying the grammar vocabulary.
+Ton actively suppresses raw, confusing ANTLR4 exceptions in favor of a custom-built, visual diagnostic system inspired by modern compilers like Rust. The listener intercepts `RecognitionException` events, translates them into user-friendly hints, and fetches the exact line of source code from the input stream to visually point out the error.
 
+**Key Features:**
+- **Smart Symbol Translation:** Detects common programmer mistakes, such as using `=` instead of `<-` for assignment, and provides specific, actionable corrections.
+- **Visual Error Pointing:** Dynamically extracts the offending line from the `InputStream` and calculates whitespace/tabs to render a precise `^` indicator exactly under the invalid token.
+
+**Implementation Highlight:**
 ```cpp
-void TonSyntaxErrorListener::syntaxError(antlr4::Recognizer *recognizer, 
-                                         antlr4::Token *offendingSymbol, 
-                                         size_t line, 
-                                         size_t charPositionInLine, 
-                                         const std::string &msg, 
-                                         std::exception_ptr e) {
-    std::string tokenText = (offendingSymbol != nullptr) ? offendingSymbol->getText() : "Unrecognized sign";
-    std::string message;
-    std::string expected = "";
+// ... (Token mapping and user-friendly message generation) ...
 
-    // Extract expected tokens from vocabulary if exception exists
-    if (e != nullptr) {
-        try {
-            std::rethrow_exception(e);
-        } catch (const antlr4::RecognitionException &re) {
-            if (re.getOffendingState() != (size_t)-1) {
-                const antlr4::dfa::Vocabulary &vocab = recognizer->getVocabulary(); 
-                expected = re.getExpectedTokens().toString(vocab);
-            } else {
-                expected = "Could not determine expected tokens (Invalid State)";
-            }
-        } catch (...) {}
-    }
-
-    // Map raw ANTLR messages to user-friendly Ton messages
-    if (msg.find("mismatched input") != std::string::npos){
-        message = "Unexpected sign or word.";
-        if (!expected.empty()) message += "\n    Expected one of: " + expected;
-    }
-    else if (msg.find("missing") != std::string::npos){
-        message = "A missing sign";
-        if (!expected.empty()) message += "\n    Try adding: " + expected;
-    }
-    // ... Additional message mapping (no viable alternative, extraneous input, etc.) ...
-    else {
-        message = msg;
-    }
-
-    // Display cleanly formatted error to the user
-    std::cerr << "\n>>> [SYNTAX ERROR] Line " << line << ", Column " << charPositionInLine << ":\n"
-              << "    Problem with: '" << tokenText << "'\n"
-              << "    " << message << "\n";
+// Fetching the actual source code line
+antlr4::IntStream *inputStream = recognizer->getInputStream();
+if (auto *charStream = dynamic_cast<antlr4::CharStream*>(inputStream)) {
+    fullText = charStream->toString();
 }
+
+// ... (Line extraction logic) ...
+
+// Rendering the visual indicator
+for (size_t i = 0; i < charPositionInLine; i++) {
+    if (i < errorLineText.length() && errorLineText[i] == '\t') indicator += "\t";
+    else indicator += " ";
+}
+size_t tokenLength = (offendingSymbol != nullptr) ? offendingSymbol->getText().length() : 1;
+for (size_t i = 0; i < tokenLength; i++) indicator += "^";
+
+// Final Console Output Rendering
+std::cerr << "\n>>> [SYNTAX ERROR] Line " << line << ", Column " << charPositionInLine << ":\n";
+if (!errorLineText.empty()) {
+    std::cerr << "  |\n"
+              << line << " | " << errorLineText << "\n"
+              << "  | " << indicator << "\n"
+              << "  |\n";
+}
+std::cerr << "    Problem with: '" << tokenText << "'\n"
+          << "    " << message << "\n";
+
+```
+Example Console Output:
+
+```bash
+>>> [SYNTAX ERROR] Line 12, Column 14:
+  |
+12 | !make INT x = 5;
+  |               ^
+  |
+    Problem with: '='
+    Invalid assignment. In Ton language, you must use '<-' instead of '='.
 ```
 #### 4.4.2 Semantic Typo Correction (Levenshtein Algorithm)
 The Typechecker enhances Developer Experience (DX) by implementing the Levenshtein distance algorithm. When an unresolved identifier (variable, array, or function) is encountered, the compiler scans the `Scope` for all currently visible names. If a known identifier has an edit distance of less than 3, it intercepts the standard error and appends a smart suggestion (e.g., `"Variable 'X' is not defined. Suggestion: Did you mean 'Y'?"`).
