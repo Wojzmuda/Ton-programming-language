@@ -4,6 +4,7 @@
 #include <filesystem>
 #define TSF_IMPLEMENTATION
 #include "core/tsf.h"
+#include <iomanip> 
 
 const std::unordered_map<std::string, int> TonInterpreter::SAMPLE_INSTRUMENTS = {
     {"piano",      0}, // YAMAHA GRAND PIANO
@@ -202,9 +203,10 @@ std::any TonInterpreter::visitStatement(TonParser::StatementContext *ctx) {
 
 std::any TonInterpreter::visitVarDecl(TonParser::VarDeclContext *ctx) {
     std::string varName = ctx->ID()->getText();
-    std::string typeName = ctx->type()->getText();
+    std::string typeName = ctx->type()->getText(); 
 
     std::any value;
+    bool hasValue = false;
 
     if (ctx->expr()) {
         value = visit(ctx->expr());
@@ -216,24 +218,25 @@ std::any TonInterpreter::visitVarDecl(TonParser::VarDeclContext *ctx) {
         }
     } else {
         if (typeName == "TIMELINE") {
-            Timeline tl; tl.name = varName; value = tl;
+            Timeline tl; 
+            tl.name = varName; 
+            value = tl;
         }
-        else if (typeName == "TRACK") value = Track();
         else if (typeName == "SOUND") value = Sound();
+        else if (typeName == "TRACK") value = Track(); 
+        else if (typeName == "ARRAY") value = std::vector<std::any>{};
+        else if (typeName == "BOOL") value = false;   
         else if (typeName == "INT") value = 0;
         else if (typeName == "NUMERICAL") value = 0.0;
         else if (typeName == "NOTE") value = Note();
-        else if (typeName == "BOOL") value = false;
         else if (typeName == "STRING") value = std::string("");
-        else if (typeName == "CHAR") value = '\0';
-        else if (typeName == "ARRAY") value = std::vector<std::any>{};
+        else if (typeName == "CHAR") value = '\0'; 
         else value = {};
     }
 
-    currentScope->define(varName, typeName, value);
+    currentScope->define(varName, typeName, value, hasValue);
     return value;
 }
-
 
 std::any TonInterpreter::visitTargetExpr(TonParser::TargetExprContext *ctx) {
     auto targetNode = ctx->target(); 
@@ -247,7 +250,12 @@ std::any TonInterpreter::visitTargetExpr(TonParser::TargetExprContext *ctx) {
     }
 
     if (targetNode->ID().size() == 1) {
-        return targetScope->get(baseName);
+         try {
+            return targetScope->get(baseName);
+        } catch (const std::runtime_error& e) {
+            size_t line = ctx->getStart()->getLine();
+            throw std::runtime_error("Line " + std::to_string(line) + ": " + e.what());
+    }
     }
 
     std::string trackName = targetNode->ID(1)->getText();
@@ -559,8 +567,8 @@ std::any TonInterpreter::visitCreateSoundExpr(TonParser::CreateSoundExprContext 
         throw std::runtime_error("Line " + std::to_string(line) + ": Second argument of SOUND definition must be an INT.");
     }
 
-    Note note = std::any_cast<Note>(arg1);;
-    int durationMs = std::any_cast<int>(arg2);;
+    Note note = std::any_cast<Note>(arg1);
+    int durationMs = std::any_cast<int>(arg2);
     float volume = 0.5f;
 
     if (ctx->expr().size() > 2) {
@@ -1643,3 +1651,77 @@ std::any TonInterpreter::visitLengthOfExpr(TonParser::LengthOfExprContext *ctx) 
                              ": LENGTH operator requires STRING, ARRAY, SOUND, TRACK, or TIMELINE.");
 }
 
+std::any TonInterpreter::visitDebugDumpStat(TonParser::DebugDumpStatContext *ctx) {
+
+    std::cout << "\n==================== [TON DEBUG DUMP] ====================" << std::endl;
+    size_t line = ctx->getStart()->getLine();
+    std::cout << "Triggered at line: " << line << "\n" << std::endl;
+    
+    std::cout << "  " << std::left 
+              << std::setw(20) << "VARIABLE NAME" 
+              << std::setw(15) << "TYPE" 
+              << std::setw(15) << "INITIALIZED" 
+              << "CURRENT VALUE" << std::endl;
+    std::cout << "  -----------------------------------------------------------------" << std::endl;
+
+    auto scopeTracker = currentScope;
+    int level = 0;
+
+    while (scopeTracker != nullptr) {
+        if (level > 0) {
+            std::cout << "  --- Parent Scope (Level " << level << ") ---" << std::endl;
+        }
+
+        if (scopeTracker->values.empty()) {
+            std::cout << "  (no variables defined in this scope)" << std::endl;
+        }
+
+        for (const auto& pair : scopeTracker->values) {
+            std::string name = pair.first;
+            std::string type = scopeTracker->types[name];
+            bool isInit = scopeTracker->initialized[name];
+            std::string initStr = isInit ? "TRUE" : "FALSE";
+            std::string valStr = "[Uninitialized / Complex Type]";
+
+            if (isInit) {
+                std::any val = pair.second;
+                if (val.type() == typeid(int)) {
+                    valStr = std::to_string(std::any_cast<int>(val));
+                }
+                else if (val.type() == typeid(double)) {
+                    valStr = std::to_string(std::any_cast<double>(val));
+                }
+                else if (val.type() == typeid(std::string)) {
+                    valStr = "\"" + std::any_cast<std::string>(val) + "\"";
+                }
+                else if (val.type() == typeid(char)) {
+                    valStr = "'" + std::string(1, std::any_cast<char>(val)) + "'";
+                }
+                else if (val.type() == typeid(bool)) {
+                    valStr = std::any_cast<bool>(val) ? "TRUE" : "FALSE";
+                }
+                else if (type == "ARRAY") {
+                    valStr = "[Array Object]";
+                }
+                else if (type == "SOUND") {
+                    valStr = "[Sound Object]";
+                }
+                else if (type == "TIMELINE") {
+                    valStr = "[Timeline Object]";
+                }
+            }
+
+            std::cout << "  " << std::left 
+                      << std::setw(20) << name 
+                      << std::setw(15) << type 
+                      << std::setw(15) << initStr 
+                      << valStr << std::endl;
+        }
+        
+        scopeTracker = scopeTracker->parent;
+        level++;
+    }
+
+    std::cout << "===========================================================\n" << std::endl;
+    return {};
+}
