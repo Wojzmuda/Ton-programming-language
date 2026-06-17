@@ -743,3 +743,12 @@ Triggered at line: 70
 The interpreter distinguishes between audio mixing and audio concatenation on a low mathematical level:
 - **Mixing (`+` operator):** The `visitAddSubMixExpr` iterates through the sample arrays of two `Sound` objects, mathematically superimposing (adding) the float values of parallel samples to play them simultaneously.
 - **Concatenation (`&` operator):** The `visitConcatExpr` utilizes `std::vector::insert` to sequentially append the raw buffer of the right-hand `Sound` to the end of the left-hand `Sound`, enabling rapid, seamless chronological chaining.
+
+## 5. Dependencies & Technologies
+
+The Ton interpreter relies on a minimal, carefully selected set of external libraries to handle syntax parsing and digital signal processing efficiently:
+
+* **C++17 Standard:** The core language requirement, heavily utilizing modern C++ features such as `std::any`, `std::shared_ptr`, and the `<filesystem>` library to ensure memory safety, robust dynamic typing, and cross-platform file resolution.
+* **ANTLR4 (C++ Runtime):** The backbone of the compilation pipeline, used for generating the Lexer, Parser, and the AST Visitors/Listeners based on the custom language grammar.
+* **TinySoundFont (TSF):** A lightweight, single-file C/C++ library utilized by the internal audio engine for rendering MIDI notes and preset instruments into raw audio samples using standard SoundFont (`.sf2`) banks.
+* **AudioFile:** A header-only C++ library used in the final export stage (`!save` command) to process, normalize, and write the generated floating-point sample arrays into standard mono `.wav` audio files.
