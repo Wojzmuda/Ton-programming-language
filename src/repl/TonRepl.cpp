@@ -34,24 +34,30 @@ void TonRepl::start() {
 
         // kinda copy of main.cpp, but single line conf:
         TonSyntaxErrorListener errorListener;
-        antlr4::ANTLRInputStream input(line);
-        TonLexer lexer(&input);
+        auto input = std::make_unique<antlr4::ANTLRInputStream>(line);
+        auto lexer = std::make_unique<TonLexer>(input.get());
 
-        lexer.removeErrorListeners();
-        lexer.addErrorListener(&errorListener);
+        lexer->removeErrorListeners();
+        lexer->addErrorListener(&errorListener);
 
-        antlr4::CommonTokenStream tokens(&lexer);
-        TonParser parser(&tokens);
+        auto tokens = std::make_unique<antlr4::CommonTokenStream>(lexer.get());
+        auto parser = std::make_unique<TonParser>(tokens.get());
 
-        parser.removeErrorListeners();
-        parser.addErrorListener(&errorListener);
+        parser->removeErrorListeners();
+        parser->addErrorListener(&errorListener);
 
-        auto treeAST = parser.program();
+        auto treeAST = parser->program();
 
-        size_t totalErrors = lexer.getNumberOfSyntaxErrors() + parser.getNumberOfSyntaxErrors();
+        size_t totalErrors = lexer->getNumberOfSyntaxErrors() + parser->getNumberOfSyntaxErrors();
         if (totalErrors > 0) {
             continue;
         }
+
+        // move this to shared class memory
+        inputStreams.push_back(std::move(input));
+        lexers.push_back(std::move(lexer));
+        tokenStreams.push_back(std::move(tokens));
+        parsers.push_back(std::move(parser));
 
         // Run TypeChecker and Interpreter
         try {
