@@ -219,8 +219,6 @@ $ !shout heavy_synth; <-- ERROR: Variable no longer exists.
 If you are generating complex, multi-layered sounds (like bouncing multiple synths together before placing them on a track), it is highly recommended to do so inside **Anonymous Blocks**. This ensures that the intermediate, temporary audio files are deleted from your RAM immediately after they are mixed into the final variable, preventing your script from crashing due to memory limits.
 
 
-Oto gotowy rozdział do dodania na samym końcu pliku `syntax.md`. Opisuje on dokładnie działanie ciągów znaków (Strings) oraz tablic (Arrays) zgodnie z tym, co pozwala osiągnąć Twój interpreter.
-
 ---
 
 ## 7. Complex Datatypes: Strings and Arrays

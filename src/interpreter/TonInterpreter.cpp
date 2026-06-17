@@ -1496,12 +1496,28 @@ std::any TonInterpreter::visitCastExpr(TonParser::CastExprContext *ctx) {
         if (val.type() == typeid(double)) return static_cast<int>(std::any_cast<double>(val));
         if (val.type() == typeid(bool)) return std::any_cast<bool>(val) ? 1 : 0;
         if (val.type() == typeid(int)) return val; 
+        if (val.type() == typeid(std::string)) {
+            try {
+                return std::stoi(std::any_cast<std::string>(val));
+            } catch (const std::exception& e) {
+                throw std::runtime_error("Line " + std::to_string(line) + 
+                                         ": Cannot cast STRING to INT. Invalid format.");
+            }
+        }
     }
     
 
     else if (targetType == "NUMERICAL") {
         if (val.type() == typeid(int)) return static_cast<double>(std::any_cast<int>(val));
         if (val.type() == typeid(double)) return val;
+        if (val.type() == typeid(std::string)) {
+            try {
+                return std::stod(std::any_cast<std::string>(val));
+            } catch (const std::exception& e) {
+                throw std::runtime_error("Line " + std::to_string(line) + 
+                                         ": Cannot cast STRING to NUMERICAL. Invalid format.");
+            }
+        }
     }
 
 
@@ -1537,7 +1553,7 @@ else if (targetType == "CHAR") {
     throw std::runtime_error("Line " + std::to_string(line) + ": Invalid explicit cast to <" + targetType + "> from the given expression.");
 }
 std::any TonInterpreter::visitLengthOfExpr(TonParser::LengthOfExprContext *ctx) {
-    std::any val = visit(ctx->expr());
+    std::any val = visit(ctx->expr())
 
 
     if (val.type() == typeid(std::string)) {
