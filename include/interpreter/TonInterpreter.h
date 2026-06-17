@@ -41,6 +41,9 @@ private:
     std::any executeFunctionLogic(const std:: string& funcName, const std::vector<TonParser::ExprContext*>& argsCtx);
     void validateStackDepth();
 
+    std::shared_ptr<Scope<std::any>> resolveScope(TonParser::TargetContext *ctx);
+    
+
 public:
     TonInterpreter();
     ~TonInterpreter();
