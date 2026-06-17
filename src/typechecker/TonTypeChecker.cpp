@@ -1,8 +1,28 @@
 #include "typechecker/TonTypeChecker.h"
+#include "diagnostics/Diagnostics.h"
+
+template <typename T>
+static std::shared_ptr<Scope<T>> resolveElderScopeTC(std::shared_ptr<Scope<T>> currentScope, int elderCount, size_t line) {
+    auto targetScope = currentScope;
+    for (int i = 0; i < elderCount; ++i) {
+        if (targetScope->parent != nullptr) {
+            targetScope = targetScope->parent;
+        } else {
+            throw std::runtime_error("Type Error in line " + std::to_string(line) + ": 'ELDER::' reached beyond global scope.");
+        }
+    }
+    return targetScope;
+}
+
 
 std::any TonTypeChecker::visitTargetExpr(TonParser::TargetExprContext *ctx) {
+    int elderCount = ctx->target()->elderRef().size();
+    auto targetScope = resolveElderScopeTC(currentScope, elderCount, ctx->getStart()->getLine());
+    
     std::string baseVarName = ctx->target()->ID(0)->getText();
-    std::string type = currentScope->resolveType(baseVarName);
+   
+    std::string type = targetScope->resolveType(baseVarName); 
+    
     if (ctx->target()->ID().size() > 1) {
         return std::string("SOUND");
     }
@@ -40,19 +60,21 @@ std::any TonTypeChecker::visitRelationalExpr(TonParser::RelationalExprContext *c
     if (hasUnknown(left, right)) {
         return std::string("BOOL");
     }
-    // TODO for now we are letting INT and NUMERICAL to be compared.
-    // Later on we should delete in because there will be implicit type conversion (int -> num)
+
+    if (isConvertible(left, right)) {
+        return std::string("BOOL");
+    }
+
     if (left == "SOUND" && right == "SOUND") {
         return std::string("BOOL");
     }
+
     if (left == "NOTE" && right == "NOTE") {
         return std::string("BOOL");
     }
-    if (left != right && !( (left == "INT" || left == "NUMERICAL") && (right == "INT" || right == "NUMERICAL") )) {
-        size_t line = ctx->getStart()->getLine();
-        throw std::runtime_error("Type Error in line " + std::to_string(line) + ": Cannot compare " + left + " with " + right);
-    }
-    return std::string("BOOL");
+
+    size_t line = ctx->getStart()->getLine();
+    throw std::runtime_error("Type Error in line " + std::to_string(line) + ": Cannot compare " + left + " with " + right);
 }
 
 std::any TonTypeChecker::visitUnaryExpr(TonParser::UnaryExprContext *ctx) {
@@ -174,8 +196,10 @@ std::any TonTypeChecker::visitFunctionCallExpr(TonParser::FunctionCallExprContex
 
     if (!currentScope->exists(funcName)) {
         size_t line = ctx->getStart()->getLine();
+        auto visibleNames = currentScope->getAllVisibleNames();
+        std::string suggestion = suggestSimilarName(funcName, visibleNames);
         throw std::runtime_error("Line " + std::to_string(line) +
-                                 ": Function '" + funcName + "' is not defined.");
+                                 ": Function '" + funcName + "' is not defined." +suggestion);
     }
     std::string returnType = currentScope->resolveType(funcName);
     return returnType;
@@ -193,20 +217,20 @@ std::any TonTypeChecker::visitCreateSoundExpr(TonParser::CreateSoundExprContext 
         return std::string("SOUND");
     }
 
-    if (arg1Type != "NOTE") {
+    if (!isConvertible("NOTE", arg1Type)) {
         size_t line = ctx->getStart()->getLine();
         throw std::runtime_error("Line " + std::to_string(line) +
                                  ": First argument of CreateSound must be a NOTE. Given: " + arg1Type);
     }
     
-    if (arg2Type != "INT") {
+    if (!isConvertible("INT", arg2Type)) {
         size_t line = ctx->getStart()->getLine();
         throw std::runtime_error("Line " + std::to_string(line) +
                                  ": Second argument (duration) of CreateSound must be an INT. Given: " + arg2Type);
     }
 
     if (ctx->expr().size() > 2) {
-        if (arg3Type != "INT" && arg3Type != "NUMERICAL") {
+        if (!isConvertible("NUMERICAL", arg3Type)) {
             size_t line = ctx->getStart()->getLine();
             throw std::runtime_error("Line " + std::to_string(line) +
                                      ": Third argument (volume) of SOUND must be INT or NUMERICAL. Given: " + arg3Type);
@@ -291,27 +315,62 @@ std::any TonTypeChecker::visitSliceExpr(TonParser::SliceExprContext *ctx) {
     return baseType; 
 }
 std::any TonTypeChecker::visitPopExpr(TonParser::PopExprContext *ctx) {
-    std::string varName = ctx->ID()->getText();
+    int elderCount = ctx->target()->elderRef().size();
+    auto targetScope = resolveElderScopeTC(currentScope, elderCount, ctx->getStart()->getLine());
+    
+    std::string varName = ctx->target()->ID(0)->getText();
 
-    if (!currentScope->exists(varName)) {
+    if (!targetScope->exists(varName)) { 
         size_t line = ctx->getStart()->getLine();
+        auto visibleNames = targetScope->getAllVisibleNames();
+        std::string suggestion = suggestSimilarName(varName, visibleNames);
         throw std::runtime_error("Type Error in line " + std::to_string(line) + 
-                                 ": Array '" + varName + "' is not defined.");
+                                 ": Array '" + varName + "' is not defined." + suggestion);
     }
 
-    std::string targetType = currentScope->resolveType(varName);
+    std::string targetType = targetScope->resolveType(varName);
+
 
     if (hasUnknown(targetType)) {
         return std::string("UNKNOWN");
     }
-
     if (targetType != "ARRAY") {
         size_t line = ctx->getStart()->getLine();
         throw std::runtime_error("Type Error in line " + std::to_string(line) + 
                                  ": POP requires an ARRAY variable. Given: " + targetType);
     }
+
     return std::string("UNKNOWN");
 }
+
+std::any TonTypeChecker::visitArrayOpStat(TonParser::ArrayOpStatContext *ctx) {
+    int elderCount = ctx->target()->elderRef().size();
+    auto targetScope = resolveElderScopeTC(currentScope, elderCount, ctx->getStart()->getLine());
+    
+    std::string varName = ctx->target()->ID(0)->getText();
+
+    if (!targetScope->exists(varName)) {
+        size_t line = ctx->getStart()->getLine();
+        auto visibleNames = targetScope->getAllVisibleNames();
+        std::string suggestion = suggestSimilarName(varName, visibleNames); 
+        throw std::runtime_error("Type Error in line " + std::to_string(line) + 
+                                 ": Array '" + varName + "' is not defined." + suggestion);
+    }
+
+    std::string targetType = targetScope->resolveType(varName);
+    if (targetType != "ARRAY") {
+        size_t line = ctx->getStart()->getLine();
+        throw std::runtime_error("Type Error in line " + std::to_string(line) + 
+                                 ": Array operation requires an ARRAY variable. Given: " + targetType);
+    }
+
+    if (ctx->APPEND()) {
+         visit(ctx->expr());
+    }
+
+    return {}; 
+}
+
 
 
 std::any TonTypeChecker::visitCastExpr(TonParser::CastExprContext *ctx) {
@@ -332,11 +391,11 @@ std::any TonTypeChecker::visitCastExpr(TonParser::CastExprContext *ctx) {
     }
 
     else if (targetType == "NUMERICAL") {
-        if (exprType == "INT" || exprType == "NUMERICAL") return std::string("NUMERICAL");
+        if (exprType == "INT" || exprType == "NUMERICAL" || exprType == "BOOL") return std::string("NUMERICAL");
     }
    
     else if (targetType == "BOOL") {
-        if (exprType == "INT" || exprType == "BOOL") return std::string("BOOL");
+        if (exprType == "INT" || exprType == "BOOL" || exprType == "NUMERICAL") return std::string("BOOL");
     }
 
     else if (targetType == "STRING") {
@@ -350,3 +409,5 @@ else if (targetType == "CHAR") {
     throw std::runtime_error("Type Error in line " + std::to_string(line) +
                              ": Cannot explicitly cast <" + exprType + "> to <" + targetType + ">.");
 }
+
+std::any TonTypeChecker::visitDebugDumpStat(TonParser::DebugDumpStatContext *ctx) {}

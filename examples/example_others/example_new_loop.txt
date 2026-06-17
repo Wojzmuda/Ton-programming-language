@@ -1,0 +1,41 @@
+!shout "--- TEST 1: PĘTLA I IF ---";
+!loop < INT i FROM 1 TO 10 > {
+    !shout "Iteracja i = ", i;
+    
+    $ Zmieniony zwykly if na poprawny !if < ... > z Twojego języka
+    !if < i == 3 > {
+        !shout "Doszlismy do 3!";
+    }
+}
+
+!shout "--- TEST 2: PĘTLA Z WYMUSZONYM TYPEM ---";
+!make INT z <- 100;
+
+$ Na starej bazie kompilator dalej wymaga typu "INT", więc go dopisałem
+!loop < INT z FROM 1 TO 3 > {
+    !shout "Iteracja z = ", z;
+}
+
+!shout "--- TEST 1: ZEWNETRZNA ZMIENNA (BEZ TYPU W PETLI) ---";
+!make INT k <- 100;
+
+$ Uzywamy 'k' bez dopisywania 'INT' z przodu!
+!loop < k FROM 1 TO 3 > {
+    !shout "Iteracja k = ", k;
+}
+!shout "Wartosc k po petli (powinno byc 4): ", k;
+
+!shout "--- TEST 2: ZMIANA LICZNIKA W SRODKU PETLI ---";
+!loop < INT i FROM 1 TO 10 > {
+    !shout "Iteracja i = ", i;
+    
+    !if < i == 3 > {
+        !shout ">>> Przyspieszamy! Dodaje 5 do i.";
+        i <- i + 5;
+    }
+}
+
+$ Zmienna 'xyz' NIE ISTNIEJE w programie, a próbujemy jej użyć bez typu:
+$!loop < xyz FROM 1 TO 5 > {
+$    !shout xyz;
+$}

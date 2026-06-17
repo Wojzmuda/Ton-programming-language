@@ -21,7 +21,29 @@ private:
         return ((types == "UNKNOWN") || ...);
     }
 
+
+
 public:
+
+    bool isConvertible(const std::string& expected, const std::string& given) {
+        if (expected == given || given == "UNKNOWN" || expected == "UNKNOWN") {
+            return true;
+        }
+        if ((expected == "INT" && given == "NUMERICAL") ||
+            (expected == "NUMERICAL" && given == "INT")) {
+            return true;
+        }
+        if ((expected == "INT" && given == "BOOL") ||
+            (expected == "BOOL" && given == "INT")) {
+            return true;
+        }
+        if ((expected == "NUMERICAL" && given == "BOOL") ||
+            (expected == "BOOL" && given == "NUMERICAL")) {
+            return true;
+        }
+        return false;
+    }
+
     TonTypeChecker(std::shared_ptr<Scope<int>> scope) : currentScope{scope} { };
 
     std::any visitIntValExpr(TonParser::IntValExprContext *ctx) override { return std::string("INT"); }
@@ -60,5 +82,9 @@ public:
     std::any visitIsolateExpr(TonParser::IsolateExprContext *ctx) override;
 
     std::any visitPopExpr(TonParser::PopExprContext *ctx) override;
+
+    std::any visitArrayOpStat(TonParser::ArrayOpStatContext *ctx) override;
     std::any visitCastExpr(TonParser::CastExprContext *ctx) override;
+
+    std::any visitDebugDumpStat(TonParser::DebugDumpStatContext *ctx) override;
 };

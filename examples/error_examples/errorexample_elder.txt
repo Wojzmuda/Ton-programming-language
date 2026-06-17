@@ -1,0 +1,44 @@
+$ ==============================================================
+$ SKRYPT TESTOWY: EDGE CASE'Y OPERATORA ELDER::
+$ UWAGA: Odkomentowuj testy POJEDYNCZO, bo Listener przerywa dzialanie po pierwszym bledzie!
+$ ==============================================================
+
+!make INT global_x <- 10;
+!make ARRAY global_arr <- [1, 2];
+
+{
+    !make STRING global_x <- "napis lokalny";
+    !make INT b <- 99;
+    
+    $ -------------------------------------------------------------
+    $ TEST 1: Wspinaczka zbyt wysoko (Edge Case)
+    $ Chcemy się odwołać do ELDER::ELDER, ale jesteśmy tylko 1 poziom głęboko.
+    $ Oczekiwany błąd: "...reached beyond global scope."
+    $ -------------------------------------------------------------
+    $ ELDER::ELDER::global_x <- 50;
+
+
+    $ -------------------------------------------------------------
+    $ TEST 2: Niezgodność typów na wyższym poziomie (Edge Case wyłapany przez Ownera)
+    $ Lokalnie 'global_x' to STRING, ale ELDER::global_x to INT.
+    $ Próbujemy przypisać STRINGA do INTa w rodzicu.
+    $ Oczekiwany błąd: "Cannot assign STRING to variable 'global_x' of type INT"
+    $ -------------------------------------------------------------
+    $ ELDER::global_x <- "To zepsuje TypeChecker";
+
+
+    $ -------------------------------------------------------------
+    $ TEST 3: Odwołanie do zmiennej, która wyżej nie istnieje (Edge Case)
+    $ Zmienna 'b' istnieje tylko w tym lokalnym bloku, nie ma jej u ELDERA.
+    $ Oczekiwany błąd: "Variable 'b' is not defined."
+    $ -------------------------------------------------------------
+    $ ELDER::b <- 100;
+
+
+    $ -------------------------------------------------------------
+    $ TEST 4: Próba operacji na złym typie w rodzicu (Edge Case)
+    $ Próbujemy wykonać komendę tablicową na zmiennej globalnej, która jest INT.
+    $ Oczekiwany błąd: "Cannot perform array operations on type INT."
+    $ -------------------------------------------------------------
+    $ APPEND 5 TO ELDER::global_x;
+}

@@ -90,6 +90,50 @@ Tøn supports a classic set of operators for logic and mathematics:
 
 ---
 
+## 4. Type Conversions  and Rules
+The language supports both explicit and implicit type conversions.
+
+### Implicit Conversions
+Implicit conversions happen automatically in the background whenever the context requires it — most notably during variable assignments (e.g., assigning a `NUMERICAL` to an `INT` variable), passing arguments to functions, or evaluating mathematical/logical expressions.
+
+Tøn will perform the following conversions implicitly:
+* `INT` -> `NUMERICAL` *(type promotion - converts an integer to a floating-point number)*
+* `NUMERICAL` -> `INT` *(type demotion - performs **truncation** of the decimal part)*
+* `INT/NUMERICAL` -> `BOOL` *(evaluates to **FALSE** when number is exactly **0 / 0.0**, and **TRUE** otherwise)*
+* `BOOL` -> `INT/NUMERICAL` -> *(evaluates **0 / 0.0** when **FALSE** and **1 / 1.0** when **TRUE** to the number)*
+
+### Explicit Conversions
+Additionaly, the language provides **cast** operator: `<NEW_TYPE>expression`. It can be used to manually force any of the implicit conversions mentioned above, and also to perform the following:
+
+* `<CHAR> STRING` *(works only when given `STRING` has a length of exactly 1)*
+* `<STRING> CHAR` *(creates a `STRING` of size one with the given `CHAR`)*
+* `<STRING> INT/NUMERICAL` *(constructs a `STRING` representation of the given number)*
+* `<INT/NUMERICAL> STRING` *(creates a number from a given `STRING`)*
+
+> **Note:** `STRING` -> `INT/NUMERICAL` conversion will succeed only if the given `STRING` contains a valid number. Otherwise, the interpreter will produce a runtime error.
+
+### Casting in Practice
+
+To explicitly cast a value from one type to another, place the target type inside angle brackets `< >` directly before the expression or variable.
+
+Here is a short example demonstrating both implicit and explicit conversions in action:
+```ton
+$ Implicit conversion (INT is automatically promoted to NUMERICAL)
+!make NUMERICAL myNumber <- 42;
+
+$ Explicitly casting a NUMERICAL to a STRING
+!make STRING textNumber <- "34";
+!make INT number <- <INT>textNumber;
+
+$ 3. Explicitly casting a NUMERICAL down to an INT (truncates decimals)
+!make NUMERICAL price <- 19.99;
+!make INT flatPrice <- <INT>price;
+
+!shout number; $ output: 34
+!shout flatPrice;  $ output: 19
+```
+---
+
 ## 4. Control Flow
 Conditionals and loops in Tøn use angle brackets `< >` for their expressions.
 ### If / Otherwise Statements

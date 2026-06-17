@@ -1,0 +1,71 @@
+$ =============================================================================
+$                   KOMPLETNY TEST ZAAWANSOWANEJ DIAGNOSTYKI BŁĘDÓW
+$ =============================================================================
+
+$ -----------------------------------------------------------------------------
+$ KONFIGURACJA ŚRODOWISKA (Zmienne Globalne i Funkcja)
+$ -----------------------------------------------------------------------------
+!make INT global_tempo <- 125 ;
+!make STRING user_name <- "Aleksander" ;
+!make INT global_unassigned ; $ Celowo zostawiona bez wartości startowej
+
+!define VOID playMelody <INT duration> {
+    !shout "Playing melody for:" ;
+    !shout duration ;
+}
+
+$ -----------------------------------------------------------------------------
+$ GŁÓWNY BLOK PROGRAMU
+$ -----------------------------------------------------------------------------
+{
+    !make INT current_volume <- 90 ;
+    !make NUMERICAL pi_value <- 3.1415 ;
+    !make INT local_unassigned ; $ Kolejna zmienna bez wartości
+    !make ARRAY track_events ;    $ Tablice są domyślnie inicjalizowane jako []
+
+    $ =========================================================================
+    $ CZĘŚĆ 1: TESTY SUGEROWANIA LITERÓWEK ("Did you mean...?")
+    $ =========================================================================
+
+    $ --- TEST 1.1: Literówka w nazwie zmiennej globalnej przy przypisaniu ---
+    $ Oczekiwany błąd: Cannot assign to undefined variable 'global_tempa'. Suggestion: Did you mean 'global_tempo'?
+    $ global_tempa <- 140 ;
+
+    $ --- TEST 1.2: Literówka w bloku lokalnym przy odczycie (TargetExpr) ---
+    $ Oczekiwany błąd: Variable 'current_volum' is not defined. Suggestion: Did you mean 'current_volume'?
+    $ !make INT new_vol <- current_volum + 10 ;
+
+    $ --- TEST 1.3: Literówka w nazwie wywoływanej funkcji (TypeChecker) ---
+    $ Oczekiwany błąd: Function 'playMelodi' is not defined. Suggestion: Did you mean 'playMelody'?
+    $ !make INT zapychacz <- playMelodi(500) ;
+
+
+    $ =========================================================================
+    $ CZĘŚĆ 2: TESTY NIEZAINICJALIZOWANYCH ZMIENNYCH
+    $ =========================================================================
+
+    $ --- TEST 2.1: Użycie lokalnej pustej zmiennej w operacji matematycznej ---
+    $ Oczekiwany błąd: [Error] Variable 'local_unassigned' is declared but uninitialized.
+    $ !make INT crash_test <- local_unassigned + 10 ;
+
+    $ --- TEST 2.2: Użycie globalnej pustej zmiennej ---
+    $ Oczekiwany błąd: [Error] Variable 'global_unassigned' is declared but uninitialized.
+    $ current_volume <- global_unassigned ;
+
+
+    $ =========================================================================
+    $ CZĘŚĆ 3: LEGALNA ŚCIEŻKA I ZRZUT PAMIĘCI (!debug)
+    $ =========================================================================
+    
+    $ Ta sekcja wykona się bezbłędnie, jeśli powyższe testy są zakomentowane.
+    !shout "--- Uruchamiam legalna sciezke programu ---" ;
+    
+    !make INT late_initialized ; $ Deklaracja pustej zmiennej
+    late_initialized <- 777 ;   $ Prawidłowa inicjalizacja - podnosi flagę w Scope!
+
+    !shout "Zmienna late_initialized po przypisaniu wartości:" ;
+    !shout late_initialized ;
+
+    $ Wywołujemy nasz nowy, potężny mechanizm inspekcji stanu pamieci!
+    !debug ;
+}
