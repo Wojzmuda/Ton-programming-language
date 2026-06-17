@@ -1,6 +1,6 @@
 !make INT tempo <- 120;
 !make ARRAY nuty <- [C4, E4, G4];
-!make SOUND testowyDzwiek <- synth C4 500;
+!make SOUND testowyDzwiek <- sine C4 500;
 
 !shout "=== TEST KOMENDY SHOUT Z WIELOMA ARGUMENTAMI ===" ;
 

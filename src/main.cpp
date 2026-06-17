@@ -4,6 +4,7 @@
 #include "interpreter/TonInterpreter.h"
 #include "listener/TonSyntaxErrorListener.h"
 #include "listener/TonDeclarationListener.h"
+#include "repl/TonRepl.h"
 
 #include <iostream>
 #include <fstream>
@@ -11,8 +12,10 @@
 
 int main(int argc, const char* argv[]){
     if(argc < 2){
-        std::cerr << "Use command: \t "<<argv[0]<< "\t <Ton_program.txt>"<<std::endl;
-        return 1;
+        //std::cerr << "Use command: \t "<<argv[0]<< "\t <Ton_program.txt>"<<std::endl;
+        TonRepl repl;
+        repl.start();
+        return 0;
     }
 
     std::ifstream stream(argv[1]);

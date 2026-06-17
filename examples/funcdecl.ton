@@ -1,0 +1,7 @@
+$ Wywołanie jest na samej górze!
+!make INT tempo <- dajTempo() ;
+
+$ A definicja na dole.
+!define INT dajTempo <> {
+    !out 120 ;
+}
