@@ -14,6 +14,13 @@ class TonTypeChecker : public TonBaseVisitor
 private:
     std::shared_ptr<Scope<int>> currentScope;
 
+    // this one is crazy: It takes any number of strings and
+    // returns true if any of them equals to "UNKNOWN", else otherwise.
+    template<typename... Args>
+    bool hasUnknown(const Args&... types) {
+        return ((types == "UNKNOWN") || ...);
+    }
+
 public:
     TonTypeChecker(std::shared_ptr<Scope<int>> scope) : currentScope{scope} { };
 
@@ -53,4 +60,7 @@ public:
     std::any visitIsolateExpr(TonParser::IsolateExprContext *ctx) override;
 
     std::any visitPopExpr(TonParser::PopExprContext *ctx) override;
+
+    std::any visitArrayOpStat(TonParser::ArrayOpStatContext *ctx) override;
+    std::any visitCastExpr(TonParser::CastExprContext *ctx) override;
 };

@@ -9,10 +9,11 @@
 
 3. Add references. We are using some external libraries, we should list them here.
 
+4. Add list of possible `USE x;`
 ---
 
 #### Personally, I would divide docs for a few files.
 1. Strictly syntax and standard operations (math + strings etc)
 2. Music operators
 3. How to setup language and environment (.sf2 file docs to be done)
-4. Implementation details (dr Palka wanted that kind of doc file, am I right?
+4. Implementation details (dr Palka wanted that kind of doc file, am I right?)

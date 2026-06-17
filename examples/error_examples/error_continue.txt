@@ -1,0 +1,5 @@
+$ TEST 2: !continue poza pętla wewnątrz zwykłego bloku (powinien być błąd)
+{
+    !shout "Jesteśmy w zwykłym bloku kodu...";
+    !continue; $ Błąd! Blok to nie pętla!
+}

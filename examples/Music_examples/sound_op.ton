@@ -1,0 +1,44 @@
+USE piano;
+
+!make NOTE nuta_bazowa <- C4;
+!make NOTE x <- C3;
+!make SOUND dzwiek_a <- piano nuta_bazowa 1000;
+!make SOUND dzwiek_b <- piano E4 1000;
+!make SOUND szybki_hit <- sine G4 250;
+
+!if <nuta_bazowa == x> {
+	!shout "FAIL";
+} !otherwise {
+	!shout "PASS";
+}
+
+!if <nuta_bazowa > x> {
+	!shout "PASS";
+} !otherwise {
+	!shout "FAIL";
+}
+
+!if <dzwiek_a == dzwiek_b> {
+	!shout "FAIL";
+} !otherwise {
+	!shout "PASS";
+}
+
+!if <dzwiek_a >= dzwiek_b> {
+	!shout "PASS";
+} !otherwise {
+	!shout "FAIL";
+}
+
+!if <szybki_hit < dzwiek_b> {
+	!shout "PASS";
+} !otherwise {
+	!shout "FAIL";
+}
+
+!if <dzwiek_a != dzwiek_a> {
+	!shout "FAIL";
+} !otherwise {
+	!shout "PASS";
+}
+

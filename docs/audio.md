@@ -115,6 +115,32 @@ Tøn supports overloaded operators designed specifically for audio manipulation:
 * **`+` (Mix)** : When applied to `SOUND` or `TRACK` objects, it overlays their audio waves, playing them simultaneously.
 * **`&` (Concat)** : Glues two `SOUND` objects sequentially, making the second sound play immediately after the first one finishes.
 
+* **LENGTH** : Can be used on `SOUND`, `TRACK` and `TIMELINE` objects. Returns an `INT` number representing audio object duration in miliseconds. 
+
+```
+!make SOUND a <- organ C4 500;
+!shout LENGTH a; 
+$ output: 500
+
+!make SOUND b <- organ D4 300;
+!make SOUND mix <- a + b;
+!make SOUND concat <- a & b;
+
+!shout LENGTH concat;
+$ output: 500
+
+!shout LENGTH concat;
+$ output: 800
+
+!make TIMELINE tl;
+tl NEW TRACK ayo <- [concat AT 200, a AT 250];
+!shout LENGTH tl.ayo;
+$ output: 1000
+
+tl NEW TRACK short <- [mix AT 0];
+!shout LENGTH tl;
+$ output: 1000
+```
 ---
 
 
