@@ -136,10 +136,7 @@ void TonDeclarationListener::exitTargetExpr(TonParser::TargetExprContext *ctx) {
 }
 
 void TonDeclarationListener::enterFuncDef(TonParser::FuncDefContext *ctx) {
-    std::string funcName = ctx->ID(0)->getText();
-    std::string returnType = ctx->type(0)->getText();
     int currentLine = ctx->getStart()->getLine();
-    currentScope->define(funcName, returnType, currentLine);
     currentScope = std::make_shared<Scope<int>>(currentScope);
     for (size_t i = 1; i < ctx->ID().size(); ++i) {
         std::string paramName = ctx->ID(i)->getText();
@@ -259,4 +256,20 @@ void TonDeclarationListener::enterContinueStat(TonParser::ContinueStatContext *c
 }
 
 void TonDeclarationListener::exitDebugDumpStat(TonParser::DebugDumpStatContext *ctx) {
+}
+
+void TonDeclarationListener::enterProgram(TonParser::ProgramContext *ctx) {
+
+    for (auto stmt : ctx->statement()) {
+        if (auto funcDefCtx = stmt->funcDef()) {
+            std::string funcName = funcDefCtx->ID(0)->getText();
+            std::string returnType = funcDefCtx->type(0)->getText();
+            int currentLine = funcDefCtx->getStart()->getLine();
+            
+
+            if (!currentScope->existsLocally(funcName)) {
+                currentScope->define(funcName, returnType, currentLine);
+            }
+        }
+    }
 }

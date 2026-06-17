@@ -216,6 +216,14 @@ std::any TonInterpreter::visitExprStat(TonParser::ExprStatContext *ctx) {
 }
 
 std::any TonInterpreter::visitProgram(TonParser::ProgramContext *ctx) {
+    for (auto stmt : ctx->statement()) {
+        if (auto funcDefCtx = stmt->funcDef()) {
+            std::string funcName = funcDefCtx->ID(0)->getText();
+            currentScope->define(funcName, "FUNCTION", funcDefCtx);
+        }
+    }
+
+
     return visitChildren(ctx);
 }
 
@@ -1261,8 +1269,6 @@ std::any TonInterpreter::visitLoopStat(TonParser::LoopStatContext *ctx) {
 }
 
 std::any TonInterpreter::visitFuncDef(TonParser::FuncDefContext *ctx){
-        std::string funcName = ctx->ID(0)->getText();
-        currentScope->define(funcName, "FUNCTION", ctx);
         return {};
     }
 
