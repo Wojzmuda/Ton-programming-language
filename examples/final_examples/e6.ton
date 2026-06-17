@@ -1,0 +1,11 @@
+!define INT main <> {
+    !loop <INT i FROM 0 TO 9> {
+        !if <i / 2.0 == i / 2> {
+            !shout i;
+            !shout i;
+        }
+    }
+    !out 0;
+}
+
+!make INT run <- main();

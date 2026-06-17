@@ -1,0 +1,18 @@
+!make INT x <- 1;
+!make INT y <- 100;
+{
+    !make INT x <- 2;
+    {
+        !make INT x <- 3;
+        !shout x;
+        !shout ELDER::x;
+        !shout ELDER::ELDER::x;
+
+        !shout y;
+        !shout ELDER::y;
+        !shout ELDER::ELDER::y;
+
+        $ !shout ELDER::ELDER::ELDER::x;
+        $ !shout ELDER::ELDER::ELDER::y;
+    }
+}

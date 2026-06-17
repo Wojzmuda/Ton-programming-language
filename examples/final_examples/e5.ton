@@ -1,0 +1,7 @@
+!make INT i <- 1;
+!make NUMERICAL f <- 1.0;
+!make INT i2 <- 1; $ (int)1.5;
+!make INT i3 <- 1; $ (int)true;
+!make INT i4 <- 1; $ (int)"1";
+!make BOOL b <- TRUE; $ (bool)1.0;
+$ ...

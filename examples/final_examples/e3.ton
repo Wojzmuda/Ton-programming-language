@@ -1,0 +1,14 @@
+!make INT x <- 100;
+
+!define VOID foo <INT x> { $ INT x
+    $ !make INT x <- 1;
+    !shout x;
+    !shout ELDER::x;
+}
+
+!define INT main <> {
+    foo(5);
+    !out 0;
+}
+
+!make INT run <- main();

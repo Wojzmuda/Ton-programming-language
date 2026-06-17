@@ -1,0 +1,21 @@
+!make INT x <- 100;
+
+!define INT foo <INT n> {
+    !make INT x <- n;
+    $ x <- n;
+
+    !if <n > 0> {
+        !make INT dummy <- foo(n - 1);
+    }
+    !shout x;
+    !shout ELDER::x;
+    $ !shout ELDER::ELDER::x;
+    !out 0;  
+}
+
+!define INT main <> {
+    !make INT dummy <- foo(6);
+    !out 0;
+}
+
+!make INT run <- main();
