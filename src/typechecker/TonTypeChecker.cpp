@@ -40,19 +40,21 @@ std::any TonTypeChecker::visitRelationalExpr(TonParser::RelationalExprContext *c
     if (hasUnknown(left, right)) {
         return std::string("BOOL");
     }
-    // TODO for now we are letting INT and NUMERICAL to be compared.
-    // Later on we should delete in because there will be implicit type conversion (int -> num)
+
+    if (isConvertible(left, right)) {
+        return std::string("BOOL");
+    }
+
     if (left == "SOUND" && right == "SOUND") {
         return std::string("BOOL");
     }
+
     if (left == "NOTE" && right == "NOTE") {
         return std::string("BOOL");
     }
-    if (left != right && !( (left == "INT" || left == "NUMERICAL") && (right == "INT" || right == "NUMERICAL") )) {
-        size_t line = ctx->getStart()->getLine();
-        throw std::runtime_error("Type Error in line " + std::to_string(line) + ": Cannot compare " + left + " with " + right);
-    }
-    return std::string("BOOL");
+
+    size_t line = ctx->getStart()->getLine();
+    throw std::runtime_error("Type Error in line " + std::to_string(line) + ": Cannot compare " + left + " with " + right);
 }
 
 std::any TonTypeChecker::visitUnaryExpr(TonParser::UnaryExprContext *ctx) {
@@ -193,20 +195,20 @@ std::any TonTypeChecker::visitCreateSoundExpr(TonParser::CreateSoundExprContext 
         return std::string("SOUND");
     }
 
-    if (arg1Type != "NOTE") {
+    if (!isConvertible("NOTE", arg1Type)) {
         size_t line = ctx->getStart()->getLine();
         throw std::runtime_error("Line " + std::to_string(line) +
                                  ": First argument of CreateSound must be a NOTE. Given: " + arg1Type);
     }
     
-    if (arg2Type != "INT") {
+    if (!isConvertible("INT", arg2Type)) {
         size_t line = ctx->getStart()->getLine();
         throw std::runtime_error("Line " + std::to_string(line) +
                                  ": Second argument (duration) of CreateSound must be an INT. Given: " + arg2Type);
     }
 
     if (ctx->expr().size() > 2) {
-        if (arg3Type != "INT" && arg3Type != "NUMERICAL") {
+        if (!isConvertible("NUMERICAL", arg3Type)) {
             size_t line = ctx->getStart()->getLine();
             throw std::runtime_error("Line " + std::to_string(line) +
                                      ": Third argument (volume) of SOUND must be INT or NUMERICAL. Given: " + arg3Type);

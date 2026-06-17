@@ -26,7 +26,7 @@ void TonDeclarationListener::exitVarDecl(TonParser::VarDeclContext *ctx) {
         std::any result = typeChecker.visit(ctx->expr());
         std::string actualType = std::any_cast<std::string>(result);
 
-        if (expectedType != actualType && actualType != "UNKNOWN") {
+        if (!typeChecker.isConvertible(expectedType, actualType)) {
             size_t line = ctx->getStart()->getLine();
             throw std::runtime_error("Type Error in line " + std::to_string(line) +
                                      ": Cannot assign " + actualType + " to a variable of type " + expectedType + ".");
