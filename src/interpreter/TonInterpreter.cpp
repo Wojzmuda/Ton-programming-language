@@ -170,14 +170,22 @@ std::any TonInterpreter::visitVarDecl(TonParser::VarDeclContext *ctx) {
     if (ctx->expr()) {
         value = visit(ctx->expr());
         hasValue = true; 
-    } else {
-        
-        if (typeName == "TIMELINE") {
-            Timeline tl; tl.name = varName; value = tl;
-            hasValue = true;
+        if (!doTypesMatch(typeName, value)) {
+            size_t line = ctx->getStart()->getLine();
+            throw std::runtime_error("Line " + std::to_string(line) +
+                ": Cannot assign this value to a variable of type " +
+                typeName + ".");
         }
-        else if (typeName == "SOUND") { value = Sound(); hasValue = true; }
-        else if (typeName == "ARRAY") { value = std::vector<std::any>{}; hasValue = true; }
+    } else {
+        if (typeName == "TIMELINE") {
+            Timeline tl; 
+            tl.name = varName; 
+            value = tl;
+        }
+        else if (typeName == "SOUND") value = Sound();
+        else if (typeName == "TRACK") value = Track(); 
+        else if (typeName == "ARRAY") value = std::vector<std::any>{};
+        else if (typeName == "BOOL") value = false;   
         else if (typeName == "INT") value = 0;
         else if (typeName == "NUMERICAL") value = 0.0;
         else if (typeName == "NOTE") value = Note();
@@ -189,7 +197,6 @@ std::any TonInterpreter::visitVarDecl(TonParser::VarDeclContext *ctx) {
     currentScope->define(varName, typeName, value, hasValue);
     return value;
 }
-
 
 std::any TonInterpreter::visitTargetExpr(TonParser::TargetExprContext *ctx) {
     auto targetNode = ctx->target(); 
@@ -277,7 +284,7 @@ std::any TonInterpreter::visitAssignment(TonParser::AssignmentContext *ctx) {
         if (!targetScope->exists(varName)) {
             throw std::runtime_error("Error: Variable '" + varName + "' must be declared first.");
         }
-std::any rightSide = visit(ctx->expr());
+        std::any rightSide = visit(ctx->expr());
         std::string declaredType = targetScope->resolveType(varName); 
         
         if (!doTypesMatch(declaredType, rightSide)) {
@@ -521,8 +528,8 @@ std::any TonInterpreter::visitCreateSoundExpr(TonParser::CreateSoundExprContext 
         throw std::runtime_error("Line " + std::to_string(line) + ": Second argument of SOUND definition must be an INT.");
     }
 
-    Note note = std::any_cast<Note>(arg1);;
-    int durationMs = std::any_cast<int>(arg2);;
+    Note note = std::any_cast<Note>(arg1);
+    int durationMs = std::any_cast<int>(arg2);
     float volume = 0.5f;
 
     if (ctx->expr().size() > 2) {
