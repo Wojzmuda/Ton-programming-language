@@ -59,24 +59,83 @@ Use `!make` to declare variables, followed by the type, name, and assignment ope
 !make STRING greeting <- "Hello Music!";
 ```
 
-### Output to Screen (`!shout`)
-Prints text to the console.
+### Delayed Assignment (Uninitialized Variables)
+You can declare a variable without immediately assigning a value to it by omitting the `<-` operator. However, Tøn enforces strict memory safety: you **cannot** read or use this variable until it has been explicitly assigned a value.
 
+```text
+!make INT counter;       $ Variable is born, but empty
+!shout counter;          $ <-- ERROR: Variable is declared but uninitialized.
+
+counter <- 1;            $ Value is assigned
+!shout counter;          $ Now it works! Outputs: 1
 ```
-!shout "Generating track...";
+
+### Output to Screen (`!shout`)
+It evaluates expressions at runtime and prints their representation directly to the console. 
+
+You are allowed to pass all available data types to `!shout` statement, however the complex types might be printed as `[COMPLEX OBJECT]` due to the inherent inability to convert them to text.
+
+You can also print multiple independent values in a single statement by separating them with a comma (`,`).
+
+```ton
+!shout "Tempo is set to:", 120, "BPM";
 ```
 
 ### Operators
 
 Tøn supports a classic set of operators for logic and mathematics:
 
-* **Assigment:** `<-`
+* **Assignment:** `<-`
 * **Arithmetic:** `+`, `-`, `*`, `/`
 * **Relational:** `==` (equal to), `!=` (not equal to), `<`, `>`, `<=`, `>=`
 * **Logical:** `AND`, `OR`, `NOT`
 
-> **Note:** Some operators are additionaly overloaded for Audio types. For more information, read [Audio Engine Documentation](./audio.md)
+> **Note:** Some operators are additionally overloaded for Audio types. For more information, read [Audio Engine Documentation](./audio.md)
 
+---
+
+## 4. Type Conversions  and Rules
+The language supports both explicit and implicit type conversions.
+
+### Implicit Conversions
+Implicit conversions happen automatically in the background whenever the context requires it — most notably during variable assignments (e.g., assigning a `NUMERICAL` to an `INT` variable), passing arguments to functions, or evaluating mathematical/logical expressions.
+
+Tøn will perform the following conversions implicitly:
+* `INT` -> `NUMERICAL` *(type promotion - converts an integer to a floating-point number)*
+* `NUMERICAL` -> `INT` *(type demotion - performs **truncation** of the decimal part)*
+* `INT/NUMERICAL` -> `BOOL` *(evaluates to **FALSE** when number is exactly **0 / 0.0**, and **TRUE** otherwise)*
+* `BOOL` -> `INT/NUMERICAL` -> *(evaluates **0 / 0.0** when **FALSE** and **1 / 1.0** when **TRUE** to the number)*
+
+### Explicit Conversions
+Additionaly, the language provides **cast** operator: `<NEW_TYPE>expression`. It can be used to manually force any of the implicit conversions mentioned above, and also to perform the following:
+
+* `<CHAR> STRING` *(works only when given `STRING` has a length of exactly 1)*
+* `<STRING> CHAR` *(creates a `STRING` of size one with the given `CHAR`)*
+* `<STRING> INT/NUMERICAL` *(constructs a `STRING` representation of the given number)*
+* `<INT/NUMERICAL> STRING` *(creates a number from a given `STRING`)*
+
+> **Note:** `STRING` -> `INT/NUMERICAL` conversion will succeed only if the given `STRING` contains a valid number. Otherwise, the interpreter will produce a runtime error.
+
+### Casting in Practice
+
+To explicitly cast a value from one type to another, place the target type inside angle brackets `< >` directly before the expression or variable.
+
+Here is a short example demonstrating both implicit and explicit conversions in action:
+```ton
+$ Implicit conversion (INT is automatically promoted to NUMERICAL)
+!make NUMERICAL myNumber <- 42;
+
+$ Explicitly casting a NUMERICAL to a STRING
+!make STRING textNumber <- "34";
+!make INT number <- <INT>textNumber;
+
+$ 3. Explicitly casting a NUMERICAL down to an INT (truncates decimals)
+!make NUMERICAL price <- 19.99;
+!make INT flatPrice <- <INT>price;
+
+!shout number; $ output: 34
+!shout flatPrice;  $ output: 19
+```
 ---
 
 ## 4. Control Flow
@@ -112,13 +171,59 @@ $ Loop until a condition is true
 !until <x == 0> {
     x -<- 1;
 }
+
+$ Loop with a custom step using BY
+!loop <INT i FROM 10 TO 0 BY -2> {
+    !shout i; $ Outputs: 10, 8, 6, 4, 2, 0
+}
+
+$ Loop with previously declared variable
+!make INT a <- 3;
+!loop <a FROM 2 TO 54> {
+}
+!shout a;    $ Outputs: 54
+
+$ Foreach Loop: Iterate directly over an ARRAY
+!make ARRAY playlist <- [10, 20, 30];
+!loop <INT item <- playlist> {
+    !shout item; $ Iterates through every element in 'playlist'
+}
 ```
-## ***:exclamation: TODO: LIFE CYCLE OF ARGUMENTS IN LOOP <> :exclamation:***
+
+### Lifecycle of Loop Arguments
+When you declare an iterator or a variable directly inside the angle brackets of a `!loop` statement (e.g., `INT i` in a `FROM ... TO` loop), that variable is bound **strictly** to the loop's internal scope. 
+
+It is born when the loop starts and completely destroyed the moment the loop finishes its execution. You cannot access or shout a loop iterator from outside of its block.
+
+```text
+!loop <INT i FROM 1 TO 3> {
+    !shout i; $ Outputs: 1, 2, 3
+}
+$ !shout i; <-- THIS WOULD CAUSE AN ERROR: Variable 'i' is not defined.
 
 *Note: You can use `!break` to exit a loop early, or `!continue` to skip the current iteration and proceed to the next one.*
 
 ---
 
+
+## 5. Functions & Scoping
+
+Tøn allows you to encapsulate logic into functions and manage memory dynamically using block scopes. 
+
+### Defining Functions
+Functions are created using the `!define` keyword, followed by the return type, the function name, and its arguments inside angle brackets `< >`. Use the `!out` keyword to return a value.
+
+```text
+!define STRING introduce <INT arg1, INT arg2> {
+    !if <arg1 > arg2> {
+        !out "High";
+    }
+    !otherwise {
+        !out "Low";
+    }
+}
+```
+---
 
 ## 5. Functions & Scoping
 
@@ -196,6 +301,20 @@ The variable remains alive and accessible:
 
 The exact moment the execution reaches the closing brace `}` of the block where the variable was defined, the variable is instantly destroyed. The memory it occupied is immediately freed. Therefore, variables created in global scope will occupy the memory until the program ends.
 
+### Parent Scope Access (`ELDER::`)
+By default, if a variable is shadowed by a local variable with the same name, or if you need explicit access to a variable defined in a higher enclosing block, you can use the `ELDER::` prefix. Every `ELDER::` moves one level up in the memory tree.
+
+```text
+!make INT x <- 100;
+{
+    !make INT x <- 5;
+    !shout x;          $ Outputs: 5 (local)
+    !shout ELDER::x;   $ Outputs: 100 (from the parent block)
+    
+    ELDER::x <- 999;   $ Modifies the global variable!
+}
+```
+
 ### Example of the Lifecycle
 
 ```ton
@@ -214,12 +333,9 @@ $ !shout heavy_synth; <-- ERROR: Variable no longer exists.
 
 ```
 
-### Good Practise Advise
+### Good Practice Advise
 
 If you are generating complex, multi-layered sounds (like bouncing multiple synths together before placing them on a track), it is highly recommended to do so inside **Anonymous Blocks**. This ensures that the intermediate, temporary audio files are deleted from your RAM immediately after they are mixed into the final variable, preventing your script from crashing due to memory limits.
-
-
-Oto gotowy rozdział do dodania na samym końcu pliku `syntax.md`. Opisuje on dokładnie działanie ciągów znaków (Strings) oraz tablic (Arrays) zgodnie z tym, co pozwala osiągnąć Twój interpreter.
 
 ---
 
@@ -258,7 +374,7 @@ Strings support relational operators, making it easy to build logic around text 
 #### Retrieving String Length
 Tøn provides `LENGTH` operator which can be used on `ARRAY` object and returns a positive `INT` number.
 ```
-!make STRING x <- "May the force be with you"
+!make STRING x <- "May the force be with you";
 !make INT x_len <- LENGTH x;
 !shout x_len;
 $ prints 25
@@ -322,3 +438,6 @@ $ Remove and capture the last element
 $ Empty the array
 CLEAR playlist;  $ playlist is now [ ]
 ```
+
+
+

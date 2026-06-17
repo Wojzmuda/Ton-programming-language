@@ -25,14 +25,17 @@ statement
     | exprStat          // for printing results in repl
     | callStat          // zagraj(120, "szybko")
     | block             // nameless scope
+    | debugStat         // !debug;
     ;
 
 varDecl : EXCLAM_MARK MAKE type ID (ASSIGN expr)? SEMI ;
 
-trackDecl : ID NEW TRACK ID SEMI ;
+trackDecl : target NEW TRACK ID SEMI ;
 
 // Target żeby się dało: adresowanie wielopoziomowe: ID, ID.ID, lub ID.ID."alias"
-target : ID (DOT ID (DOT STRING_VAL)?)? ;
+target : elderRef* ID (DOT ID (DOT STRING_VAL)?)? ;
+
+elderRef : ELDER DOUBLE_COLON ;
 
 // do wypisywania wartosci w repl bez shout
 exprStat : expr SEMI ;
@@ -61,10 +64,10 @@ ifStat
 
 loopStat 
     : EXCLAM_MARK LOOP L_ANGLE expr TIMES R_ANGLE block                                  
-    | EXCLAM_MARK LOOP L_ANGLE type ID FROM expr TO expr (BY expr)? R_ANGLE block                 
-    | EXCLAM_MARK LOOP L_ANGLE type ID ASSIGN expr R_ANGLE block                         
+    | EXCLAM_MARK LOOP L_ANGLE type? ID FROM expr TO expr (BY expr)? R_ANGLE block                 
+    | EXCLAM_MARK LOOP L_ANGLE type? ID ASSIGN expr R_ANGLE block                                 
     ;
-
+    
 untilStat : EXCLAM_MARK UNTIL L_ANGLE expr R_ANGLE block ;
 
 breakStat : EXCLAM_MARK BREAK SEMI ;
@@ -83,13 +86,15 @@ audioOpStat
     ;
 
 arrayOpStat
-    : APPEND expr TO ID SEMI
-    | CLEAR ID SEMI
+    : APPEND expr TO target SEMI
+    | CLEAR target SEMI
     ;
 
 saveStat : EXCLAM_MARK SAVE expr STRING_VAL SEMI ;
 
 playStat : PLAY target SEMI ;
+
+debugStat : EXCLAM_MARK DEBUG SEMI #debugDumpStat ;
 
 type : TYPE_BOOL | TYPE_INT | TYPE_NUM | TYPE_CHAR | TYPE_STRING 
      | TYPE_NOTE | TYPE_SOUND | TYPE_VOID | TYPE_ARRAY | TYPE_INSTR 
@@ -102,7 +107,8 @@ expr
     | ID expr expr expr?                                       # CreateSoundExpr
     | expr (AS STRING_VAL)? AT expr                            # TrackEventExpr
     | expr L_BRACKET expr COLON expr R_BRACKET                 # SliceExpr   
-    | expr L_BRACKET expr R_BRACKET                            # IndexExpr    
+    | expr L_BRACKET expr R_BRACKET                            # IndexExpr  
+    | L_ANGLE type R_ANGLE expr                                # CastExpr  
     | L_PAREN expr R_PAREN                                     # ParensExpr
     | (NOT_KW) expr                                            # NotExpr
     | (PLUS | MINUS) expr                                      # UnaryExpr
@@ -119,10 +125,10 @@ expr
     | CHAR_VAL                                                 # CharValExpr
     | STRING_VAL                                               # StringValExpr
     | target                                                   # TargetExpr       // Zastępuje samo ID, by wspierać np. t1.skrzypeczki
-    | LENGTH target                                            # LengthOfExpr 
+    | LENGTH expr                                            # LengthOfExpr 
     | EMPTYSOUND                                               # EmptySoundExpr   
-    | ISOLATE target                                           # IsolateExpr
-    | POP ID                                                   # PopExpr                        
+    | ISOLATE target                                           # IsolateExpr  
+    | POP target                                               # PopExpr                      
     ;
 
 // --- TOKENS ---
@@ -150,6 +156,7 @@ SHOUT          : 'shout' ;
 SAVE           : 'save' ;
 BREAK          : 'break' ;
 CONTINUE       : 'continue' ;
+DEBUG          : 'debug' ;
 
 // Nowe słowa kluczowe
 NEW            : 'NEW' ;
@@ -174,6 +181,10 @@ UNMUTE         : 'UNMUTE' ;
 DIVIDE         : 'DIVIDE' ;
 EMPTYSOUND     : 'EMPTYSOUND' ;
 VOL            : 'VOL' ;
+
+// --- Najpierw tokeny dwuznakowe / specjalne dla parent ---
+ELDER         : 'ELDER' ;
+DOUBLE_COLON   : '::' ;
 
 ASSIGN         : '<-' ; 
 ADD_ASSIGN     : '+<-' ;
@@ -221,3 +232,4 @@ POP            : 'POP' ;
 ID             : [a-zA-Z_][a-zA-Z0-9_]* ;
 WS             : [ \t\r\n]+ -> skip ;
 COMMENT        : '$' ~[\r\n]* -> skip ;
+

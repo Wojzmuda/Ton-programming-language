@@ -24,6 +24,7 @@ public:
 };
 class TonInterpreter: public TonBaseVisitor {
 private:
+    bool coerceType(const std::string& expectedTypeName, std::any& val);
     std::string findSoundFontPath();
     tsf* soundFont = nullptr;
     std::unordered_map<std::string, Instrument> loadedInstruments;
@@ -48,6 +49,7 @@ private:
         }
         return aggregate;
     }
+    std::shared_ptr<Scope<std::any>> resolveScope(TonParser::TargetContext *ctx);
 
 public:
     TonInterpreter();
@@ -112,4 +114,9 @@ public:
     std::any visitSliceExpr(TonParser::SliceExprContext *ctx) override;
     std::any visitArrayOpStat(TonParser::ArrayOpStatContext *ctx) override;
     std::any visitPopExpr(TonParser::PopExprContext *ctx) override;
+
+    std::any visitCastExpr(TonParser::CastExprContext *ctx) override;
+    std::any visitLengthOfExpr(TonParser::LengthOfExprContext *ctx) override;
+
+    std::any visitDebugDumpStat(TonParser::DebugDumpStatContext *ctx) override;
 };
