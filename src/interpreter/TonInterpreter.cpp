@@ -1102,8 +1102,7 @@ std::any TonInterpreter::visitUntilStat(TonParser::UntilStatContext *ctx) {
 }
 
 std::any TonInterpreter::visitLoopStat(TonParser::LoopStatContext *ctx) {
-
-
+    
     if (ctx->TIMES()) {
         std::any timesAny = visit(ctx->expr(0));
         int times = 0;
@@ -1126,13 +1125,11 @@ std::any TonInterpreter::visitLoopStat(TonParser::LoopStatContext *ctx) {
 
     else if (ctx->FROM()) {
         std::string varName = ctx->ID()->getText();
-        std::string typeName = ctx->type()->getText();
 
         int start = std::any_cast<int>(visit(ctx->expr(0)));
         int end = std::any_cast<int>(visit(ctx->expr(1)));
 
         int step = (start <= end) ? 1 : -1;
-
 
         if (ctx->BY() != nullptr) {
             step = std::any_cast<int>(visit(ctx->expr(2)));
@@ -1144,23 +1141,53 @@ std::any TonInterpreter::visitLoopStat(TonParser::LoopStatContext *ctx) {
         }
 
         auto previousScope = currentScope;
-        currentScope = std::make_shared<Scope<std::any>>(previousScope);
-        currentScope->define(varName, typeName, start);
-
-        for (int i = start; (step > 0 ? i <= end : i >= end); i += step) {
-            currentScope->set(varName, i);
-
-            try { visit(ctx->block()); }
-            catch (BreakException&) { break; }
-            catch (ContinueException&) { continue; }
+        
+    
+        if (ctx->type() != nullptr) {
+            std::string typeName = ctx->type()->getText();
+            currentScope = std::make_shared<Scope<std::any>>(previousScope);
+            currentScope->define(varName, typeName, start);
+        } else {
+            if (!currentScope->exists(varName)) {
+                size_t line = ctx->getStart()->getLine();
+                throw std::runtime_error("Line " + std::to_string(line) + ": Error - Variable '" + varName + "' not found.");
+            }
+           
+            currentScope->set(varName, start);
         }
+
+     
+        while (true) {
+    
+            int currentVal = std::any_cast<int>(currentScope->get(varName));
+            
+      
+            if (step > 0 ? currentVal > end : currentVal < end) {
+                break;
+            }
+            
+        
+            try { 
+                visit(ctx->block()); 
+            } 
+            catch (BreakException&) { 
+                break; 
+            } 
+            catch (ContinueException&) { 
+              
+            }
+
+           
+            int valAfterBlock = std::any_cast<int>(currentScope->get(varName));
+            currentScope->set(varName, valAfterBlock + step);
+        }
+
         currentScope = previousScope;
     }
 
     else if (ctx->ASSIGN()) {
         std::string varName = ctx->ID()->getText();
-        std::string typeName = ctx->type()->getText();
-
+        
         std::any arrayAny = visit(ctx->expr(0));
         if (arrayAny.type() != typeid(std::vector<std::any>)) {
             size_t line = ctx->getStart()->getLine();
@@ -1169,9 +1196,17 @@ std::any TonInterpreter::visitLoopStat(TonParser::LoopStatContext *ctx) {
         auto arrayVec = std::any_cast<std::vector<std::any>>(arrayAny);
 
         auto previousScope = currentScope;
-        currentScope = std::make_shared<Scope<std::any>>(previousScope);
 
-        currentScope->define(varName, typeName, std::any{});
+        if (ctx->type() != nullptr) {
+            std::string typeName = ctx->type()->getText();
+            currentScope = std::make_shared<Scope<std::any>>(previousScope);
+            currentScope->define(varName, typeName, std::any{});
+        } else {
+            if (!currentScope->exists(varName)) {
+                size_t line = ctx->getStart()->getLine();
+                throw std::runtime_error("Line " + std::to_string(line) + ": Error - Variable '" + varName + "' not found.");
+            }
+        }
 
         for (auto& item : arrayVec) {
             currentScope->set(varName, item);
