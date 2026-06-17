@@ -71,10 +71,14 @@ counter <- 1;            $ Value is assigned
 ```
 
 ### Output to Screen (`!shout`)
-Prints text to the console.
+It evaluates expressions at runtime and prints their representation directly to the console. 
 
-```
-!shout "Generating track...";
+You are allowed to pass all available data types to `!shout` statement, however the complex types might be printed as `[COMPLEX OBJECT]` due to the inherent inability to convert them to text.
+
+You can also print multiple independent values in a single statement by separating them with a comma (`,`).
+
+```ton
+!shout "Tempo is set to:", 120, "BPM";
 ```
 
 ### Operators
