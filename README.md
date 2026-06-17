@@ -1,8 +1,12 @@
 # Tøn-programming-language :musical_note:
 Description, will be written in the future
 
-## Documentation Structure
+---
+
+## Documentation Structure :page_with_curl: 
 *To be written when all documentation is merged and finished*
+
+---
 
 ##  Setup and Build :building_construction:
 This repository comes with 2 configuration scripts for both **Windows** and **Linux** machines. If you wish to dive deeper into the configuration, please visit [setup.md](./docs/setup.md) file.
@@ -18,6 +22,8 @@ To run the script, simply open your terminal in the project root directory and e
 ```
 bash install-linux.sh
 ```
+
+---
 
 ##  Project structure :evergreen_tree:
 
