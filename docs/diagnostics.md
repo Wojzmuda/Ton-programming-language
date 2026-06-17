@@ -1,14 +1,14 @@
 # Tøn Language: Diagnostics & Tooling
 
-Tøn is designed not just to execute code, but to actively assist the developer. This document outlines the built-in diagnostic tools, memory safety features, and debugging commands available in the Tøn compiler and interpreter.
+Tøn is designed not just to execute code, but to actively assist the developer. This document outlines the built-in diagnostic tools, memory safety features, and debugging commands available in the Tøn interpreter. 
 
 ---
 
 ## 1. Smart Typo Suggestions (Levenshtein Algorithm)
 
-One of the most frustrating parts of programming is halted execution due to a simple typo. Tøn features an intelligent scope-aware suggestion system. 
+Tøn features an intelligent, scope-aware suggestion system for unresolved identifiers. 
 
-When you attempt to use a variable, array, or function that does not exist, the compiler uses the **Levenshtein distance algorithm** to scan your current memory scope (including parent blocks). If it finds a similarly named identifier, it will suggest it directly in the error console.
+When you attempt to use a variable, array, or function that does not exist, the interpreter uses the **Levenshtein distance algorithm** to scan your current memory scope (including parent blocks). If it finds a similarly named identifier, it will suggest it directly in the error console.
 
 **Example:**
 ```text
@@ -27,8 +27,7 @@ When you attempt to use a variable, array, or function that does not exist, the 
 ## 2. Strict Initialization Checks
 
 Tøn prioritizes memory safety and predictable audio generation. The Type Checker ensures that no variable is used before it is explicitly assigned a value. 
-
-While you can declare a variable to reserve memory (e.g., `!make INT counter;`), any attempt to read from it, use it in a mathematical operation, or pass it to an audio node without initializing it first will be intercepted by the compiler.
+While you can declare a variable to reserve memory (e.g., `!make INT counter;`), any attempt to read from it, use it in a mathematical operation, or pass it to an audio node without initializing it first will be intercepted by the interpreter's type checker before execution.
 
 **Example:**
 ```text
@@ -44,8 +43,6 @@ While you can declare a variable to reserve memory (e.g., `!make INT counter;`),
 ---
 
 ## 3. Memory State Dump (`!debug;`)
-
-When writing complex, multi-layered scripts with multiple anonymous blocks and shadowed variables, it can be difficult to track what data is currently alive in the RAM.
 
 Tøn provides the `!debug;` statement. Placing this anywhere in your code will halt the interpreter and print a detailed table of the current memory scope directly to your terminal. It displays every living variable, its associated data type, initialization status, and current value, organized by hierarchical memory levels.
 

@@ -63,7 +63,8 @@ Use `!make` to declare variables, followed by the type, name, and assignment ope
 You can declare a variable without immediately assigning a value to it by omitting the `<-` operator. However, Tøn enforces strict memory safety: you **cannot** read or use this variable until it has been explicitly assigned a value.
 
 ```text
-!make INT counter;       $Variable is born, but empty$ !shout counter;        <-- ERROR: Variable is declared but uninitialized.
+!make INT counter;       $ Variable is born, but empty
+!shout counter;          $ <-- ERROR: Variable is declared but uninitialized.
 
 counter <- 1;            $ Value is assigned
 !shout counter;          $ Now it works! Outputs: 1
@@ -80,12 +81,12 @@ Prints text to the console.
 
 Tøn supports a classic set of operators for logic and mathematics:
 
-* **Assigment:** `<-`
+* **Assignment:** `<-`
 * **Arithmetic:** `+`, `-`, `*`, `/`
 * **Relational:** `==` (equal to), `!=` (not equal to), `<`, `>`, `<=`, `>=`
 * **Logical:** `AND`, `OR`, `NOT`
 
-> **Note:** Some operators are additionaly overloaded for Audio types. For more information, read [Audio Engine Documentation](./audio.md)
+> **Note:** Some operators are additionally overloaded for Audio types. For more information, read [Audio Engine Documentation](./audio.md)
 
 ---
 
@@ -127,6 +128,12 @@ $ Loop with a custom step using BY
 !loop <INT i FROM 10 TO 0 BY -2> {
     !shout i; $ Outputs: 10, 8, 6, 4, 2, 0
 }
+
+$ Loop with previously declared variable
+!make INT a <- 3;
+!loop <a FROM 2 TO 54> {
+}
+!shout a;    $ Outputs: 54
 
 $ Foreach Loop: Iterate directly over an ARRAY
 !make ARRAY playlist <- [10, 20, 30];
@@ -300,7 +307,7 @@ Strings support relational operators, making it easy to build logic around text 
 #### Retrieving String Length
 Tøn provides `LENGTH` operator which can be used on `ARRAY` object and returns a positive `INT` number.
 ```
-!make STRING x <- "May the force be with you"
+!make STRING x <- "May the force be with you";
 !make INT x_len <- LENGTH x;
 !shout x_len;
 $ prints 25
