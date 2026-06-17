@@ -1,0 +1,14 @@
+USE piano;
+$ 1. Tworzymy mieszaną tablicę (ARRAY)
+!make ARRAY arr <- [C4, 42, "Witaj Tøn!"];
+
+$ 2. Wyciągamy elementy dynamicznie do ściśle typowanych zmiennych
+!make NOTE n <- arr[0];
+!make INT liczba <- arr[1];
+!make STRING tekst <- arr[2];
+
+$ 3. Używamy ich w locie w operacjach
+!make SOUND s <- piano arr[0] 500;   $ Generowanie dźwięku z UNKNOWN (które w locie jest nutą)
+!save s "x.wav";
+!shout tekst;  $ Powinno wypisać: Witaj Tøn!
+!shout liczba; $ Powinno wypisać: 42

@@ -1,0 +1,47 @@
+$ ==============================================================
+$ SOLIDNY TEST OPERATORA ELDER:: (ISSUE #81)
+$ ==============================================================
+
+!make INT var_x <- 10;
+!make STRING tekst <- "Globalny";
+!make ARRAY tablica <- [1, 2, 3];
+
+!shout "[POZIOM 0] Start: var_x = ", var_x, ", tekst = ", tekst;
+
+{
+    $ Przesłaniemy zmienne lokalnie (Shadowing)
+    !make INT var_x <- 50;
+    !make STRING tekst <- "Lokalny_Poziom_1";
+    
+    $ TEST 1: Nadpisanie wartości w scope nadrzędnym (visitAssignment)
+    ELDER::var_x <- 100;
+    ELDER::tekst <- "Zmieniony_Przez_Rodzica";
+    
+    $ TEST 2: Odczyt z nadrzędnego scope'u przy przesłoniętych nazwach (visitTargetExpr)
+    !shout "[POZIOM 1] Lokalny var_x = ", var_x;
+    !shout "[POZIOM 1] Nadrzedny ELDER::var_x = ", ELDER::var_x;
+    !shout "[POZIOM 1] Nadrzedny ELDER::tekst = ", ELDER::tekst;
+    
+    {
+        $ Wchodzimy o krok głębiej - dwa poziomy zagnieżdżenia bloku
+        !make INT var_x <- 999;
+        
+        $ TEST 3: Wspinaczka wielopoziomowa (ELDER::ELDER::)
+        $ Modyfikujemy zmienną na samym szczycie (z 100 na 777)
+        ELDER::ELDER::var_x <- 777;
+        
+        $ TEST 4: Operacje na tablicy z najwyższego poziomu
+        $ Sprawdzamy czy resolveScope() działa dla innych typów komend
+        APPEND 4 TO ELDER::ELDER::tablica;
+        
+        !shout "[POZIOM 2] Zagniezdzony var_x = ", var_x;
+        !shout "[POZIOM 2] Srodkowy ELDER::var_x = ", ELDER::var_x;
+        !shout "[POZIOM 2] Najwyzszy ELDER::ELDER::var_x = ", ELDER::ELDER::var_x;
+        !shout "[POZIOM 2] Najwyzsza ELDER::ELDER::tablica = ", ELDER::ELDER::tablica;
+    }
+}
+
+!shout "--------------------------------------------------";
+!shout "[POZIOM 0] Wynik var_x (Powinien byc 777): ", var_x;
+!shout "[POZIOM 0] Wynik tekst: ", tekst;
+!shout "[POZIOM 0] Wynik tablica (Powinna miec [1, 2, 3, 4]): ", tablica;

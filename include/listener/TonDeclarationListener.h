@@ -34,4 +34,6 @@ class TonDeclarationListener : public TonBaseListener {
         void exitUntilStat(TonParser::UntilStatContext *ctx) override;
         void enterBreakStat(TonParser::BreakStatContext *ctx) override;
         void enterContinueStat(TonParser::ContinueStatContext *ctx) override;
+
+        void exitDebugDumpStat(TonParser::DebugDumpStatContext *ctx) override;
 };

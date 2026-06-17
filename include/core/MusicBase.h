@@ -127,14 +127,26 @@ public:
         }
     }
     void generateSawWave(Note note, int durationMs) {
-        // TODO
         samples.clear();
-        return;
+        int totalSamples = (durationMs / 1000.0) * sampleRate;
+        samples.reserve(totalSamples);
+        for (int i = 0; i < totalSamples; ++i) {
+            double time = (double)i / sampleRate;
+            double phase = std::fmod(time * note.getFrequency(), 1.0);
+            double sampleValue = 2.0 * phase - 1.0;
+            samples.push_back(sampleValue);
+        }
     }
     void generateSquareWave(Note note, int durationMs) {
-        // TODO
         samples.clear();
-        return;
+        int totalSamples = (durationMs / 1000.0) * sampleRate;
+        samples.reserve(totalSamples);
+        for (int i = 0; i < totalSamples; ++i) {
+            double time = (double)i / sampleRate;
+            double phase = std::fmod(time * note.getFrequency(), 1.0);
+            double sampleValue = (phase < 0.5) ? 1.0 : -1.0;
+            samples.push_back(sampleValue);
+        }
     }
 
 public:
@@ -147,7 +159,7 @@ public:
             this->generateSawWave(note, durationMs);
         }
         else if (synthName == "square") {
-            this->generateSawWave(note, durationMs);
+            this->generateSquareWave(note, durationMs);
         }
         else {
             throw std::runtime_error("no such synth");
