@@ -54,6 +54,7 @@ statement
     | continueStat      # Continue loop (!continue)
     | callStat          # Function call statement
     | block             # Nameless scope
+    | debugDumpStat     # Console memory dump for debugging
     ;
 ```
 
@@ -181,6 +182,14 @@ ID         : [a-zA-Z_][a-zA-Z0-9_]* ;
 WS         : [ \t\r\n]+ -> skip ;
 COMMENT    : '$' ~[\r\n]* -> skip ;
 ```
+
+### 2.9 Explicit Type Casting
+
+```antlr
+expr : L_ANGLE type R_ANGLE expr ; # CastExpr
+```
+
+The language supports explicit type casting for basic data types (`INT`, `NUMERICAL`, `BOOL`, `STRING`, `CHAR`). It handles safe string conversions, truncation of floating-point numbers, and boolean evaluations natively.
 
 ## 3. System Overview
 
@@ -344,6 +353,11 @@ Key operations:
 
 The distinction between `set()` (update existing) and `define()` (create new) enforces the language's semantic rule that variables must be declared before assignment, while preventing accidental shadowing through the `existsLocally()` check during the declaration pass.
 
+#### 4.2.6 Built-in Sound Library
+The engine provides a predefined set of ready-to-use instruments mapped to specific MIDI preset indices from the General MIDI standard. Users can initialize them via the `USE` header.
+- **Synthesizers (`SYNTHS`):** `sine`, `saw`, `square`
+- **Sampled Instruments (`SAMPLE_INSTRUMENTS`):** 13 curated presets including `piano`, `organ`, `guitar`, `bass`, `strings`, `drums`, and orchestral elements.
+
 ### 4.3 Main Execution Pipeline (main.cpp)
 
 The entry point establishes the multi-pass architecture, registering custom listeners and protecting the runtime environment from `std::bad_any_cast` exceptions caused by the ANTLR4 C++ target.
@@ -472,6 +486,9 @@ The listener heavily validates assignments (`exitAssignment`), splitting logic b
 - **Scenario B1**: Assignment to a specific alias within a Timeline track (e.g., `mySong.bassline."start"`), validating that only `SOUND` or `TRACK_EVENT` types are assigned
 - **Scenario B2**: Whole-track assignment (e.g., `mySong.bassline <- [...]`), requiring `ARRAY` or `TRACK_EVENT` types
 
+#### 4.5.5 Explicit Scope Resolution
+To handle deep nesting (e.g., inside loops or function calls), the `resolveScope` mechanism allows for explicit upward scope traversal. By utilizing `elderRef()`, the interpreter can bypass the local namespace and intentionally target variables in outer scopes, effectively solving variable shadowing issues without breaking strict lexical scoping rules.
+
 ### 4.6 Static Analysis (Typechecker)
 
 The `TonTypeChecker` module interacts closely with the Declaration Listener, verifying semantic correctness for expressions to prevent illegal operations on data types. It returns type names as `std::any`.
@@ -496,6 +513,11 @@ std::any TonTypeChecker::visitIndexExpr(TonParser::IndexExprContext *ctx) {
     // ARRAY indexing returns UNKNOWN (mixed-type arrays)
 }
 ```
+#### 4.6.3 Implicit Type Coercion
+The interpreter implements a robust implicit type conversion system (`TonInterpreter::coerceType`) at runtime. It automatically and safely converts primitives when assigning variables or passing function arguments. For example:
+- `BOOL` can be evaluated as numeric `1`/`0` or `1.0`/`0.0`.
+- `INT` and `FLOAT` (`NUMERICAL`) are automatically promoted or truncated depending on the expected parameter type.
+This minimizes strict-typing friction for the user while maintaining memory safety in the C++ backend.
 
 ### 4.7 Runtime Execution Engine (TonInterpreter)
 
@@ -686,3 +708,30 @@ std::any TonInterpreter::visitSaveStat(TonParser::SaveStatContext *ctx) {
 }
 ```
 
+#### 4.7.6 Memory Debugging Utility
+Ton features a built-in state inspection tool (`visitDebugDumpStat`) that allows users to dump the entire execution context to the console. When triggered, it walks recursively up the environment chain and prints a formatted, aligned table of all current variables, their designated types, initialization status, and current values. Complex memory structures (like `ARRAY`, `SOUND`, or `TIMELINE`) are gracefully summarized, making script debugging highly efficient without external tools.
+
+```bash
+==================== [TON DEBUG DUMP] ====================
+Triggered at line: 70
+
+  VARIABLE NAME       TYPE           INITIALIZED    CURRENT VALUE
+  -----------------------------------------------------------------
+  current_volume      INT            FALSE          [Uninitialized / Complex Type]
+  late_initialized    INT            TRUE           777
+  local_unassigned    INT            FALSE          [Uninitialized / Complex Type]
+  pi_value            NUMERICAL      FALSE          [Uninitialized / Complex Type]
+  track_events        ARRAY          FALSE          [Uninitialized / Complex Type]
+  --- Parent Scope (Level 1) ---
+  global_tempo        INT            FALSE          [Uninitialized / Complex Type]
+  global_unassigned   INT            FALSE          [Uninitialized / Complex Type]
+  playMelody          FUNCTION       TRUE           [Uninitialized / Complex Type]
+  user_name           STRING         FALSE          [Uninitialized / Complex Type]
+==========================================================
+
+```
+
+#### 4.7.7 Audio Polymorphism Mechanics
+The interpreter distinguishes between audio mixing and audio concatenation on a low mathematical level:
+- **Mixing (`+` operator):** The `visitAddSubMixExpr` iterates through the sample arrays of two `Sound` objects, mathematically superimposing (adding) the float values of parallel samples to play them simultaneously.
+- **Concatenation (`&` operator):** The `visitConcatExpr` utilizes `std::vector::insert` to sequentially append the raw buffer of the right-hand `Sound` to the end of the left-hand `Sound`, enabling rapid, seamless chronological chaining.
