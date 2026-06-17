@@ -1,0 +1,4 @@
+$ BŁĄD: Brak zdefiniowanego typu zmiennej po !make
+!make moja_zmienna <- 42;
+
+!shout moja_zmienna;

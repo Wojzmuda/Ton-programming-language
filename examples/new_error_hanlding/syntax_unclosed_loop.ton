@@ -1,0 +1,6 @@
+$ BŁĄD: Brak zamykającej klamry dla pętli !loop
+!make INT licznik <- 0;
+
+!loop <licznik FROM 1 TO 3> {
+    !shout "Gramy w pętli...";
+    !make SOUND s <- synth E4 200;
