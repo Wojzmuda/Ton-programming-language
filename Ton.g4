@@ -24,6 +24,7 @@ statement
     | continueStat      // !continue;
     | callStat          // zagraj(120, "szybko")
     | block             // nameless scope
+    | exprStat          // for printing results in repl
     ;
 
 varDecl : EXCLAM_MARK MAKE type ID (ASSIGN expr)? SEMI ;
@@ -35,6 +36,9 @@ target : ID (DOT ID (DOT STRING_VAL)?)? ;
 
 // Zeby sie dalo wywolac funkcje void
 callStat : ID L_PAREN (expr (COMMA expr)*)? R_PAREN SEMI ;
+
+// do wypisywania wartosci w repl bez shout
+exprStat : expr SEMI ;
 
 assignment 
     : target ASSIGN expr SEMI 

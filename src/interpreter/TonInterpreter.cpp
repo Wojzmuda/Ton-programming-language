@@ -90,6 +90,55 @@ TonInterpreter::~TonInterpreter() {
     }
 }
 
+void TonInterpreter::printValue(const std::any& value) {
+    if (value.type() == typeid(std::string)) {
+        std::cout << std::any_cast<std::string>(value);
+    }
+    else if (value.type() == typeid(int)) {
+        std::cout << std::any_cast<int>(value);
+    }
+    else if (value.type() == typeid(double)) {
+        std::cout << std::any_cast<double>(value);
+    }
+    else if (value.type() == typeid(char)) {
+        std::cout << "'" << std::any_cast<char>(value) << "'";
+    }
+    else if (value.type() == typeid(bool)) {
+        std::cout << (std::any_cast<bool>(value) ? "TRUE" : "FALSE");
+    }
+    else if (value.type() == typeid(Note)) {
+        Note currentNote = std::any_cast<Note>(value);
+        std::cout << "NOTE(" << currentNote.pitchClass << currentNote.octave << ")";
+    }
+    else if (value.type() == typeid(Instrument)) {
+        Instrument currentInstrument = std::any_cast<Instrument>(value);
+        std::cout << "INSTRUMENT(" << currentInstrument.getName() << ")";
+    }
+    else if (value.type() == typeid(std::vector<std::any>)) {
+        auto arrayElements = std::any_cast<std::vector<std::any>>(value);
+        std::cout << "[ ";
+        for (size_t j = 0; j < arrayElements.size(); j++) {
+            printValue(arrayElements[j]);
+
+            if (j < arrayElements.size() - 1) {
+                std::cout << ", ";
+            }
+        }
+        std::cout << " ]";
+    }
+    else if (!value.has_value()) {
+        std::cout << "[VOID / EMPTY]";
+    }
+    else {
+        // Obiekty SOUND itp. (i tak nie da się ich sensownie wydrukować w tekście)
+        std::cout << "[Complex Object]";
+    }
+}
+
+std::any TonInterpreter::visitExprStat(TonParser::ExprStatContext *ctx) {
+    return visit(ctx->expr());
+}
+
 std::any TonInterpreter::visitProgram(TonParser::ProgramContext *ctx) {
     return visitChildren(ctx);
 }
@@ -148,7 +197,7 @@ std::any TonInterpreter::visitVarDecl(TonParser::VarDeclContext *ctx) {
     }
 
     currentScope->define(varName, typeName, value);
-    return value;
+    return {};
 }
 
 
@@ -338,66 +387,8 @@ std::any TonInterpreter::visitShoutStat(TonParser::ShoutStatContext *ctx) {
     auto expressions = ctx->expr();
     for (size_t i = 0; i <  expressions.size(); ++i){
         std::any value = visit(expressions[i]);
-    
-
-    if (value.type() == typeid(std::string)) {
-        std::cout << std::any_cast<std::string>(value);
-    }
-    else if (value.type() == typeid(int)) {
-        std::cout << std::any_cast<int>(value);
-    }
-    else if (value.type() == typeid(double)) {
-        std::cout << std::any_cast<double>(value);
-    }
-    else if (value.type() == typeid(char)) {
-        std::cout << "'" << std::any_cast<char>(value) << "'";
-    }
-    else if (value.type() == typeid(bool)) {
-        std::cout << (std::any_cast<bool>(value) ? "TRUE" : "FALSE");
-    }
-    else if (value.type() == typeid(Note)) {
-        Note currentNote = std::any_cast<Note>(value);
-        std::cout << "NOTE(" << currentNote.pitchClass << currentNote.octave << ")";
-    }
-    else if (value.type() == typeid(Instrument)) {
-        Instrument currentInstrument = std::any_cast<Instrument>(value);
-        std::cout << "INSTRUMENT(" << currentInstrument.getName() << ")";
-    }
-    else if (value.type() == typeid(std::vector<std::any>)) {
-        auto arrayElements = std::any_cast<std::vector<std::any>>(value);
-        std::cout << "[ ";
-
-        for (size_t j = 0; j < arrayElements.size(); j++) {
-            if (arrayElements[j].type() == typeid(int)) {
-                std::cout << std::any_cast<int>(arrayElements[j]);
-            }
-            else if (arrayElements[j].type() == typeid(double)) {
-                std::cout << std::any_cast<double>(arrayElements[j]);
-            }
-            else if (arrayElements[j].type() == typeid(std::string)) {
-                std::cout << "\"" << std::any_cast<std::string>(arrayElements[j]) << "\"";
-            }
-            else if (arrayElements[j].type() == typeid(char)) {
-                std::cout << "'" << std::any_cast<char>(arrayElements[j]) << "'";
-            }
-            else if (arrayElements[j].type() == typeid(Note)) {
-                Note n = std::any_cast<Note>(arrayElements[j]);
-                std::cout << n.pitchClass << n.octave;
-            }
-            else {
-                std::cout << "?";
-            }
-
-            if (j < arrayElements.size() - 1) std::cout << ", ";
-        }
-        std::cout << " ]";
-    }else if (!value.has_value()) {
-            std::cout << "[VOID / EMPTY]";
-        }
-    else {
-        std::cout << "[Complex Object: SOUND]" << std::endl;
-    }
-    if (i < expressions.size() - 1) {
+        this->printValue(value);
+        if (i < expressions.size() - 1) {
             std::cout << " ";
         }
     }

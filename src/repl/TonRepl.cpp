@@ -56,7 +56,12 @@ void TonRepl::start() {
         // Run TypeChecker and Interpreter
         try {
             antlr4::tree::ParseTreeWalker::DEFAULT.walk(&listener, treeAST);
-            interpreter.visit(treeAST);
+            // printing in REPL wihtout !shout expr
+            std::any possibleOutput = interpreter.visit(treeAST);
+            if (possibleOutput.has_value()) {
+                interpreter.printValue(possibleOutput);
+                std::cout << "\n";
+            }
         }
         catch (const std::bad_any_cast& e) {
             std::cerr << ">>> [RUNTIME ERROR - TYPE MISMATCH]: Incorrect data type! (" << e.what() << ")\n";
