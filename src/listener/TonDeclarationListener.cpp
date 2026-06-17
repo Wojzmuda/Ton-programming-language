@@ -3,6 +3,19 @@
 #include <string>
 #include <stdexcept>
 
+static std::shared_ptr<Scope<int>> resolveElderScope(std::shared_ptr<Scope<int>> currentScope, int elderCount, size_t line) {
+    auto targetScope = currentScope;
+    for (int i = 0; i < elderCount; ++i) {
+        if (targetScope->parent != nullptr) {
+            targetScope = targetScope->parent;
+        } else {
+            throw std::runtime_error("Error in line " + std::to_string(line) + ": 'ELDER::' reached beyond global scope.");
+        }
+    }
+    return targetScope;
+}
+
+
 void TonDeclarationListener::enterVarDecl(TonParser::VarDeclContext *ctx){
     std::string varName = ctx->ID()->getText();
     std::string typeName = ctx->type()->getText();
@@ -35,63 +48,67 @@ void TonDeclarationListener::exitVarDecl(TonParser::VarDeclContext *ctx) {
 }
 
 void TonDeclarationListener::enterTrackDecl(TonParser::TrackDeclContext *ctx){
-    std::string trackName = ctx->ID(1)->getText();
+    int elderCount = ctx->target() -> elderRef().size();
+    auto targetScope = resolveElderScope(currentScope, elderCount, ctx->getStart()->getLine());  
+    
+    std::string timelineName = ctx->target()->ID(0)->getText(); 
+    std::string trackName = ctx->ID()->getText(); 
+
     int currentLine = ctx->getStart()->getLine();
-    if (currentScope->existsLocally(trackName)) {
-        int previousLine = currentScope->get(trackName);
-        
+    if (targetScope->existsLocally(trackName)) { 
+        int previousLine = targetScope->get(trackName); 
+
         throw std::runtime_error("Error in line " + std::to_string(currentLine) + 
                                  ": Variable redeclaration '" + trackName + 
                                  "'. Previous declaration is on line " + std::to_string(previousLine) + ".");
     }
 
-    currentScope->define(trackName, "TRACK", currentLine);
+    targetScope->define(trackName, "TRACK", currentLine); 
 }
 
 void TonDeclarationListener::exitAssignment(TonParser::AssignmentContext *ctx) {
     auto targetNode = ctx->target();
     std::string varName = targetNode->ID(0)->getText();
 
-    if (!currentScope->exists(varName)) {
+    int elderCount = targetNode->elderRef().size();
+    auto targetScope = resolveElderScope(currentScope, elderCount, ctx->getStart()->getLine());
+
+    if (!targetScope->exists(varName)) { 
         size_t line = ctx->getStart()->getLine();
         throw std::runtime_error("Error in line " + std::to_string(line) +
                                  ": Cannot assign to undefined variable '" + varName + "'.");
     }
-    // std::string expectedType = currentScope->resolveType(varName);
-    TonTypeChecker typeChecker(currentScope);
+    
+    TonTypeChecker typeChecker(currentScope); 
     std::any result = typeChecker.visit(ctx->expr());
     std::string actualType = std::any_cast<std::string>(result);
 
-    // --- SCENARIUSZ A: Zwykłe przypisanie (np. tempo <- 120) ---
+    // --- SCENARIUSZ A: Zwykłe przypisanie ---
     if (targetNode->ID().size() == 1) {
-        std::string expectedType = currentScope->resolveType(varName);
+        std::string expectedType = targetScope->resolveType(varName); 
         if (expectedType != actualType && actualType != "UNKNOWN") {
             size_t line = ctx->getStart()->getLine();
             throw std::runtime_error("Type Error in line " + std::to_string(line) +
                                      ": Cannot assign " + actualType + " to variable '" + varName + "' of type " + expectedType + ".");
         }
-        return; // Zwykłe przypisanie pomyślne!
+        return; 
     }
 
-    // --- SCENARIUSZ B: Przypisanie do tracka w TIMELINE (np. mySong.bassline <- ...) ---
-    std::string expectedBaseType = currentScope->resolveType(varName);
+    // --- SCENARIUSZ B: Przypisanie do tracka w TIMELINE ---
+    std::string expectedBaseType = targetScope->resolveType(varName); 
     if (expectedBaseType != "TIMELINE" ) {
         size_t line = ctx->getStart()->getLine();
         throw std::runtime_error("Type Error in line " + std::to_string(line) +
                                  ": '" + varName + "' is not a TIMELINE.");
     }
 
-    // SCENARIUSZ B1: Przypisanie do konkretnego aliasu (mySong.bassline."start" <- beep)
     if (targetNode->STRING_VAL()) {
         if (actualType != "SOUND" && actualType != "TRACK_EVENT" && actualType != "UNKNOWN") {
             size_t line = ctx->getStart()->getLine();
             throw std::runtime_error("Type Error in line " + std::to_string(line) +
                                      ": Can only assign SOUND or TRACK_EVENT to a specific alias. Given: " + actualType);
         }
-    }
-
-    // SCENARIUSZ B2: Całościowe przypisanie na ścieżkę (mySong.bassline <- [bass AT 0])
-    else {
+    } else {
         if (actualType != "ARRAY" && actualType != "TRACK_EVENT" && actualType != "UNKNOWN") {
             size_t line = ctx->getStart()->getLine();
             throw std::runtime_error("Type Error in line " + std::to_string(line) +
@@ -103,7 +120,10 @@ void TonDeclarationListener::exitAssignment(TonParser::AssignmentContext *ctx) {
 void TonDeclarationListener::exitTargetExpr(TonParser::TargetExprContext *ctx) {
     std::string varName = ctx->target()->ID(0)->getText();
 
-    if (!currentScope->exists(varName)) {
+    int elderCount = ctx->target()->elderRef().size();
+    auto targetScope = resolveElderScope(currentScope, elderCount, ctx->getStart()->getLine());
+
+    if (!targetScope->exists(varName)) { 
         size_t line = ctx->getStart()->getLine();
         throw std::runtime_error("Error in line " + std::to_string(line) +
                                  ": Variable '" + varName + "' is not defined.");
@@ -156,46 +176,24 @@ void TonDeclarationListener::exitBlock(TonParser::BlockContext *ctx){
 }
 
 
-void TonDeclarationListener::exitArrayOpStat(TonParser::ArrayOpStatContext *ctx) {
-    std::string varName = ctx->ID()->getText();
-
-    if (!currentScope->exists(varName)) {
-        size_t line = ctx->getStart()->getLine();
-        throw std::runtime_error("Error in line " + std::to_string(line) +
-                                 ": Variable '" + varName + "' is not defined.");
-    }
-
-    std::string targetType = currentScope->resolveType(varName);
-    if (targetType != "ARRAY") {
-        size_t line = ctx->getStart()->getLine();
-        throw std::runtime_error("Type Error in line " + std::to_string(line) +
-                                 ": Cannot perform array operations on type " + targetType + ".");
-    }
-
-    // Jeśli to operacja APPEND, sprawdzamy też wyrażenie (np. zeby wyłapać błąd w 'APPEND 10 + "tekst" TO lista')
-    if (ctx->APPEND()) {
-        TonTypeChecker typeChecker(currentScope);
-        typeChecker.visit(ctx->expr());
-    }
-}
-
-
 void TonDeclarationListener::enterLoopStat(TonParser::LoopStatContext *ctx) {
     loopLevel++;
     currentScope = std::make_shared<Scope<int>>(currentScope);
 
     int currentLine = ctx->getStart()->getLine();
-    if (ctx->FROM()) {
+    if (ctx->FROM() || ctx->ASSIGN()) {
         std::string varName = ctx->ID()->getText();
-        std::string typeName = ctx->type()->getText();
         
-        currentScope->define(varName, typeName, currentLine);
-    }
-    else if (ctx->ASSIGN()) {
-        std::string varName = ctx->ID()->getText();
-        std::string typeName = ctx->type()->getText();
-        
-        currentScope->define(varName, typeName, currentLine);
+
+        if (ctx->type() != nullptr) {
+            std::string typeName = ctx->type()->getText();
+            currentScope->define(varName, typeName, currentLine);
+        } else {
+            if (!currentScope->parent || !currentScope->parent->exists(varName)) {
+                throw std::runtime_error("Validation Error in line " + std::to_string(currentLine) + 
+                         ": Variable '" + varName + "' used in loop declaration is not defined.");
+            }
+        }
     }
 }
 
@@ -206,6 +204,29 @@ void TonDeclarationListener::exitLoopStat(TonParser::LoopStatContext *ctx) {
     }
 }
 
+void TonDeclarationListener::exitArrayOpStat(TonParser::ArrayOpStatContext *ctx) {
+    std::string varName = ctx->target()->ID(0)->getText();
+    int elderCount = ctx->target()->elderRef().size();
+    auto targetScope = resolveElderScope(currentScope, elderCount, ctx->getStart()->getLine());
+
+    if (!targetScope->exists(varName)) { 
+        size_t line = ctx->getStart()->getLine();
+        throw std::runtime_error("Error in line " + std::to_string(line) +
+                                 ": Variable '" + varName + "' is not defined.");
+    }
+
+    std::string targetType = targetScope->resolveType(varName); 
+    if (targetType != "ARRAY") {
+        size_t line = ctx->getStart()->getLine();
+        throw std::runtime_error("Type Error in line " + std::to_string(line) +
+                                 ": Cannot perform array operations on type " + targetType + ".");
+    }
+    
+    if (ctx->APPEND()) {
+        TonTypeChecker typeChecker(currentScope); 
+        typeChecker.visit(ctx->expr());
+    }
+}
 void TonDeclarationListener::enterUntilStat(TonParser::UntilStatContext *ctx) {
     loopLevel++;
 }
