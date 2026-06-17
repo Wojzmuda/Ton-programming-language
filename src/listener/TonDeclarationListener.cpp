@@ -176,30 +176,6 @@ void TonDeclarationListener::exitBlock(TonParser::BlockContext *ctx){
 }
 
 
-void TonDeclarationListener::exitArrayOpStat(TonParser::ArrayOpStatContext *ctx) {
-    std::string varName = ctx->ID()->getText();
-
-    if (!currentScope->exists(varName)) {
-        size_t line = ctx->getStart()->getLine();
-        throw std::runtime_error("Error in line " + std::to_string(line) +
-                                 ": Variable '" + varName + "' is not defined.");
-    }
-
-    std::string targetType = currentScope->resolveType(varName);
-    if (targetType != "ARRAY") {
-        size_t line = ctx->getStart()->getLine();
-        throw std::runtime_error("Type Error in line " + std::to_string(line) +
-                                 ": Cannot perform array operations on type " + targetType + ".");
-    }
-
-    // Jeśli to operacja APPEND, sprawdzamy też wyrażenie (np. zeby wyłapać błąd w 'APPEND 10 + "tekst" TO lista')
-    if (ctx->APPEND()) {
-        TonTypeChecker typeChecker(currentScope);
-        typeChecker.visit(ctx->expr());
-    }
-}
-
-
 void TonDeclarationListener::enterLoopStat(TonParser::LoopStatContext *ctx) {
     loopLevel++;
     currentScope = std::make_shared<Scope<int>>(currentScope);
