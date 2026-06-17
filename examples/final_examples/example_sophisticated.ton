@@ -1,0 +1,95 @@
+$ =============================================================================
+$ TØN SCRIPT: "NIGHT DRIVE" - WIELOWARSTWOWA KOMPOZYCJA
+$ =============================================================================
+
+$ ---------------------------------------------------------
+$ 1. IMPORTY INSTRUMENTÓW (BEZWZGLĘDNIE NA SAMEJ GÓRZE)
+$ ---------------------------------------------------------
+USE bass ;
+USE overdrive ;
+USE piano ;
+
+$ ---------------------------------------------------------
+$ 2. FUNKCJE I NARZĘDZIA (PRZED GŁÓWNĄ LOGIKĄ)
+$ ---------------------------------------------------------
+$ Funkcja obliczająca czas startu nuty (krok * indeks)
+!define INT calcTime <INT index, INT step> {
+    !make INT result <- index * step ;
+    !out result ;
+}
+
+$ ---------------------------------------------------------
+$ 3. GŁÓWNY PROGRAM I ZMIENNE BAZOWE
+$ ---------------------------------------------------------
+!shout "--- Inicjalizacja projektu: Night Drive ---" ;
+
+!make INT step_ms <- 300 ;
+!make ARRAY scale <- [A3, C4, E4, G4, B4] ;
+!make INT global_vol <- 80 ;
+
+$ Demonstracja operatora ELDER: bezpieczna zmiana globalnej głośności z wnętrza bloku
+{
+    !make INT global_vol <- 10 ; $ Tworzymy lokalną zmienną (shadowing)
+    !shout "Lokalny test wyciszenia: ", global_vol ;
+    
+    $ Podkręcamy oryginalną, nadrzędną zmienną!
+    ELDER::global_vol <- 100 ; 
+}
+!shout "Globalna glosnosc po modyfikacji z bloku: ", global_vol ;
+
+$ ---------------------------------------------------------
+$ 4. GENEROWANIE DŹWIĘKÓW I SLICING TABLIC
+$ ---------------------------------------------------------
+!shout "Generowanie instrumentow..." ;
+
+$ Warstwa 1: Potezny Bass (długie, głębokie nuty)
+!make SOUND b1 <- bass scale[0] 1200 ;
+!make SOUND b2 <- bass scale[3] 1200 ;
+
+$ Warstwa 2: Arpeggio z overdrive'em (wycinamy końcówkę tablicy za pomocą slicingu!)
+!make ARRAY arp_notes <- scale[-3:-1] ; $ Wyciąga E4 i G4
+!make SOUND arp1 <- overdrive arp_notes[0] 150 ;
+!make SOUND arp2 <- overdrive arp_notes[1] 150 ;
+!make SOUND arp3 <- overdrive scale[4] 150 ;    $ B4 na szczycie
+
+$ Warstwa 3: Akordy pianina (łączenie dźwięków operatorem &)
+!make SOUND chord_A <- piano scale[0] 900 & piano scale[2] 900 & piano scale[4] 900 ;
+
+$ ---------------------------------------------------------
+$ 5. SKŁADANIE OSI CZASU (TIMELINE)
+$ ---------------------------------------------------------
+!shout "Montaz na osi czasu..." ;
+!make TIMELINE track ;
+
+$ Ścieżka basu (uderza co 4 kroki)
+track NEW TRACK bassline ;
+track.bassline <- [
+    b1 AT calcTime(0, step_ms),
+    b2 AT calcTime(4, step_ms),
+    b1 AT calcTime(8, step_ms)
+] ;
+
+$ Ścieżka Arpeggio (gęsta pętla)
+track NEW TRACK arpeggio ;
+track.arpeggio <- [
+    arp1 AT calcTime(0, step_ms), arp2 AT calcTime(1, step_ms), arp3 AT calcTime(2, step_ms), arp2 AT calcTime(3, step_ms),
+    arp1 AT calcTime(4, step_ms), arp2 AT calcTime(5, step_ms), arp3 AT calcTime(6, step_ms), arp2 AT calcTime(7, step_ms),
+    arp1 AT calcTime(8, step_ms), arp2 AT calcTime(9, step_ms), arp3 AT calcTime(10, step_ms), arp2 AT calcTime(11, step_ms)
+] ;
+
+$ Ścieżka Akordów (tworzy tło)
+track NEW TRACK chords ;
+track.chords <- [
+    chord_A AT calcTime(0, step_ms),
+    chord_A AT calcTime(8, step_ms)
+] ;
+
+$ Miksowanie i eksport
+track.bassline VOL global_vol ;
+track.arpeggio VOL 50 ;
+track.chords VOL 70 ;
+
+!shout "Dlugosc calkowita (ms): ", LENGTH track ;
+!save track "night_drive.wav" ;
+
+!shout "--- Sukces! Zapisano night_drive.wav ---" ;
