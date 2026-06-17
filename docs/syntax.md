@@ -97,8 +97,6 @@ Additionaly, the language provides **cast** operator: `<NEW_TYPE>expression`. It
 * `<CHAR> STRING` *(works only when given `STRING` has a length of exactly 1)*
 * `<STRING> CHAR` *(creates a `STRING` of size one with the given `CHAR`)*
 * `<STRING> INT/NUMERICAL` *(constructs a `STRING` representation of the given number)*
-
-**TODO :triangular_flag_on_post: NOT IMPLEMENTED YET: :triangular_flag_on_post:**
 * `<INT/NUMERICAL> STRING` *(creates a number from a given `STRING`)*
 
 > **Note:** `STRING` -> `INT/NUMERICAL` conversion will succeed only if the given `STRING` contains a valid number. Otherwise, the interpreter will produce a runtime error.
