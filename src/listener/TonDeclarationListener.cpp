@@ -2,6 +2,7 @@
 #include "typechecker/TonTypeChecker.h"
 #include <string>
 #include <stdexcept>
+#include "diagnostics/Diagnostics.h"
 
 static std::shared_ptr<Scope<int>> resolveElderScope(std::shared_ptr<Scope<int>> currentScope, int elderCount, size_t line) {
     auto targetScope = currentScope;
@@ -75,8 +76,10 @@ void TonDeclarationListener::exitAssignment(TonParser::AssignmentContext *ctx) {
 
     if (!targetScope->exists(varName)) { 
         size_t line = ctx->getStart()->getLine();
+        auto visibleNames = targetScope->getAllVisibleNames();
+        std::string suggestion = suggestSimilarName(varName, visibleNames);
         throw std::runtime_error("Error in line " + std::to_string(line) +
-                                 ": Cannot assign to undefined variable '" + varName + "'.");
+                                 ": Cannot assign to undefined variable '" + varName + "'."+ suggestion);
     }
     
     TonTypeChecker typeChecker(currentScope); 
@@ -124,9 +127,11 @@ void TonDeclarationListener::exitTargetExpr(TonParser::TargetExprContext *ctx) {
     auto targetScope = resolveElderScope(currentScope, elderCount, ctx->getStart()->getLine());
 
     if (!targetScope->exists(varName)) { 
+        auto visibleNames = targetScope->getAllVisibleNames();
+        std::string suggestion = suggestSimilarName(varName, visibleNames);
         size_t line = ctx->getStart()->getLine();
         throw std::runtime_error("Error in line " + std::to_string(line) +
-                                 ": Variable '" + varName + "' is not defined.");
+                                 ": Variable '" + varName + "' is not defined." + suggestion);
     }
 }
 
@@ -211,8 +216,10 @@ void TonDeclarationListener::exitArrayOpStat(TonParser::ArrayOpStatContext *ctx)
 
     if (!targetScope->exists(varName)) { 
         size_t line = ctx->getStart()->getLine();
+        auto visibleNames = targetScope->getAllVisibleNames();
+        std::string suggestion = suggestSimilarName(varName, visibleNames);
         throw std::runtime_error("Error in line " + std::to_string(line) +
-                                 ": Variable '" + varName + "' is not defined.");
+                                 ": Variable '" + varName + "' is not defined."+suggestion);
     }
 
     std::string targetType = targetScope->resolveType(varName); 
@@ -249,4 +256,7 @@ void TonDeclarationListener::enterContinueStat(TonParser::ContinueStatContext *c
         throw std::runtime_error("Validation Error in line " + std::to_string(line) + 
                                  ": '!continue' statement is not allowed outside of a loop.");
     }
+}
+
+void TonDeclarationListener::exitDebugDumpStat(TonParser::DebugDumpStatContext *ctx) {
 }

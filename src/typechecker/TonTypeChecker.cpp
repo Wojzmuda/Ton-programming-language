@@ -1,4 +1,5 @@
 #include "typechecker/TonTypeChecker.h"
+#include "diagnostics/Diagnostics.h"
 
 template <typename T>
 static std::shared_ptr<Scope<T>> resolveElderScopeTC(std::shared_ptr<Scope<T>> currentScope, int elderCount, size_t line) {
@@ -193,8 +194,10 @@ std::any TonTypeChecker::visitFunctionCallExpr(TonParser::FunctionCallExprContex
 
     if (!currentScope->exists(funcName)) {
         size_t line = ctx->getStart()->getLine();
+        auto visibleNames = currentScope->getAllVisibleNames();
+        std::string suggestion = suggestSimilarName(funcName, visibleNames);
         throw std::runtime_error("Line " + std::to_string(line) +
-                                 ": Function '" + funcName + "' is not defined.");
+                                 ": Function '" + funcName + "' is not defined." +suggestion);
     }
     std::string returnType = currentScope->resolveType(funcName);
     return returnType;
@@ -317,8 +320,10 @@ std::any TonTypeChecker::visitPopExpr(TonParser::PopExprContext *ctx) {
 
     if (!targetScope->exists(varName)) { 
         size_t line = ctx->getStart()->getLine();
+        auto visibleNames = targetScope->getAllVisibleNames();
+        std::string suggestion = suggestSimilarName(varName, visibleNames);
         throw std::runtime_error("Type Error in line " + std::to_string(line) + 
-                                 ": Array '" + varName + "' is not defined.");
+                                 ": Array '" + varName + "' is not defined." + suggestion);
     }
 
     std::string targetType = targetScope->resolveType(varName);
@@ -344,8 +349,10 @@ std::any TonTypeChecker::visitArrayOpStat(TonParser::ArrayOpStatContext *ctx) {
 
     if (!targetScope->exists(varName)) {
         size_t line = ctx->getStart()->getLine();
+        auto visibleNames = targetScope->getAllVisibleNames();
+        std::string suggestion = suggestSimilarName(varName, visibleNames); 
         throw std::runtime_error("Type Error in line " + std::to_string(line) + 
-                                 ": Array '" + varName + "' is not defined.");
+                                 ": Array '" + varName + "' is not defined." + suggestion);
     }
 
     std::string targetType = targetScope->resolveType(varName);
@@ -400,3 +407,5 @@ else if (targetType == "CHAR") {
     throw std::runtime_error("Type Error in line " + std::to_string(line) +
                              ": Cannot explicitly cast <" + exprType + "> to <" + targetType + ">.");
 }
+
+std::any TonTypeChecker::visitDebugDumpStat(TonParser::DebugDumpStatContext *ctx) {}

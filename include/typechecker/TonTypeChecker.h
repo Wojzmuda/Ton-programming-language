@@ -63,4 +63,6 @@ public:
 
     std::any visitArrayOpStat(TonParser::ArrayOpStatContext *ctx) override;
     std::any visitCastExpr(TonParser::CastExprContext *ctx) override;
+
+    std::any visitDebugDumpStat(TonParser::DebugDumpStatContext *ctx) override;
 };
