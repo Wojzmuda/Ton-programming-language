@@ -1,0 +1,9 @@
+!make SOUND sin <- sine A4 1000;
+!make SOUND saw <- saw F4 1000;
+!make SOUND square <- square D4 1000;
+
+!make TIMELINE synths;
+synths NEW TRACK t;
+synths.t <- [sin AT 0, saw AT LENGTH sin, square AT ((LENGTH sin) + (LENGTH saw))];
+
+!save synths "a.wav";

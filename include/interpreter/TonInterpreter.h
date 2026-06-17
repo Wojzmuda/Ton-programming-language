@@ -24,6 +24,7 @@ public:
 };
 class TonInterpreter: public TonBaseVisitor {
 private:
+    bool doTypesMatch(const std::string& expectedTypeName, const std::any& val);
     std::string findSoundFontPath();
     tsf* soundFont = nullptr;
     std::unordered_map<std::string, Instrument> loadedInstruments;
