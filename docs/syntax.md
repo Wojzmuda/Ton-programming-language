@@ -245,7 +245,7 @@ Functions are created using the `!define` keyword, followed by the return type, 
 
 ### Calling Functions
 How you call a function depends strictly on its return type:
-1. **Value-Returning Functions** (`INT`, `SOUND`, `STRING`, etc.): Must be used as part of an expression (e.g., assigned to a variable or used in a mathematical equation).
+1. **Value-Returning Functions** (`INT`, `SOUND`, `STRING`, etc.): May be used as part of an expression (e.g., assigned to a variable or used in a mathematical equation) or called as standalone statements.
 2. **`VOID` Functions**: Do not return a value. They are executed as standalone statements and do not use the `!out` keyword.
 
 ```text

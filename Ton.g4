@@ -22,6 +22,7 @@ statement
     | returnStat        // !out 5;
     | breakStat         // !break;
     | continueStat      // !continue;
+    | exprStat          // for printing results in repl
     | callStat          // zagraj(120, "szybko")
     | block             // nameless scope
     | debugStat         // !debug;
@@ -36,8 +37,13 @@ target : elderRef* ID (DOT ID (DOT STRING_VAL)?)? ;
 
 elderRef : ELDER DOUBLE_COLON ;
 
+// do wypisywania wartosci w repl bez shout
+exprStat : expr SEMI ;
+
 // Zeby sie dalo wywolac funkcje void
 callStat : ID L_PAREN (expr (COMMA expr)*)? R_PAREN SEMI ;
+
+
 
 assignment 
     : target ASSIGN expr SEMI 

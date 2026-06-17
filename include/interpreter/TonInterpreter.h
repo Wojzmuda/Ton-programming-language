@@ -41,12 +41,23 @@ private:
     std::any executeFunctionLogic(const std:: string& funcName, const std::vector<TonParser::ExprContext*>& argsCtx);
     void validateStackDepth();
 
+    // overrides default children behavior: if it meets eof or closing bracket,
+    //it will not overwrite previous return value
+    std::any aggregateResult(std::any aggregate, const std::any nextResult) override {
+        if (nextResult.has_value()) {
+            return nextResult;
+        }
+        return aggregate;
+    }
     std::shared_ptr<Scope<std::any>> resolveScope(TonParser::TargetContext *ctx);
 
 public:
     TonInterpreter();
     ~TonInterpreter();
 
+    void printValue(const std::any& value);
+
+    std::any visitExprStat(TonParser::ExprStatContext *ctx) override;
     std::any visitProgram(TonParser::ProgramContext *ctx) override;
     std::any visitBlock(TonParser::BlockContext *ctx) override;
     std::any visitStatement(TonParser::StatementContext *ctx) override;
