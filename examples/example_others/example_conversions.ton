@@ -1,0 +1,34 @@
+$ 1. Konwersje liczbowe: INT <-> NUMERICAL
+!make NUMERICAL ulamek <- 5;            $ Niejawna konwersja INT (5) na NUMERICAL (5.0)
+!make INT liczbaCalkowita <- 3.99;      $ Niejawna konwersja NUMERICAL (3.99) na INT (3 - ucięcie)
+
+!shout "Ulamek: ", ulamek;                $ Powinno wypisać 5.0
+!shout "Calkowita: ", liczbaCalkowita;    $ Powinno wypisać 3
+
+$ 2. Konwersje logiczno-liczbowe: INT/NUMERICAL <-> BOOL
+!make BOOL czyPrawda <- 42;             $ Niejawna konwersja INT (42) na BOOL (TRUE)
+!make BOOL czyFalsz <- 0.0;             $ Niejawna konwersja NUMERICAL (0.0) na BOOL (FALSE)
+!make INT zPrawdyNaInt <- TRUE;         $ Niejawna konwersja BOOL (TRUE) na INT (1)
+
+!shout "Prawda? ", czyPrawda;             $ Powinno wypisać TRUE
+!shout "Falsz? ", czyFalsz;               $ Powinno wypisać FALSE
+!shout "Z prawdy: ", zPrawdyNaInt;        $ Powinno wypisać 1
+
+$ 1. Rzutowanie liczb na tekst i znak (STRING, CHAR)
+!make STRING intNaTekst <- <STRING>123;
+!make STRING numNaTekst <- <STRING>45.67;
+!make CHAR tekstNaZnak <- <CHAR>"X";
+
+!shout "Liczba jako tekst: ", intNaTekst; $ Powinno wypisać 123
+!shout "Ułamek jako tekst: ", numNaTekst; $ Powinno wypisać 45.67
+!shout "Pierwszy znak: ", tekstNaZnak;    $ Powinno wypisać 'X'
+
+$ 2. Zabezpieczenie przed rzutowaniem za długiego tekstu na CHAR
+$ Poniższa linijka wywoła celowy błąd w czasie wykonania, jeśli odkomentujesz
+$ !make CHAR zlyZnak <- <CHAR>"Za dlugi tekst";
+
+$ 3. Rzutowanie tekstu na liczby (jeśli zaimplementowałeś)
+$ Sprawdźmy jak zachowuje się rzutowanie BOOL na NUMERICAL
+!make NUMERICAL zPrawdyNaNum <- <NUMERICAL>TRUE;
+
+!shout "Z prawdy na Num: ", zPrawdyNaNum; $ Powinno wypisać 1.0
