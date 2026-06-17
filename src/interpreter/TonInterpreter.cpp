@@ -282,11 +282,8 @@ std::any TonInterpreter::visitVarDecl(TonParser::VarDeclContext *ctx) {
         else if (typeName == "CHAR") value = '\0'; 
         else value = {};
     }
-
-    currentScope->define(varName, typeName, value);
-    return {};
     currentScope->define(varName, typeName, value, hasValue);
-    return value;
+    return {};
 }
 
 std::any TonInterpreter::visitTargetExpr(TonParser::TargetExprContext *ctx) {
