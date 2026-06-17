@@ -1483,12 +1483,14 @@ std::any TonInterpreter::visitCastExpr(TonParser::CastExprContext *ctx) {
 
     else if (targetType == "NUMERICAL") {
         if (val.type() == typeid(int)) return static_cast<double>(std::any_cast<int>(val));
+        if (val.type() == typeid(bool)) return val;
         if (val.type() == typeid(double)) return val;
     }
 
 
     else if (targetType == "BOOL") {
         if (val.type() == typeid(int)) return std::any_cast<int>(val) != 0;
+        if (val.type() == typeid(double)) return std::any_cast<int>(val) != 0;
         if (val.type() == typeid(bool)) return val;
     }
 
