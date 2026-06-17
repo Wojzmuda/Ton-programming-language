@@ -210,6 +210,9 @@ std::any TonInterpreter::visitVarDecl(TonParser::VarDeclContext *ctx) {
 
     if (ctx->expr()) {
         value = visit(ctx->expr());
+
+        hasValue = true;
+
         if (!coerceType(typeName, value)) {
             size_t line = ctx->getStart()->getLine();
             throw std::runtime_error("Line " + std::to_string(line) +
