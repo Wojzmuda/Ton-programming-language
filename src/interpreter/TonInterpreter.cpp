@@ -27,6 +27,20 @@ const std::unordered_set<std::string> TonInterpreter::SYNTHS = {
     "square"
 };
 
+std::shared_ptr<Scope<std::any>> TonInterpreter::resolveScope(TonParser::TargetContext *ctx) {
+    int parentCount = ctx->elderRef().size();
+    auto targetScope = currentScope;
+
+    for (int i = 0; i < parentCount; ++i) {
+        if (targetScope->parent == nullptr) {
+            size_t line = ctx->getStart()->getLine();
+            throw std::runtime_error("Error in line " + std::to_string(line) + ": 'parent::' reached beyond global scope.");
+        }
+        targetScope = targetScope->parent;
+    }
+    return targetScope;
+}
+
 bool TonInterpreter::coerceType(const std::string &expectedTypeName, std::any &value)
 {
     if (expectedTypeName == "INT" && value.type() == typeid(int)) return true;
