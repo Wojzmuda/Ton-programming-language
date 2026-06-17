@@ -1,0 +1,35 @@
+$ ==============================================================
+$ SKRYPT TESTOWY: SUGESTIE NAPRAWY BŁĘDÓW (LITERÓWKI)
+$ Odkomentowuj testy POJEDYNCZO!
+$ ==============================================================
+
+!make INT global_tempo <- 120 ;
+!make STRING user_name <- "Jan" ;
+
+!define VOID playIntro <> {
+    !shout "Intro..." ;
+}
+
+{
+    !make INT local_volume <- 80 ;
+
+    $ -------------------------------------------------------------
+    $ TEST 1.1: Literówka w przypisaniu (Zwykła zmienna)
+    $ Oczekiwany błąd: "...Cannot assign to undefined variable 'global_tempa'..."
+    $ -------------------------------------------------------------
+    $global_tempa <- 140 ;
+
+
+    $ -------------------------------------------------------------
+    $ TEST 1.2: Literówka w bloku lokalnym
+    $ Oczekiwany błąd: "...Variable 'local_volum' is not defined..."
+    $ -------------------------------------------------------------
+    $local_volum <- 90 ;
+
+
+    $ -------------------------------------------------------------
+    $ TEST 1.3: Literówka w wywołaniu funkcji (TypeChecker)
+    $ Oczekiwany błąd: "...Function 'playIntru' is not defined..."
+    $ -------------------------------------------------------------
+    $!make INT zapychanie_wyrazenia <- playIntru() ;
+}

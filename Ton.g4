@@ -24,6 +24,7 @@ statement
     | continueStat      // !continue;
     | callStat          // zagraj(120, "szybko")
     | block             // nameless scope
+    | debugStat         // !debug;
     ;
 
 varDecl : EXCLAM_MARK MAKE type ID (ASSIGN expr)? SEMI ;
@@ -87,6 +88,8 @@ saveStat : EXCLAM_MARK SAVE expr STRING_VAL SEMI ;
 
 playStat : PLAY target SEMI ;
 
+debugStat : EXCLAM_MARK DEBUG SEMI #debugDumpStat ;
+
 type : TYPE_BOOL | TYPE_INT | TYPE_NUM | TYPE_CHAR | TYPE_STRING 
      | TYPE_NOTE | TYPE_SOUND | TYPE_VOID | TYPE_ARRAY | TYPE_INSTR 
      | TYPE_TIMELINE
@@ -147,6 +150,7 @@ SHOUT          : 'shout' ;
 SAVE           : 'save' ;
 BREAK          : 'break' ;
 CONTINUE       : 'continue' ;
+DEBUG          : 'debug' ;
 
 // Nowe słowa kluczowe
 NEW            : 'NEW' ;

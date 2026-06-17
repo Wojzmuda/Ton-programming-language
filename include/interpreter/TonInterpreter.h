@@ -42,7 +42,6 @@ private:
     void validateStackDepth();
 
     std::shared_ptr<Scope<std::any>> resolveScope(TonParser::TargetContext *ctx);
-    
 
 public:
     TonInterpreter();
@@ -107,4 +106,6 @@ public:
 
     std::any visitCastExpr(TonParser::CastExprContext *ctx) override;
     std::any visitLengthOfExpr(TonParser::LengthOfExprContext *ctx) override;
+
+    std::any visitDebugDumpStat(TonParser::DebugDumpStatContext *ctx) override;
 };

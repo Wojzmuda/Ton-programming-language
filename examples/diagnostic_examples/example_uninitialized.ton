@@ -1,0 +1,44 @@
+$ ==============================================================
+$ SKRYPT TESTOWY: NIEZAINICJALIZOWANE ZMIENNE
+$ Odkomentowuj testy POJEDYNCZO!
+$ ==============================================================
+
+!make INT global_uninit;
+
+{
+    !make INT x;
+    !make NUMERICAL float_val;
+    !make STRING text_val;
+    
+    !make INT valid_var <- 10;
+    !make ARRAY empty_arr; $ Tablice są domyślnie zainicjalizowane jako puste []
+
+    $ -------------------------------------------------------------
+    $ TEST 2.1: Użycie lokalnego niezainicjalizowanego INT w wyrażeniu
+    $ Oczekiwany błąd: "[Error] Variable 'x' is declared but uninitialized."
+    $ -------------------------------------------------------------
+    $ !make INT result <- x + 5;
+
+
+    $ -------------------------------------------------------------
+    $ TEST 2.2: Użycie niezainicjalizowanego STRING do konkatenacji
+    $ Oczekiwany błąd: "[Error] Variable 'text_val' is declared but uninitialized."
+    $ -------------------------------------------------------------
+    $ !make STRING full_text <- text_val + "dodatek";
+
+
+    $ -------------------------------------------------------------
+    $ TEST 2.3: Użycie niezainicjalizowanej zmiennej globalnej
+    $ Oczekiwany błąd: "[Error] Variable 'global_uninit' is declared but uninitialized."
+    $ -------------------------------------------------------------
+    $ valid_var <- global_uninit;
+
+
+    $ -------------------------------------------------------------
+    $ TEST 2.4: Legalna ścieżka - najpierw deklaracja, potem przypisanie, potem użycie
+    $ Oczekiwany wynik: Program powinien wykonać się bez błędu i wypisać "Wartosc: 42"
+    $ -------------------------------------------------------------
+    !make INT late_init;
+    late_init <- 42; $ Tu zmienna dostaje flagę initialized = true
+    !shout "Wartosc: ", late_init;
+}
