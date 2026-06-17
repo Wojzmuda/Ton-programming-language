@@ -59,6 +59,17 @@ Use `!make` to declare variables, followed by the type, name, and assignment ope
 !make STRING greeting <- "Hello Music!";
 ```
 
+### Delayed Assignment (Uninitialized Variables)
+You can declare a variable without immediately assigning a value to it by omitting the `<-` operator. However, Tøn enforces strict memory safety: you **cannot** read or use this variable until it has been explicitly assigned a value.
+
+```text
+!make INT counter;       $ Variable is born, but empty
+!shout counter;          $ <-- ERROR: Variable is declared but uninitialized.
+
+counter <- 1;            $ Value is assigned
+!shout counter;          $ Now it works! Outputs: 1
+```
+
 ### Output to Screen (`!shout`)
 Prints text to the console.
 
@@ -70,12 +81,12 @@ Prints text to the console.
 
 Tøn supports a classic set of operators for logic and mathematics:
 
-* **Assigment:** `<-`
+* **Assignment:** `<-`
 * **Arithmetic:** `+`, `-`, `*`, `/`
 * **Relational:** `==` (equal to), `!=` (not equal to), `<`, `>`, `<=`, `>=`
 * **Logical:** `AND`, `OR`, `NOT`
 
-> **Note:** Some operators are additionaly overloaded for Audio types. For more information, read [Audio Engine Documentation](./audio.md)
+> **Note:** Some operators are additionally overloaded for Audio types. For more information, read [Audio Engine Documentation](./audio.md)
 
 ---
 
@@ -156,8 +167,35 @@ $ Loop until a condition is true
 !until <x == 0> {
     x -<- 1;
 }
+
+$ Loop with a custom step using BY
+!loop <INT i FROM 10 TO 0 BY -2> {
+    !shout i; $ Outputs: 10, 8, 6, 4, 2, 0
+}
+
+$ Loop with previously declared variable
+!make INT a <- 3;
+!loop <a FROM 2 TO 54> {
+}
+!shout a;    $ Outputs: 54
+
+$ Foreach Loop: Iterate directly over an ARRAY
+!make ARRAY playlist <- [10, 20, 30];
+!loop <INT item <- playlist> {
+    !shout item; $ Iterates through every element in 'playlist'
+}
 ```
-## ***:exclamation: TODO: LIFE CYCLE OF ARGUMENTS IN LOOP <> :exclamation:***
+
+### Lifecycle of Loop Arguments
+When you declare an iterator or a variable directly inside the angle brackets of a `!loop` statement (e.g., `INT i` in a `FROM ... TO` loop), that variable is bound **strictly** to the loop's internal scope. 
+
+It is born when the loop starts and completely destroyed the moment the loop finishes its execution. You cannot access or shout a loop iterator from outside of its block.
+
+```text
+!loop <INT i FROM 1 TO 3> {
+    !shout i; $ Outputs: 1, 2, 3
+}
+$ !shout i; <-- THIS WOULD CAUSE AN ERROR: Variable 'i' is not defined.
 
 *Note: You can use `!break` to exit a loop early, or `!continue` to skip the current iteration and proceed to the next one.*
 
@@ -240,6 +278,20 @@ The variable remains alive and accessible:
 
 The exact moment the execution reaches the closing brace `}` of the block where the variable was defined, the variable is instantly destroyed. The memory it occupied is immediately freed. Therefore, variables created in global scope will occupy the memory until the program ends.
 
+### Parent Scope Access (`ELDER::`)
+By default, if a variable is shadowed by a local variable with the same name, or if you need explicit access to a variable defined in a higher enclosing block, you can use the `ELDER::` prefix. Every `ELDER::` moves one level up in the memory tree.
+
+```text
+!make INT x <- 100;
+{
+    !make INT x <- 5;
+    !shout x;          $ Outputs: 5 (local)
+    !shout ELDER::x;   $ Outputs: 100 (from the parent block)
+    
+    ELDER::x <- 999;   $ Modifies the global variable!
+}
+```
+
 ### Example of the Lifecycle
 
 ```ton
@@ -258,10 +310,9 @@ $ !shout heavy_synth; <-- ERROR: Variable no longer exists.
 
 ```
 
-### Good Practise Advise
+### Good Practice Advise
 
 If you are generating complex, multi-layered sounds (like bouncing multiple synths together before placing them on a track), it is highly recommended to do so inside **Anonymous Blocks**. This ensures that the intermediate, temporary audio files are deleted from your RAM immediately after they are mixed into the final variable, preventing your script from crashing due to memory limits.
-
 
 ---
 
@@ -300,7 +351,7 @@ Strings support relational operators, making it easy to build logic around text 
 #### Retrieving String Length
 Tøn provides `LENGTH` operator which can be used on `ARRAY` object and returns a positive `INT` number.
 ```
-!make STRING x <- "May the force be with you"
+!make STRING x <- "May the force be with you";
 !make INT x_len <- LENGTH x;
 !shout x_len;
 $ prints 25
@@ -364,3 +415,6 @@ $ Remove and capture the last element
 $ Empty the array
 CLEAR playlist;  $ playlist is now [ ]
 ```
+
+
+
