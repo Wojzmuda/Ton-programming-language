@@ -1,0 +1,5 @@
+$ BŁĄD: Podwójny, nadmiarowy przecinek w tablicy (ARRAY)
+!make TIMELINE t;
+t NEW TRACK bębny;
+
+t.bębny <- [synth C2 100 AT 0,, synth C2 100 AT 500];

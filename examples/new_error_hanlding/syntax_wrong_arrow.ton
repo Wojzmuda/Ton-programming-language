@@ -1,0 +1,4 @@
+$ BŁĄD: Strzałka przypisania skierowana w złą stronę
+!make INT wynik -> 10 + 20;
+
+!shout wynik;

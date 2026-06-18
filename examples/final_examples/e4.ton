@@ -1,0 +1,16 @@
+!define INT main <> {
+    !make INT i <- 0;
+    !until <i == 10> {
+        !make INT j <- 0;
+        !until <j >= i> {
+            !shout i;
+            !shout j;
+            $ i <- i + 1;
+            j <- j + 1;
+        }
+        i <- i + 1;
+    }
+    !out 0;
+}
+
+!make INT run <- main();

@@ -17,26 +17,28 @@ static std::shared_ptr<Scope<int>> resolveElderScope(std::shared_ptr<Scope<int>>
 }
 
 
+
 void TonDeclarationListener::enterVarDecl(TonParser::VarDeclContext *ctx){
     std::string varName = ctx->ID()->getText();
-    std::string typeName = ctx->type()->getText();
-
     int currentLine = ctx->getStart()->getLine();
 
     if(currentScope->existsLocally(varName)){
-        int prevLine = currentScope->get(varName);
+        int prevLine = currentScope->getRaw(varName); 
         throw std::runtime_error("Error in line " + std::to_string(currentLine) + 
                                  ": Variable redeclaration '" + varName + 
                                  "'. Previous declaration is on line " + std::to_string(prevLine) + ".");
     }
-
-    currentScope->define(varName, typeName, currentLine);
 }
 
 void TonDeclarationListener::exitVarDecl(TonParser::VarDeclContext *ctx) {
+    std::string varName = ctx->ID()->getText();
+    std::string typeName = ctx->type()->getText();
+    int currentLine = ctx->getStart()->getLine();
+
     if (ctx->expr() != nullptr) {
         std::string expectedType = ctx->type()->getText();
         TonTypeChecker typeChecker(currentScope);
+        
         std::any result = typeChecker.visit(ctx->expr());
         std::string actualType = std::any_cast<std::string>(result);
 
@@ -46,7 +48,10 @@ void TonDeclarationListener::exitVarDecl(TonParser::VarDeclContext *ctx) {
                                      ": Cannot assign " + actualType + " to a variable of type " + expectedType + ".");
         }
     }
+    
+    currentScope->define(varName, typeName, currentLine);
 }
+
 
 void TonDeclarationListener::enterTrackDecl(TonParser::TrackDeclContext *ctx){
     int elderCount = ctx->target() -> elderRef().size();

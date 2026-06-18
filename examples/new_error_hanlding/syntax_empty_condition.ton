@@ -1,0 +1,6 @@
+$ BŁĄD: Pusty warunek logiczny w instrukcji !if
+!make BOOL stan <- TRUE;
+
+!if <> {
+    !shout "To się nie wykona";
+}

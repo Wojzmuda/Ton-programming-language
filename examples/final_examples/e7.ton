@@ -1,0 +1,26 @@
+$!define INT foo2 <INT n>;
+
+!define INT foo1 <INT a> {
+    !shout "foo1:";
+    !shout a;
+    !if <a > 0> {
+        !make INT dummy <- foo2(a - 1);
+    }
+    !out 0;
+}
+
+!define INT foo2 <INT a> {
+    !shout "foo2:";
+    !shout a;
+    !if <a > 0> {
+        !make INT dummy <- foo1(a - 2);
+    }
+    !out 1;
+}
+
+!define INT main <> {
+    !make INT dummy <- foo1(10);
+    !out 0;
+}
+
+!make INT run <- main();

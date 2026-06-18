@@ -410,4 +410,6 @@ else if (targetType == "CHAR") {
                              ": Cannot explicitly cast <" + exprType + "> to <" + targetType + ">.");
 }
 
-std::any TonTypeChecker::visitDebugDumpStat(TonParser::DebugDumpStatContext *ctx) {}
+std::any TonTypeChecker::visitDebugDumpStat(TonParser::DebugDumpStatContext *ctx) {
+    return {};
+}
