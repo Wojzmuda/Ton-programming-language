@@ -35,7 +35,6 @@ bash install-linux.sh
 
 ##  Project structure :evergreen_tree:
 
-*To be updated when all is merged*
 ```
 Ton-programming-language/
 ├── antlr4_generated/
