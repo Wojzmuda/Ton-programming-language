@@ -1,10 +1,18 @@
 # Tøn-programming-language :musical_note:
-Description, will be written in the future
+**Tøn** is a custom, strongly-typed programming language and built-in Digital Audio Workstation (DAW) engine written in modern C++. Designed for programmatic music generation, it allows developers to script, mix, and manipulate audio events natively. 
+
+By blending standard programming paradigms (loops, functions, strict scoping) with domain-specific musical types (`NOTE`, `SOUND`, `TIMELINE`), Tøn empowers you to generate complex audio tracks from code and export them directly to `.wav` files. Under the hood, it features an ANTLR4-based multi-pass compiler, static type checking, and an intelligent, user-friendly diagnostic system.
 
 ---
 
 ## Documentation Structure :page_with_curl: 
-*To be written when all documentation is merged and finished*
+
+* **[Setup & Build Guide](docs/setup.md)** – Requirements, installation scripts, and SoundFont configuration.
+* **[Core Syntax](docs/syntax.md)** – Variables, data types, type casting, loops, and memory scoping.
+* **[Audio Engine](docs/audio.md)** – Generating `SOUND`s, building a `TIMELINE`, audio operators (`+`, `&`), and `.wav` export.
+* **[Diagnostics](docs/diagnostics.md)** – Smart typo suggestions, memory safety checks, and the `!debug;` tool.
+* **[Technical Report](docs/raport.md)** – Deep dive into the C++ backend, ANTLR4 compiler pipeline, and DSP implementation.
+* **[Credits & Acknowledgments](docs/credits.md)** – Third-party libraries, open-source tools, and licenses used in the project.
 
 ---
 
