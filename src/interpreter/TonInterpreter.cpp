@@ -281,6 +281,7 @@ std::any TonInterpreter::visitVarDecl(TonParser::VarDeclContext *ctx) {
             Timeline tl; 
             tl.name = varName; 
             value = tl;
+            hasValue = true;
         }
         else if (typeName == "SOUND") value = Sound();
         else if (typeName == "TRACK") value = Track(); 
@@ -381,7 +382,8 @@ std::any TonInterpreter::visitAssignment(TonParser::AssignmentContext *ctx) {
     if (targetNode->ID().size() == 1) {
         std::string varName = targetNode->ID(0)->getText();
         if (!targetScope->exists(varName)) {
-            throw std::runtime_error("Error: Variable '" + varName + "' must be declared first.");
+            size_t line = ctx->getStart()->getLine();
+            throw std::runtime_error("Line " + std::to_string(line) + ": Variable '" + varName + "' must be declared first.");
         }
         std::any rightSide = visit(ctx->expr());
         std::string declaredType = currentScope->resolveType(varName);
@@ -672,12 +674,14 @@ std::any TonInterpreter::visitTrackDecl(TonParser::TrackDeclContext *ctx) {
     auto targetScope = resolveScope(targetNode);
 
     if (!targetScope->exists(timelineName)) {
-        throw std::runtime_error("Error: Timeline '" + timelineName + "' not found.");
+        size_t line = ctx->getStart()->getLine();
+        throw std::runtime_error("Line " + std::to_string(line) + ": Timeline '" + timelineName + "' not found.");
     }
 
     std::any& baseObj = targetScope->get(timelineName);
     if (baseObj.type() != typeid(Timeline)) {
-        throw std::runtime_error("Error: '" + timelineName + "' is not a TIMELINE.");
+        size_t line = ctx->getStart()->getLine();
+        throw std::runtime_error("Line " + std::to_string(line) + ":" + timelineName + "' is not a TIMELINE.");
     }
 
     Timeline& timeline = std::any_cast<Timeline&>(baseObj);
