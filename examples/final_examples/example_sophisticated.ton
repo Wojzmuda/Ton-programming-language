@@ -3,7 +3,7 @@ $ TØN SCRIPT: "NIGHT DRIVE" - WIELOWARSTWOWA KOMPOZYCJA
 $ =============================================================================
 
 $ ---------------------------------------------------------
-$ 1. IMPORTY INSTRUMENTÓW (BEZWZGLĘDNIE NA SAMEJ GÓRZE)
+$ 1. IMPORTY INSTRUMENTÓW 
 $ ---------------------------------------------------------
 USE bass ;
 USE overdrive ;
