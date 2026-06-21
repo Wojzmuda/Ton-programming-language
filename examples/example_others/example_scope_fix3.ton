@@ -1,0 +1,23 @@
+!make INT secret <- 42;
+
+!define INT getSecret <> {
+    !out ELDER::secret;
+}
+
+!define INT main <> {
+    {
+        !make INT secret <- 100;
+        {
+            !make INT secret <- 200;
+            !shout "Wartosc lokalna w zagniezdzeniu:";
+            !shout secret;
+            
+            !shout "Wartosc z funkcji (powinna byc globalna):";
+            !make INT result <- getSecret();
+            !shout result;
+        }
+    }
+    !out 0;
+}
+
+!make INT run <- main();

@@ -35,7 +35,7 @@ std::shared_ptr<Scope<std::any>> TonInterpreter::resolveScope(TonParser::TargetC
     for (int i = 0; i < parentCount; ++i) {
         if (targetScope->parent == nullptr) {
             size_t line = ctx->getStart()->getLine();
-            throw std::runtime_error("Error in line " + std::to_string(line) + ": 'parent::' reached beyond global scope.");
+            throw std::runtime_error("Error in line " + std::to_string(line) + ": 'ELDER::' reached beyond global scope.");
         }
         targetScope = targetScope->parent;
     }
@@ -1328,7 +1328,15 @@ std::any TonInterpreter::executeFunctionLogic(const std::string& funcName, const
     }
 
     auto previousScope = currentScope;
-    currentScope = std::make_shared<Scope<std::any>>(previousScope);
+
+
+    auto globalScope = currentScope;
+    while (globalScope->parent != nullptr) {
+        globalScope = globalScope->parent;
+    }
+    
+    currentScope = std::make_shared<Scope<std::any>>(globalScope);
+
     this->currentStackDepth++;
 
     for(size_t i = 0; i < expectedargs; i++){

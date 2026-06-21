@@ -9,7 +9,7 @@
     }
     !shout x;
     !shout ELDER::x;
-    $ !shout ELDER::ELDER::x;
+    $!shout ELDER::ELDER::x;
     !out 0;  
 }
 

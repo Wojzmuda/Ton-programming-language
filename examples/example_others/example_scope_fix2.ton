@@ -1,0 +1,20 @@
+!make INT counter <- 0;
+
+!define INT recurse <INT n> {
+    ELDER::counter <- ELDER::counter + 1; $ Zwiększamy globalny licznik
+    
+    !if <n > 0> {
+        !make INT dummy <- recurse(n - 1);
+    }
+    
+    !out 0;
+}
+
+!define INT main <> {
+    !make INT dummy <- recurse(5);
+    !shout "Ile razy funkcja modyfikowala licznik globalny?";
+    !shout counter;
+    !out 0;
+}
+
+!make INT run <- main();
