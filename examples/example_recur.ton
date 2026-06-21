@@ -16,17 +16,13 @@
         !shout a; $ 0
         !out n + a; $ n + 0
     }
-    foo2(2);
+    foo(2);
     !shout a;
-    !out foo2(n+a); $ n + 0 + 3
+    !out foo(n+a); $ n + 0 + 3
 }
 
 !make INT result <- factorial(10);
-result <- factorial(10);
-result <- factorial(10);
-result <- factorial(10);
-result <- factorial(10);
-result <- factorial(99);
-$ result <- factorial(10);
-$ !shout "Silnia z 5 to:";
+result <- factorial(101);
+
+$ !shout "Silnia z 10 to:";
 !shout result;

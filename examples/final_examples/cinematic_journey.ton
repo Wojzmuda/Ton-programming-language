@@ -1,0 +1,80 @@
+$ ========================================================
+$ Tøn Preview: "A 28-Second Cinematic Journey"
+$ ========================================================
+
+USE piano;
+USE strings;
+USE cello;
+USE violin;
+USE drums;
+
+!shout "Komponowanie utworu...";
+
+!make INT beat <- 500;
+!make INT half_beat <- 250;
+!make INT bar <- 2000;
+
+!define SOUND pad_am <INT dur> { !out (strings A3 dur) + (strings C4 dur) + (strings E4 dur); }
+!define SOUND pad_f  <INT dur> { !out (strings F3 dur) + (strings A3 dur) + (strings C4 dur); }
+!define SOUND pad_c  <INT dur> { !out (strings C3 dur) + (strings E3 dur) + (strings G3 dur); }
+!define SOUND pad_g  <INT dur> { !out (strings G3 dur) + (strings B3 dur) + (strings D4 dur); }
+
+!make SOUND strings_loop <- pad_am(bar) & pad_f(bar) & pad_c(bar) & pad_g(bar);
+
+
+!make SOUND bass_loop <- (cello A2 bar) & (cello F2 bar) & (cello C2 bar) & (cello G2 bar);
+
+
+!make ARRAY p_notes <- [
+    A3, E4, A4, C5, A4, E4, A3, E4,  $ Am
+    F3, C4, F4, A4, F4, C4, F3, C4,  $ F
+    C3, G3, C4, E4, C4, G3, C3, G3,  $ C
+    G3, D4, G4, B4, G4, D4, G3, D4   $ G
+];
+
+!make SOUND piano_arp <- piano p_notes[0] half_beat;
+!make INT p_stop <- (LENGTH p_notes) - 1;
+
+!loop <INT i FROM 1 TO p_stop> {
+    !make NOTE pn <- p_notes[i];
+    piano_arp <- piano_arp & (piano pn half_beat);
+}
+
+
+!make SOUND v1 <- violin A4 1000;
+!make SOUND v2 <- violin C5 1000;
+!make SOUND v3 <- violin F5 1500;
+!make SOUND v4 <- violin E5 500;
+!make SOUND v5 <- violin G5 1000;
+!make SOUND v6 <- violin E5 1000;
+!make SOUND v7 <- violin D5 2000;
+
+!make SOUND slow_melody <- v1 & v2 & v3 & v4 & v5 & v6 & v7;
+
+!make SOUND kick <- drums C2 beat;
+!make SOUND snare <- drums G3 beat;
+!make SOUND drum_bar <- kick & snare & kick & snare;
+!make SOUND drum_loop <- drum_bar & drum_bar & drum_bar & drum_bar;
+
+!make SOUND end_piano <- (piano A3 4000) + (piano C4 4000) + (piano E4 4000) + (piano A4 4000);
+!make SOUND end_pad <- pad_am(4000);
+!make SOUND end_bass <- cello A2 4000;
+
+!make TIMELINE cinematic;
+cinematic NEW TRACK piano;
+cinematic NEW TRACK bass;
+cinematic NEW TRACK violin;
+cinematic NEW TRACK pad;
+cinematic NEW TRACK drums;
+
+
+cinematic.piano <- [piano_arp AT 0, piano_arp AT 8000, piano_arp AT 16000, end_piano AT 24000];
+cinematic.bass <- [bass_loop AT 0, bass_loop AT 8000, bass_loop AT 16000, end_bass AT 24000];
+cinematic.violin <- [slow_melody AT 8000, slow_melody AT 16000];
+cinematic.pad <- [strings_loop AT 16000, end_pad AT 24000];
+cinematic.drums <- [drum_loop AT 16000];
+
+
+!shout "Całkowita długość utworu (ms):", LENGTH cinematic;
+!save cinematic "cinematic_journey.wav";
+!shout "Utwór gotowy!";

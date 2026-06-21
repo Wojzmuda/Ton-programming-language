@@ -3,7 +3,7 @@ $ TØN SCRIPT: "NIGHT DRIVE" - WIELOWARSTWOWA KOMPOZYCJA
 $ =============================================================================
 
 $ ---------------------------------------------------------
-$ 1. IMPORTY INSTRUMENTÓW (BEZWZGLĘDNIE NA SAMEJ GÓRZE)
+$ 1. IMPORTY INSTRUMENTÓW 
 $ ---------------------------------------------------------
 USE bass ;
 USE overdrive ;
@@ -53,7 +53,7 @@ $ Warstwa 2: Arpeggio z overdrive'em (wycinamy końcówkę tablicy za pomocą sl
 !make SOUND arp3 <- overdrive scale[4] 150 ;    $ B4 na szczycie
 
 $ Warstwa 3: Akordy pianina (łączenie dźwięków operatorem &)
-!make SOUND chord_A <- piano scale[0] 900 & piano scale[2] 900 & piano scale[4] 900 ;
+!make SOUND chord_A <- (piano scale[0] 900) & (piano scale[2] 900) & (piano scale[4] 900) ;
 
 $ ---------------------------------------------------------
 $ 5. SKŁADANIE OSI CZASU (TIMELINE)

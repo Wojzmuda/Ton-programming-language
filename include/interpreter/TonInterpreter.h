@@ -32,7 +32,7 @@ private:
     static const std::unordered_set<std::string> SYNTHS;
 
     std::shared_ptr<Scope<std::any>> currentScope;
-    static constexpr int MAX_STACK_DEPTH = 1000;
+    static constexpr int MAX_STACK_DEPTH = 100;
     int currentStackDepth;
 
     struct BreakException : public std::exception {};

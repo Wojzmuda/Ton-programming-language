@@ -387,11 +387,11 @@ std::any TonTypeChecker::visitCastExpr(TonParser::CastExprContext *ctx) {
     }
 
     if (targetType == "INT") {
-        if (exprType == "NUMERICAL" || exprType == "BOOL" || exprType == "INT") return std::string("INT");
+        if (exprType == "NUMERICAL" || exprType == "BOOL" || exprType == "INT" || exprType == "STRING") return std::string("INT");
     }
 
     else if (targetType == "NUMERICAL") {
-        if (exprType == "INT" || exprType == "NUMERICAL" || exprType == "BOOL") return std::string("NUMERICAL");
+        if (exprType == "INT" || exprType == "NUMERICAL" || exprType == "BOOL" || exprType == "STRING") return std::string("NUMERICAL");
     }
    
     else if (targetType == "BOOL") {
