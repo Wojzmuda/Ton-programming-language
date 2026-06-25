@@ -1,0 +1,14 @@
+!make INT x <- 10;
+
+!define VOID printGlobal <> {
+    !shout "Zmienna globalna wynosi:";
+    !shout ELDER::x;
+}
+
+!define INT main <> {
+    !make INT x <- 999; $ Próba zmylenia interpretera
+    printGlobal();
+    !out 0;
+}
+
+!make INT run <- main();

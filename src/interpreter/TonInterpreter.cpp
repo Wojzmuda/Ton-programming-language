@@ -29,18 +29,36 @@ const std::unordered_set<std::string> TonInterpreter::SYNTHS = {
 };
 
 std::shared_ptr<Scope<std::any>> TonInterpreter::resolveScope(TonParser::TargetContext *ctx) {
-    int parentCount = ctx->elderRef().size();
+int elderCount = ctx->elderRef().size();
     auto targetScope = currentScope;
 
-    for (int i = 0; i < parentCount; ++i) {
-        if (targetScope->parent == nullptr) {
-            size_t line = ctx->getStart()->getLine();
-            throw std::runtime_error("Error in line " + std::to_string(line) + ": 'parent::' reached beyond global scope.");
+    if (elderCount == 0) {
+        return targetScope;
+    }
+
+    std::string baseName = ctx->ID(0)->getText();
+    int skippedDefinitions = 0;
+
+    while (targetScope != nullptr) {
+
+        if (targetScope->values.find(baseName) != targetScope->values.end()) {
+   
+            if (skippedDefinitions == elderCount) {
+                return targetScope;
+            }
+ 
+            skippedDefinitions++;
         }
+        
         targetScope = targetScope->parent;
     }
-    return targetScope;
+
+    size_t line = ctx->getStart()->getLine();
+    throw std::runtime_error("Error in line " + std::to_string(line) + 
+                             ": 'ELDER::' failed. Variable '" + baseName + 
+                             "' is not shadowed " + std::to_string(elderCount) + " time(s).");
 }
+
 
 bool TonInterpreter::coerceType(const std::string &expectedTypeName, std::any &value)
 {
@@ -1328,7 +1346,15 @@ std::any TonInterpreter::executeFunctionLogic(const std::string& funcName, const
     }
 
     auto previousScope = currentScope;
-    currentScope = std::make_shared<Scope<std::any>>(previousScope);
+
+
+    auto globalScope = currentScope;
+    while (globalScope->parent != nullptr) {
+        globalScope = globalScope->parent;
+    }
+    
+    currentScope = std::make_shared<Scope<std::any>>(globalScope);
+
     this->currentStackDepth++;
 
     for(size_t i = 0; i < expectedargs; i++){
