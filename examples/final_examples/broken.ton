@@ -1,0 +1,15 @@
+!make INT x <- 100;     
+
+!define INT main <> {
+    !shout x;           
+    
+    !make INT x <- 3;   
+    
+    !shout x;           
+    
+    !shout ELDER::x;   
+    
+    !out x;            
+}
+
+!make INT run <- main(); 
