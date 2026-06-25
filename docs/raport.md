@@ -446,19 +446,31 @@ The Typechecker enhances Developer Experience (DX) by implementing the Levenshte
 
 The `TonDeclarationListener` performs a critical pre-processing pass over the AST. It builds the symbol table, establishes lexical scopes, and validates semantic rules before runtime execution.
 
-#### 4.5.1 Block and Scope Management
+#### 4.5.1 Memory Management and the `Scope<T>` Class Architecture
 
-Scoping is managed using a nested `std::shared_ptr<Scope<int>>` structure. A new scope is automatically pushed for function bodies, loops, and nameless blocks (`{ ... }`), preventing variable leakage.
+At the heart of Ton's lexical scoping and stack frame simulation is the custom `Scope<T>` class template. It acts as an isolated memory environment (or frame) for variables, types, and initialization tracking.
 
-```cpp
-void TonDeclarationListener::enterBlock(TonParser::BlockContext *ctx) {
-    // Detect if parent is function definition or loop
-    // Prevent creating duplicate scopes if the parent already created one
-    if (!isFuncBody && !isLoopBody) {
-        currentScope = std::make_shared<Scope<int>>(currentScope);
-    }
-}
-```
+**Internal Data Structures:**
+Each `Scope` object maintains three critical components:
+1. `std::shared_ptr<Scope<T>> parent` – A pointer establishing the hierarchical chain.
+2. `std::map<std::string, T> values` – Stores the actual data (e.g., `std::any` at runtime, or line numbers during the static pass).
+3. `std::map<std::string, std::string> types` – Enforces static typing rules (e.g., locking a variable to `"INT"` or `"SOUND"`).
+4. `std::map<std::string, bool> initialized` – A safety guard to prevent read operations on uninitialized memory.
+
+**Core Interaction Methods:**
+The environment exposes strict CRUD operations to the AST Visitors:
+* **`define(name, type, value)`**: Exclusively creates a *new* variable in the *local* `values` map. Prevents shadowing leaks.
+* **`set(name, value)`**: Recursively traverses the `parent` chain to mutate an *existing* variable. Throws an error if the variable is undeclared.
+* **`get(name)`**: Recursively traverses upwards to retrieve a value. Throws an error if the variable exists but is flagged as uninitialized.
+* **`existsLocally(name)`**: Used primarily by the `TonDeclarationListener` to immediately detect and block redeclaration of the same variable name within the exact same block.
+
+**Block Triggers:**
+The creation of these memory frames is highly deliberate. A new `std::make_shared<Scope<T>>` is explicitly instantiated and pushed onto the scope chain by the Visitors during specific AST node entries:
+* `visitBlock()`: Triggered for nameless scopes `{ ... }`.
+* `visitLoopStat()` / `visitUntilStat()`: Encloses loop iterations.
+* `executeFunctionLogic()`: Instantiates the hardware-equivalent Stack Frame for function execution.
+
+To prevent redundant memory allocation, `visitBlock()` performs a parent-check (`isFuncBody || isLoopBody`) to avoid creating a duplicate scope if the parent AST node (like a `!define` or `!loop`) has already established an isolated frame for that block.
 
 #### 4.5.2 Duplicate Declaration Detection
 
@@ -494,8 +506,15 @@ The listener heavily validates assignments (`exitAssignment`), splitting logic b
 - **Scenario B1**: Assignment to a specific alias within a Timeline track (e.g., `mySong.bassline."start"`), validating that only `SOUND` or `TRACK_EVENT` types are assigned
 - **Scenario B2**: Whole-track assignment (e.g., `mySong.bassline <- [...]`), requiring `ARRAY` or `TRACK_EVENT` types
 
-#### 4.5.5 Multi-Level Scope Climbing (`ELDER::`)
-To handle deep nesting, the `ELDER::` operator allows for explicit upward scope traversal. The implementation (`resolveElderScopeTC`) supports cascading resolution (e.g., `ELDER::ELDER::varName`). The Typechecker iterates up the parent hierarchy based on the token count and strictly enforces bounds, throwing a compile-time exception if the user attempts to reach beyond the global scope.
+#### 4.5.5 Multi-Level Scope Climbing (`ELDER::`) and Shadowing
+
+To handle deep nesting and variable shadowing, Ton introduces the `ELDER::` operator, which allows for explicit upward scope traversal. However, rather than blindly traversing parent pointers, the implementation (`resolveElderScopeTC` in the Typechecker and `resolveElderScope` in the Interpreter) strictly enforces **physical variable shadowing**.
+
+When evaluating an expression like `ELDER::varName` or `ELDER::ELDER::varName`, the engine iterates through the scope hierarchy and counts the actual physical definitions of the target variable in the underlying memory maps (`values` and `types`). 
+- If a variable is not explicitly declared in a nested block, the engine treats it as a single instance.
+- The operator skips exactly as many definitions as requested by the token count. If the requested depth exceeds the number of times the variable was actually shadowed, the compiler throws a descriptive exception (e.g., `"Variable 'X' is not shadowed 2 time(s)"`).
+
+This design prevents silent bugs where users might unintentionally mutate inherited variables, ensuring that `ELDER::` is only used when a variable is genuinely masked by a local declaration.
 
 ### 4.6 Static Analysis (Typechecker)
 
@@ -602,89 +621,29 @@ std::any TonInterpreter::visitReturnStat(TonParser::ReturnStatContext *ctx){
 }
 ```
 
-#### 4.7.3 Call Stack & Function Execution
+#### 4.7.3 Call Stack, Stack Frames, and Lexical Scoping
 
-To prevent stack overflow crashes from infinite recursion, the interpreter enforces a strict `MAX_STACK_DEPTH`. During a function call, a new isolated `Scope` is created, arguments are evaluated and type-checked at runtime, and the execution is pushed to the new context.
+To safely manage function execution and recursion, the interpreter simulates hardware **Stack Frames** (activation records) through dynamic `Scope` allocation. 
 
-```cpp
-std::any TonInterpreter::executeFunctionLogic(const std::string& funcName, const std::vector<TonParser::ExprContext*>& argsCtx){
-    this->validateStackDepth(); // Throws if currentStackDepth >= MAX_STACK_DEPTH
+In traditional computer architecture, a Stack Frame is a dedicated memory block on the Call Stack created for a single function execution. It typically contains:
+1. **Parameters (Arguments):** Values passed to the function.
+2. **Local Variables:** Data explicitly created within the function body.
+3. **Saved State/Return Address:** Context to return to once the execution completes.
 
-    // ... fetch function definition and evaluate passed arguments ...
+Ton faithfully replicates this mechanism in software. During a function call (`executeFunctionLogic`), a new, isolated `Scope` object is instantiated to act as the function's software stack frame. This frame stores the evaluated arguments and local variables. To prevent stack overflow crashes from infinite recursion, the interpreter enforces a strict `MAX_STACK_DEPTH` counter (`currentStackDepth`). When the function returns or finishes, its isolated `Scope` (the frame) is naturally destroyed by C++ smart pointers, mimicking hardware stack unwinding.
 
-    auto previousScope = currentScope;
-    currentScope = std::make_shared<Scope<std::any>>(previousScope);
-    this->currentStackDepth++;
-
-    // Parameter binding & runtime type validation
-    for(size_t i = 0; i < expectedargs; i++){
-        // ... extract expected type and evaluate argument type ...
-        if (!typeMatch) {
-            currentScope = previousScope;
-            this->currentStackDepth--;
-            throw std::runtime_error("Argument '" + paramName + "' in function '" + funcName + "' must be of type " + paramType + ".");
-        }
-        currentScope->define(paramName, paramType, argval);
-    }
-
-    std::any result = {};
-    try{
-        visit(funcdefctx->block());
-        // ... handle void returns ...
-    } catch(const ReturnException& ret){
-        result = ret.returnValue;
-        // ... validate return type against function signature ...
-    } catch(...){
-        // Restore state on fatal error
-        currentScope = previousScope;
-        this->currentStackDepth--;
-        throw;
-    }
-    
-    currentScope = previousScope;
-    this->currentStackDepth--;
-    return result;
-}
-```
-
-#### 4.7.4 Polymorphic Audio Operators
-
-The interpreter elegantly handles domain-specific polymorphism. For example, the `+` operator acts as mathematical addition for numbers, concatenation for strings, and *audio mixing* for sounds. The `LENGTH` keyword dynamically calculates sizes for data structures or maximum playback duration in milliseconds for audio objects.
+**Lexical Scoping over Dynamic Scoping:**
+A critical architectural decision in Ton is how these software stack frames are linked. Instead of attaching a new function's scope to the scope of its caller (which would result in unpredictable *Dynamic Scoping*), the engine traverses up to the root and attaches every new function scope **directly to the Global Scope**. 
 
 ```cpp
-std::any TonInterpreter::visitLengthOfExpr(TonParser::LengthOfExprContext *ctx) {
-    std::any val = visit(ctx->expr());
-
-    if (val.type() == typeid(std::string)) {
-        return static_cast<int>(std::any_cast<std::string>(val).length());
-    }
-    else if (val.type() == typeid(std::vector<std::any>)) {
-        return static_cast<int>(std::any_cast<std::vector<std::any>>(val).size());
-    }
-    else if (val.type() == typeid(Sound)) {
-        Sound s = std::any_cast<Sound>(val);
-        // Calculate audio duration in milliseconds based on sample count
-        double durationSec = static_cast<double>(s.samples.size()) / s.sampleRate;
-        return static_cast<int>(durationSec * 1000.0);
-    }
-    else if (val.type() == typeid(Timeline)) {
-        Timeline tl = std::any_cast<Timeline>(val);
-        int maxMs = 0;
-        // Scan all tracks and events to find the absolute end time
-        for (const auto& trackPair : tl.tracks) {
-            for (const auto& ev : trackPair.second.events) {
-                double durationSec = static_cast<double>(ev.sound.samples.size()) / ev.sound.sampleRate;
-                int endMs = ev.startTimeMs + static_cast<int>(durationSec * 1000.0);
-                if (endMs > maxMs) maxMs = endMs;
-            }
-        }
-        return maxMs;
-    }
-    // ... handle invalid types ...
+auto globalScope = currentScope;
+while (globalScope->parent != nullptr) {
+    globalScope = globalScope->parent; // Traverse to root
 }
+// Attach new stack frame strictly to the global scope
+currentScope = std::make_shared<Scope<std::any>>(globalScope);
 ```
-
-#### 4.7.5 Audio File Export (`!save`)
+#### 4.7.4 Audio File Export (`!save`)
 
 The `!save` command serves as the final rendering step. It takes a `SOUND` or `TIMELINE` object, processes it, normalizes the waveform to prevent clipping, and exports it directly to disk as a mono `.wav` file using the `AudioFile` library.
 
@@ -718,7 +677,7 @@ std::any TonInterpreter::visitSaveStat(TonParser::SaveStatContext *ctx) {
 }
 ```
 
-#### 4.7.6 Memory Debugging Utility
+#### 4.7.5 Memory Debugging Utility
 Ton features a built-in state inspection tool (`visitDebugDumpStat`) that allows users to dump the entire execution context to the console. When triggered, it walks recursively up the environment chain and prints a formatted, aligned table of all current variables, their designated types, initialization status, and current values. Complex memory structures (like `ARRAY`, `SOUND`, or `TIMELINE`) are gracefully summarized, making script debugging highly efficient without external tools.
 
 ```bash
@@ -741,7 +700,7 @@ Triggered at line: 70
 
 ```
 
-#### 4.7.7 Audio Polymorphism Mechanics
+#### 4.7.6 Audio Polymorphism Mechanics
 The interpreter distinguishes between audio mixing and audio concatenation on a low mathematical level:
 - **Mixing (`+` operator):** The `visitAddSubMixExpr` iterates through the sample arrays of two `Sound` objects, mathematically superimposing (adding) the float values of parallel samples to play them simultaneously.
 - **Concatenation (`&` operator):** The `visitConcatExpr` utilizes `std::vector::insert` to sequentially append the raw buffer of the right-hand `Sound` to the end of the left-hand `Sound`, enabling rapid, seamless chronological chaining.
